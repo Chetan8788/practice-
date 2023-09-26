@@ -1,455 +1,271 @@
-import React, { useEffect, useState } from "react";
-import ContentAreaScreen from "../ContentArea";
-import SideBarScreen from "../Sidebar";
-import NavBarScreen from "../Navbar";
-import MiniDrawer from "./Homepage";
+
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/app";
 import { RootState } from "../../redux/store";
-import {
-    allCandidateData,
-    getCandidate,
-    getImportantCandidateData,
-} from "../../actions/candidate";
-import { useNavigate } from "react-router-dom";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
-import { getCandidateBackgroundCheck } from "../../actions/backgroundCheck";
-import { getCandidateDocumentation } from "../../actions/documentation";
-import { getCandidateStartEndOperations } from "../../actions/startendoperations";
-import { getCandidateRateRevision } from "../../actions/raterevision";
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import moment from "moment";
+import { allClientData, deleteClientData } from "../../actions/client";
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import ShowClient from "./ShowIndividualClient";
+import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { GenericTable } from "../../common/GenericTable/GenricTable";
-// import GenericTable from "../../common/GenericTable/GenricTable";
 
 const TABLE_HEAD: any = [
-    { label: "Candidate Name", key: "candidateName", },
-    { label: "Work Type", key: "workType" },
-    { label: "Added date", key: "addedDate" },
-    { label: "Address", key: "fullAddress" },
-    { label: "Contact Number", key: "contactNumber" },
-    { label: "Email", key: "email" },
-    { label: "Action", key: "action" },
+  { label: "Candidate Name", key: "candidateName" },
+  { label: "End client name", key: "endClientName" },
+  { label: "Added date", key: "Addeddate" },
+  { label: "Address", key: "Address" },
+  { label: "Contact Number", key: "contactNumber" },
+  { label: "Email", key: "email" },
+  { label: "Action", key: "action" },
 ];
 
-const HomepageScreen: React.FC = () => {
-    console.log('TABLE_HEAD: ', TABLE_HEAD);
-    const navigate = useNavigate();
-    const dispatch = useAppDispatch();
+const ShowClientTable: React.FC = () => {
+  console.log("TABLE_HEAD: ", TABLE_HEAD);
+  const dispatch = useAppDispatch();
+  const [open, setOpen] = useState(false);
 
-    useEffect(() => {
-        dispatch(allCandidateData());
-    }, []);
+  let clientData = useAppSelector(
+    (state: RootState) => state.client.allClientData
+  );
+  let clientDataRow = clientData;
+  console.log("clientdeteData", clientData);
 
-    let candidateData: any = useAppSelector(
-        (state: RootState) => state.candidate.getAllCandidates
-    );
-    let candidateDataRow = candidateData;
-    console.log("candidateDataRow: ", candidateDataRow);
-    const [open, setOpen] = useState(false);
-    const [singleCandidateData, setSingleCandidateData] = useState({});
-    const [filteredData, setFilteredData] = useState<any>();
-    console.log("filteredData", filteredData);
-    const [count, setCount] = useState(true);
+  const [filteredData, setFilteredData] = useState(clientData);
+  console.log("filteredData", filteredData);
+  const [count, setCount] = useState(true);
+  const [singleClientData, setSingleClientData] = useState({});
+  const [expanded, setExpanded] = useState<string | false>(false);
 
-    useEffect(() => {
+  useEffect(() => {
+    const clientList = clientData.map((clientdate: any) => {
+      const candidateName = clientdate?.clientId?.clientName;
+      const endClientName = clientdate?.clientId?.endClientName;
+      const Address =
+        clientdate?.addressId[0].city + ", " + clientdate?.addressId[0]?.state;
+      const Addeddate = clientdate?.addressId[0]?.contactDetailId?.createdAt;
+      const contactNumber =
+        clientdate?.addressId[0].contactDetailId?.contactNumber;
+      const email = clientdate?.addressId[0].contactDetailId?.email;
 
-
-        const candidateList = candidateData.map((candidate: any) => {
-
-            const candidateName = candidate.candidateId?.firstName + " " + candidate.candidateId?.lastName
-            const workType = candidate.candidateId?.workType;
-            const addedDate = moment.utc(candidate?.createdAt).format('YYYY-MM-DD')
-            const contactNumber = candidate.addressId[0]?.contactDetailId?.contactNumber
-            const email = candidate?.addressId[0]?.contactDetailId?.email
-            const fullAddress = candidate.addressId?.[0]?.city + ", " + candidate.addressId?.[0]?.state
-            return ({ ...candidate, fullAddress, candidateName, workType, addedDate, contactNumber, email })
-        })
-        setFilteredData(candidateList);
-
-
-        if (count) {
-            if (candidateData?.length !== 0) {
-                setFilteredData(
-                    candidateData?.filter((cd: { candidateId: any }) =>
-                        cd?.candidateId?.firstName?.toLowerCase()?.includes("")
-                    )
-                );
-                setCount(false);
-            }
-        }
-    }, [candidateData]);
-
-    const filterResult = (event: any) => {
-        // debugger;
-        setFilteredData(candidateDataRow);
-        let value: string = event.target.value;
-
-        if (candidateData?.length !== 0) {
-            console.log("ala");
-            const data: any = candidateData?.filter((cd: { candidateId: any, addressId: any }) =>
-                cd?.candidateId?.firstName
-                    ?.toLowerCase()
-                    ?.includes(value.toLowerCase()) ||
-                cd?.candidateId?.lastName
-                    ?.toLowerCase()
-                    ?.includes(value.toLowerCase()) ||
-                cd?.candidateId?.workType
-                    ?.toLowerCase()
-                    ?.includes(value.toLowerCase()) ||
-                cd?.candidateId?.createdAt
-                    ?.toLowerCase()
-                    ?.includes(value.toLowerCase()) ||
-                cd?.addressId[0]?.contactDetailId?.contactNumber
-                == value ||
-                cd?.addressId[0]?.city
-                    ?.toLowerCase()
-                    ?.includes(value.toLowerCase()) ||
-                cd?.addressId[0]?.state
-                    ?.toLowerCase()
-                    ?.includes(value.toLowerCase()) ||
-                cd?.addressId[0]?.contactDetailId?.email
-                    ?.toLowerCase()
-                    ?.includes(value.toLowerCase())
-            )
-            // console.log(' cd?.addressId[0]?.contactDetailId?.contactNumber: ', cd?.addressId[0]?.city)
-            console.log('filteredData inside search: ', data);
-            const candidateList = data?.map((candidate: any) => {
-                const candidateName = candidate.candidateId?.firstName + " " + candidate.candidateId?.lastName
-                const workType = candidate.candidateId?.workType;
-                const addedDate = moment.utc(candidate?.createdAt).format('YYYY-MM-DD')
-                const contactNumber = candidate.addressId[0]?.contactDetailId?.contactNumber
-                const email = candidate?.addressId[0]?.contactDetailId?.email
-                const fullAddress = candidate.addressId?.[0]?.city + ", " + candidate.addressId?.[0]?.state
-                return ({ ...candidate, fullAddress, candidateName, workType, addedDate, contactNumber, email })
-            })
-            console.log('candidateList: ', candidateList);
-            setFilteredData(candidateList);
-        } else {
-            const candidateList = candidateData?.map((candidate: any) => {
-                const candidateName = candidate.candidateId?.firstName + " " + candidate.candidateId?.lastName
-                const workType = candidate.candidateId?.workType;
-                const addedDate = moment.utc(candidate?.createdAt).format('YYYY-MM-DD')
-                const contactNumber = candidate.addressId[0]?.contactDetailId?.contactNumber
-                const email = candidate?.addressId[0]?.contactDetailId?.email
-                const fullAddress = candidate.addressId?.[0]?.city + ", " + candidate.addressId?.[0]?.state
-                return ({ ...candidate, fullAddress, candidateName, workType, addedDate, contactNumber, email })
-            })
-            console.log('candidateList: ', candidateList);
-            setFilteredData(candidateList);
-        }
-
-    };
-
-    const showCandidate = (data: any) => {
-        setSingleCandidateData(data);
-        setOpen(true);
-    };
-
-    function deleteJob(id: any): void {
-        // dispatch(deleteCandidateData(id));
-        // setCount(true);
+      return {
+        ...clientdate,
+        Address,
+        endClientName,
+        Addeddate,
+        candidateName,
+        contactNumber,
+        email,
+      };
+    });
+    setFilteredData(clientList);
+    if (count) {
+      if (clientData?.length !== 0) {
+        setFilteredData(
+          clientData?.filter((cd: { clientdate: any }) =>
+            cd?.clientdate?.clientName?.toLowerCase()?.includes("")
+          )
+        );
+        setCount(false);
+      }
     }
+  }, [clientData, count]);
 
-    const boxStyle = {
-        alignItems: "center",
-        border: "none",
-        flexGrow: 1,
-        marginTop: "3%",
-        overflowY: "auto",
-        overflowX: "hidden",
-        height: "60vh",
-        paddingRight: "10px",
-        paddingLeft: "10px",
-    };
+  const filterResult = (event: any) => {
+    // debugger;
+    setFilteredData(clientDataRow);
+    let value: string = event.target.value;
 
-    const button = {
-        backgroundColor: "Green",
-        border: "none",
-        color: "white",
-        padding: "15px 32px",
-        textAlign: "center",
-        textDecoration: "none",
-        display: "inline - block",
-        fontSize: "16px",
-    };
-    // const [data3, setData3] = useState<any>();
-    // const [flag, setFlag] = useState<boolean>(false);
-    // const [isAscending, setIsAscending] = useState(true);
-    // const [isAscendingWorkType, setIsAscendingWorkType] = useState(true);
-    // const [isAscendingDate, setIsAscendingDate] = useState(true);
-    // console.log("data3", data3);
+    if (clientData?.length !== 0) {
+      const data: any = clientData?.filter(
+        (cd: { clientId: any; addressId: any }) =>
+          cd?.clientId?.clientName
+            ?.toLowerCase()
+            ?.includes(value.toLowerCase()) ||
+          cd?.clientId?.endClientName
+            ?.toLowerCase()
+            ?.includes(value.toLowerCase()) ||
+          cd?.addressId[0]?.contactDetailId?.createdAt
+            ?.toLowerCase()
+            ?.includes(value.toLowerCase()) ||
+          cd?.addressId[0]?.contactDetailId?.createdAt
+            ?.toLowerCase()
+            ?.includes(value.toLowerCase()) ||
+          cd?.addressId[0]?.city
+            ?.toLowerCase()
+            ?.includes(value.toLowerCase()) ||
+          cd?.addressId[0]?.state
+            ?.toLowerCase()
+            ?.includes(value.toLowerCase()) ||
+          cd?.addressId[0].contactDetailId?.contactNumber == value ||
+          cd?.addressId[0].contactDetailId?.email
+            ?.toLowerCase()
+            ?.includes(value.toLowerCase())
+      );
+      console.log("filteredData inside search: ", data);
+      const clientList = data?.map((clientdate: any) => {
+        const candidateName = clientdate?.clientId.clientName;
+        const endClientName = clientdate?.clientId.endClientName;
+        const Addeddate = clientdate?.addressId[0].contactDetailId.createdAt;
+        const contactNumber =
+          clientdate?.addressId[0].contactDetailId.contactNumber;
+        const email = clientdate?.addressId[0].contactDetailId.email;
+        const Address =
+          clientdate?.addressId[0].city + ", " + clientdate.addressId[0].state;
+        return {
+          ...clientdate,
+          Address,
+          endClientName,
+          Addeddate,
+          candidateName,
+          contactNumber,
+          email,
+        };
+      });
 
-    const onPressAction = (rowData: any, type: any) => {
-        console.log(rowData)
-        console.log(type)
-        if (type === "View") {
-            dispatch(getCandidateBackgroundCheck(rowData?.candidateId.id));
-            dispatch(getCandidateDocumentation(rowData?.candidateId.id));
-            dispatch(getCandidateStartEndOperations(rowData?.candidateId.id));
-            dispatch(getCandidateRateRevision(rowData?.candidateId.id));
-            dispatch(getCandidate(rowData?.candidateId.id));
-            navigate("/all-data", {
-                state: {
-                    candidateData: {
-                        candidateData: rowData?.candidateId,
-                        addressData: rowData?.addressId
-                    },
-                    bgCheck: rowData?.candidateId?.backgroundCheckId,
-                    document: rowData?.candidateId?.documentationId,
-                    rateRevision: rowData?.candidateId?.rateRevisionId,
-                    startEndOperations: rowData?.candidateId?.startEndOperationId,
-                }
-            });
-        }
+      setFilteredData(clientList);
+      console.log("clientList: ", clientList);
+    } else {
+      const candidateList = clientData?.map((clientdate: any) => {
+        const candidateName = clientdate?.clientId.clientName;
+        const endClientName = clientdate?.clientId.endClientName;
+        const Addeddate = clientdate?.addressId[0].contactDetailId.createdAt;
+        const contactNumber =
+          clientdate?.addressId[0].contactDetailId.contactNumber;
+        const email = clientdate?.addressId[0].contactDetailId.email;
+        const Address =
+          clientdate?.addressId[0].city + ", " + clientdate.addressId[0].state;
+        return {
+          ...clientdate,
+          Address,
+          endClientName,
+          Addeddate,
+          candidateName,
+          contactNumber,
+          email,
+        };
+      });
+
+      console.log("candidateList: ", candidateList);
+      setFilteredData(candidateList);
     }
+  };
 
-    return (
-        <>
-            <div style={{ display: "flex" }}>
-                <div
-                    style={{ borderRadius: "15px", marginBottom: "10px", width: "90%" }}
-                    className="py-3 px-4"
-                >
-                    <div className="relative max-w">
-                        <label htmlFor="hs-table-search" className="sr-only">
-                            Search
-                        </label>
+  const showClient = (data: any) => {
+    setSingleClientData(data);
+    setOpen(true);
+  };
 
-                        <input
-                            style={{ border: "0.5px solid gray" }}
-                            type="text"
-                            name="hs-table-search"
-                            id="hs-table-search"
-                            className="ml-[-13px] p-2 pl-10 block w-[35%] border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
-                            placeholder="Search for candidates"
-                            onChange={(event) => {
-                                // setFlag(false);
-                                filterResult(event)
-                            }}
-                        />
-                        <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none pl-2">
-                            <svg
-                                className="h-3.5 w-3.5 text-gray-400"
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                fill="currentColor"
-                                viewBox="0 0 16 16"
-                            >
-                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {/* <div className="flex flex-col" style={{ height: "70vh" }}>
-                <div className="-m-1.5 overflow-x-auto">
-                    <div className="p-1.5 min-w-full inline-block align-middle">
-                        <div className=" divide-y divide-gray-200 dark:border-gray-700 dark:divide-gray-700">
+  function deleteClientAddress(personId: any): void {
+    dispatch(deleteClientData(personId));
+    setCount(true);
+  }
 
-                            <div id="all-candidate" className="relative overflow-x-auto shadow-md sm:rounded-lg h-[70vh]">
-                                <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                                    <thead className="text-[14px] text-white divide-y bg-[#1976d2]"
+  const boxStyle = {
+    alignItems: "center",
+    border: "none",
+    flexGrow: 1,
+    marginTop: "3%",
+    overflowY: "auto",
+    overflowX: "hidden",
+    height: "60vh",
+    paddingRight: "10px",
+    paddingLeft: "10px",
+  };
 
-                                    >
-                                        <tr>
-                                            <th
-                                                style={{
-                                                    position: "sticky", top: 0, zIndex: 5,
-                                                    backgroundColor: "#1976d2"
-                                                }}
-                                                scope="col"
-                                                className="px-2 py-1 border border-slate-300 text-center"
-                                            >
+  const button = {
+    backgroundColor: "Green",
+    border: "none",
+    color: "white",
+    padding: "15px 32px",
+    textAlign: "center",
+    textDecoration: "none",
+    display: "inline - block",
+    fontSize: "16px",
+  };
+  const onPressAction = (rowData: any, type: any) => {
+    console.log(rowData);
+    console.log(type);
+  };
+  return (
+    <>
+      <div style={{ display: "flex" }}>
+        <div
+          style={{ borderRadius: "15px", marginBottom: "10px", width: "90%" }}
+          className="py-3 px-4"
+        >
+          <div className="relative max-w">
+            <label htmlFor="hs-table-search" className="sr-only">
+              Search
+            </label>
 
-                                                <div className="flex  m-auto w-[80%] align-middle pt-2 border-l-[#1976d2]">
-                                                    <h1 className="">Candidate name</h1>
-                                                    {isAscending ? (
-                                                        <h1 onClick={sortingByName} className="mt-[-12px]"><ArrowDropUpIcon sx={{ fontSize: 40 }} /></h1>
-
-                                                    ) : (
-                                                        <h1 onClick={sortingByName} className="mt-[-13px]"><ArrowDropDownIcon sx={{ fontSize: 40 }} /></h1>
-                                                    )}
-                                                </div>
-                                            </th>
-                                            <th
-                                                style={{
-                                                    position: "sticky", top: 0, zIndex: 5, backgroundColor: "#1976d2"
-                                                }}
-                                                scope="col"
-                                                className="px-2 py-1 border border-slate-300 text-center"
-                                            >
-
-                                                <div className="flex  m-auto w-[80%] align-middle pt-2">
-                                                    <h1 className="">Work type</h1>
-                                                    {isAscendingWorkType ? (
-                                                        <h1 onClick={sortingByWorkType} className="mt-[-12px]"><ArrowDropUpIcon sx={{ fontSize: 40 }} /></h1>
-
-                                                    ) : (
-                                                        <h1 onClick={sortingByWorkType} className="mt-[-13px]"><ArrowDropDownIcon sx={{ fontSize: 40 }} /></h1>
-                                                    )}
-                                                </div>
-                                            </th>
-                                            <th
-                                                style={{
-                                                    position: "sticky", top: 0, zIndex: 5, backgroundColor: "#1976d2"
-                                                }}
-                                                scope="col"
-                                                className="px-2 py-1 border border-slate-300 text-center"
-                                            >
-
-                                                <div className="flex  m-auto w-[80%] align-middle pt-2">
-                                                    <h1 className="">Added date</h1>
-                                                    {isAscendingDate ? (
-                                                        <h1 onClick={sortingByDate} className="mt-[-12px]"><ArrowDropUpIcon sx={{ fontSize: 40 }} /></h1>
-
-                                                    ) : (
-                                                        <h1 onClick={sortingByDate} className="mt-[-13px]"><ArrowDropDownIcon sx={{ fontSize: 40 }} /></h1>
-                                                    )}
-                                                </div>
-                                            </th>
-                                            <th
-                                                style={{
-                                                    position: "sticky", top: 0, zIndex: 5, backgroundColor: "#1976d2"
-                                                }}
-                                                scope="col"
-                                                className="px-2 py-1 border border-slate-300 text-center"
-                                            >
-                                                Address
-                                            </th>
-                                            <th
-                                                style={{
-                                                    position: "sticky", top: 0, zIndex: 5, backgroundColor: "#1976d2"
-                                                }}
-                                                scope="col"
-                                                className="px-2 py-1 border border-slate-300 text-center"
-                                            >
-                                                Contact Number
-                                            </th>
-                                            <th
-                                                style={{
-                                                    position: "sticky", top: 0, zIndex: 5, backgroundColor: "#1976d2"
-                                                }}
-                                                scope="col"
-                                                className="px-2 py-1 border border-slate-300 text-center"
-                                            >
-                                                Email
-                                            </th>
-                                            <th
-                                                style={{
-                                                    position: "sticky", top: 0, zIndex: 5, backgroundColor: "#1976d2"
-                                                }}
-                                                scope="col"
-                                                className="px-2 py-1 border border-slate-300 text-center border-r-[#1976d2]"
-                                            >
-                                                Action
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="">
-                                        {!flag
-                                            ? filteredData?.map((ele: any, index: any) => (
-                                                <tr>
-                                                    <td className="border-b p-3 ml-3 border border-slate-300 text-center">
-                                                        {ele?.candidateId?.firstName +
-                                                            " " +
-                                                            ele?.candidateId?.lastName}
-                                                    </td>
-                                                    <td className="border-b p-3 ml-3 border border-slate-300 text-center">
-                                                        {ele?.candidateId?.workType}
-                                                    </td>
-                                                    <td className="border-b p-3 ml-3 border border-slate-300 text-center">
-                                                        {moment.utc(ele?.candidateId?.createdAt).format('YYYY-MM-DD')}
-                                                    </td>
-                                                    <td className="border-b p-3 ml-3 border border-slate-300 text-center">
-                                                        {ele?.addressId[0]?.city +
-                                                            ", " +
-                                                            ele?.addressId[0]?.state}
-                                                    </td>
-                                                    <td className="border-b p-3 ml-3 border border-slate-300 text-center">
-                                                        {ele?.addressId[0]?.contactDetailId?.contactNumber}
-                                                    </td>
-                                                    <td className="border-b p-3 ml-3 border border-slate-300 text-center">
-                                                        {ele?.addressId[0]?.contactDetailId?.email}
-                                                    </td>
-
-                                                    <td className="border-b border border-slate-300 text-center border-solid">
-                                                        <Button className=""> Delete</Button>
-                                                    </td>
-
-                                                </tr>
-                                            ))
-                                            : data3?.map((ele: any, index: any) => (
-                                                <tr>
-                                                    <td className="border-b p-3 ml-3 border border-slate-300 text-center">
-                                                        {ele?.candidateId?.firstName +
-                                                            " " +
-                                                            ele?.candidateId?.lastName}
-                                                    </td>
-                                                    <td className="border-b p-3 ml-3 border border-slate-300 text-center">
-                                                        {ele?.candidateId?.workType}
-                                                    </td>
-                                                    <td className="border-b p-3 ml-3 border border-slate-300 text-center">
-                                                        {moment.utc(ele?.candidateId?.createdAt).format('YYYY-MM-DD')}
-                                                    </td>
-                                                    <td className="border-b p-3 ml-3 border border-slate-300 text-center">
-                                                        {ele?.addressId[0]?.city +
-                                                            ", " +
-                                                            ele?.addressId[0]?.state}
-                                                    </td>
-                                                    <td className="border-b p-3 ml-3 border border-slate-300 text-center">
-                                                        {ele?.addressId[0]?.contactDetailId?.contactNumber}
-                                                    </td>
-                                                    <td className="border-b p-3 ml-3 border border-slate-300 text-center">
-                                                        {ele?.addressId[0]?.contactDetailId?.email}
-                                                    </td>
-
-                                                    <td className="border-b border border-slate-300 text-center">
-                                                        <Button className=""> Delete</Button>
-                                                    </td>
-
-                                                </tr>
-                                            ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> */}
-            <GenericTable
-                showColumnLink={["fullAddress"]}
-                // onClickRow={onClickRow}
-                tableHeader={TABLE_HEAD}
-                onPressAction={onPressAction}
-                tableData={filteredData}
-                // actionType={null}
-                showCheckbox={false}
-                showAvatar={false}
-                actionType={["View", "Delete",]}
-                // sortValue={""}
-                loading={true}
-                onPageChange={function (page: number): void {
-                    throw new Error("Function not implemented.");
-                }} count={0}
-
-
-            // loading={loading}
-            // onSelectCheckbox={(selectedIds) => setSelectedUseDetails(selectedIds)}
-            // count={course?.courseDetails?.count}
-            // onPageChange={(activePageNo) => {
-            //   getCourse(activePageNo);
-            // }}
+            <input
+              style={{ border: "0.5px solid gray" }}
+              type="text"
+              name="hs-table-search"
+              id="hs-table-search"
+              className="ml-[-13px] p-2 mt-[1px] pl-10 block w-[35%] border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+              placeholder="Search for clients"
+              onChange={(event) => filterResult(event)}
             />
-            {/* <ShowJob open={open} setOpen={setOpen} data={singleJobData} showTableCount={setCount} /> */}
-
-        </>
-    );
+            <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none pl-2">
+              <svg
+                className="h-3.5 w-3.5 text-gray-400"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                viewBox="0 0 16 16"
+              >
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div
+          style={{
+            width: "10%",
+            maxHeight: "100%",
+            justifyContent: "center",
+            alignContent: "center",
+            // marginLeft: "-10px",
+            marginLeft: "3px",
+            marginRight: "3px",
+          }}
+        >
+          <Button
+            variant="contained"
+            style={{ border: "1px solid", marginTop: "10px" }}
+            component={Link}
+            to={"/add-client"}
+            // className="ml-[-10px] "
+          >
+            Add client
+          </Button>
+        </div>
+      </div>
+      <GenericTable
+        showColumnLink={["fullAddress"]}
+        // onClickRow={onClickRow}
+        tableHeader={TABLE_HEAD}
+        onPressAction={onPressAction}
+        tableData={filteredData}
+        // actionType={null}
+        showCheckbox={false}
+        showAvatar={false}
+        actionType={["Edit", "Delete"]}
+        // sortValue={""}
+        loading={true}
+        onPageChange={function (page: number): void {
+          throw new Error("Function not implemented.");
+        }}
+        count={0}
+      />
+    </>
+  );
 };
 
-export default HomepageScreen;
-
+export default ShowClientTable;
