@@ -1,300 +1,355 @@
+import React, { useState } from 'react';
+import Grid from '@mui/material/Unstable_Grid2';
+import { TextField } from '../../common/TextField/TextField';
+import { saveClientData, setClientInputBoxValue } from '../../actions/client';
+import { ContractType, LocationName } from '../../constants/candidateclientconstants';
+import { useAppDispatch, useAppSelector } from '../../hooks/app';
+import { RootState } from '../../redux/store';
+import { Box } from '@mui/material';
+import { Button } from '../../common/Button/Button';
+import { useNavigate } from 'react-router-dom';
+import { addClientStateList } from '../../constants/constants';
+import { isEmailValid, isMobileNumberValid, isNumberValid, isTextValid } from '../../helpers/validate';
+import { EMPTY_ADDRESS_DATA } from '../../utils/addressutil';
+import Select from 'react-select';
+import { FloatLabel } from '../../common/FloatLabel/FloatLabel';
 
-import { MouseEvent, useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../hooks/app";
-import { RootState } from "../../redux/store";
-// import Button from "@mui/material/Button";
-import { Link } from "react-router-dom";
-import { allClientData, deleteClientData } from "../../actions/client";
-import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import ShowClient from "./ShowIndividualClient";
-import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { GenericTable } from "../../common/GenericTable/GenricTable";
-import AddClientDetails from "./AddClient";
-import { Modal } from "../../common/Modal/Modal";
-import { Button } from "../../common/Button/Button";
+interface Props {
+    setShowModal: any,
+}
 
-const TABLE_HEAD: any = [
-    { label: "Client Name", key: "candidateName" },
-    { label: "End client name", key: "endClientName" },
-    { label: "Added date", key: "Addeddate" },
-    { label: "Address", key: "Address" },
-    { label: "Contact Number", key: "contactNumber" },
-    { label: "Email", key: "email" },
-    { label: "Action", key: "action" },
-];
-
-const ShowClientTable: React.FC = () => {
-    console.log("TABLE_HEAD: ", TABLE_HEAD);
+const AddClientDetails: React.FC<Props> = ({ setShowModal }) => {
     const dispatch = useAppDispatch();
-    const [open, setOpen] = useState(false);
+    const currentClientData = useAppSelector((state: RootState) => state.client.clientData);
+    const allClientData = useAppSelector((state: RootState) => state.client.allClientData);
+    let allClientName: object[] = [];
+    // if (allClientData.length !== 0) {
+    //     allClientData.map((
+    //         a: { clientName: string; address: typeof EMPTY_ADDRESS_DATA[] }
+    //     ) => {
+    //         a.address.map((
+    //             b: { city: string; state: string; }
+    //         ) => {
+    //             let data = {
+    //                 value: a.clientName + " (" + b.city + "/" + b.state + ")",
+    //                 label: a.clientName + " (" + b.city + "/" + b.state + ")"
+    //             }
+    //             allClientName.push(data);
+    //         });
+    //     })
+    // }
+    const locationName = LocationName;
 
-    let clientData = useAppSelector(
-        (state: RootState) => state.client.allClientData
-    );
-    let clientDataRow = clientData;
-    console.log("clientdeteData", clientData);
 
-    const [filteredData, setFilteredData] = useState(clientData);
-    console.log("filteredData", filteredData);
-    const [count, setCount] = useState(true);
-    const [singleClientData, setSingleClientData] = useState({});
-    const [expanded, setExpanded] = useState<string | false>(false);
+    const [clientNameError, setClientNameError] = useState<any>();
+    const [endClientNameError, setEndClientNameError] = useState<any>();
+    const [mspNameError, setMspNameError] = useState<any>();
+    const [line1Error, setLine1Error] = useState<any>();
+    const [line2Error, setLine2Error] = useState<any>();
+    const [cityError, setCityError] = useState<any>();
+    const [stateError, setStateError] = useState<any>();
+    const [zipCodeError, setZipCodeError] = useState<any>();
+    const [countryError, setCountryError] = useState<any>();
+    const [emailError, setEmailError] = useState<any>();
+    const [contactError, setContactError] = useState<any>();
+    const [faxError, setFaxError] = useState<any>();
 
-    const [showModal, setShowModal] = useState<boolean>(false);
 
-    const handleCloseModal = () => {
-        setShowModal(false);
+    const onValueChange = (key: any, value: any) => {
+        dispatch(setClientInputBoxValue(key, value));
     };
-
-    useEffect(() => {
-        const clientList = clientData.map((clientdate: any) => {
-            const candidateName = clientdate?.clientId?.clientName;
-            const endClientName = clientdate?.clientId?.endClientName;
-            const Address =
-                clientdate?.addressId[0].city + ", " + clientdate?.addressId[0]?.state;
-            const Addeddate = clientdate?.addressId[0]?.contactDetailId?.createdAt;
-            const contactNumber =
-                clientdate?.addressId[0].contactDetailId?.contactNumber;
-            const email = clientdate?.addressId[0].contactDetailId?.email;
-
-            return {
-                ...clientdate,
-                Address,
-                endClientName,
-                Addeddate,
-                candidateName,
-                contactNumber,
-                email,
-            };
-        });
-        setFilteredData(clientList);
-        if (count) {
-            if (clientData?.length !== 0) {
-                setFilteredData(
-                    clientData?.filter((cd: { clientdate: any }) =>
-                        cd?.clientdate?.clientName?.toLowerCase()?.includes("")
-                    )
-                );
-                setCount(false);
-            }
-        }
-    }, [clientData, count]);
-
-    const filterResult = (event: any) => {
-        // debugger;
-        setFilteredData(clientDataRow);
-        let value: string = event.target.value;
-
-        if (clientData?.length !== 0) {
-            const data: any = clientData?.filter(
-                (cd: { clientId: any; addressId: any }) =>
-                    cd?.clientId?.clientName
-                        ?.toLowerCase()
-                        ?.includes(value.toLowerCase()) ||
-                    cd?.clientId?.endClientName
-                        ?.toLowerCase()
-                        ?.includes(value.toLowerCase()) ||
-                    cd?.addressId[0]?.contactDetailId?.createdAt
-                        ?.toLowerCase()
-                        ?.includes(value.toLowerCase()) ||
-                    cd?.addressId[0]?.contactDetailId?.createdAt
-                        ?.toLowerCase()
-                        ?.includes(value.toLowerCase()) ||
-                    cd?.addressId[0]?.city
-                        ?.toLowerCase()
-                        ?.includes(value.toLowerCase()) ||
-                    cd?.addressId[0]?.state
-                        ?.toLowerCase()
-                        ?.includes(value.toLowerCase()) ||
-                    cd?.addressId[0].contactDetailId?.contactNumber == value ||
-                    cd?.addressId[0].contactDetailId?.email
-                        ?.toLowerCase()
-                        ?.includes(value.toLowerCase())
-            );
-            console.log("filteredData inside search: ", data);
-            const clientList = data?.map((clientdate: any) => {
-                const candidateName = clientdate?.clientId.clientName;
-                const endClientName = clientdate?.clientId.endClientName;
-                const Addeddate = clientdate?.addressId[0].contactDetailId.createdAt;
-                const contactNumber =
-                    clientdate?.addressId[0].contactDetailId.contactNumber;
-                const email = clientdate?.addressId[0].contactDetailId.email;
-                const Address =
-                    clientdate?.addressId[0].city + ", " + clientdate.addressId[0].state;
-                return {
-                    ...clientdate,
-                    Address,
-                    endClientName,
-                    Addeddate,
-                    candidateName,
-                    contactNumber,
-                    email,
-                };
-            });
-
-            setFilteredData(clientList);
-            console.log("clientList: ", clientList);
-        } else {
-            const candidateList = clientData?.map((clientdate: any) => {
-                const candidateName = clientdate?.clientId.clientName;
-                const endClientName = clientdate?.clientId.endClientName;
-                const Addeddate = clientdate?.addressId[0].contactDetailId.createdAt;
-                const contactNumber =
-                    clientdate?.addressId[0].contactDetailId.contactNumber;
-                const email = clientdate?.addressId[0].contactDetailId.email;
-                const Address =
-                    clientdate?.addressId[0].city + ", " + clientdate.addressId[0].state;
-                return {
-                    ...clientdate,
-                    Address,
-                    endClientName,
-                    Addeddate,
-                    candidateName,
-                    contactNumber,
-                    email,
-                };
-            });
-
-            console.log("candidateList: ", candidateList);
-            setFilteredData(candidateList);
-        }
-    };
-
-    const showClient = (data: any) => {
-        setSingleClientData(data);
-        setOpen(true);
-    };
-
-    function deleteClientAddress(personId: any): void {
-        dispatch(deleteClientData(personId));
-        setCount(true);
-    }
 
     const boxStyle = {
-        alignItems: "center",
-        border: "none",
-        flexGrow: 1,
-        marginTop: "3%",
-        overflowY: "auto",
-        overflowX: "hidden",
-        height: "60vh",
+        alignItems: 'center',
+        border: 'none', flexGrow: 1,
+        marginTop: "3%", overflowY: "auto",
+        overflowX: 'hidden',
+        height: "70vh",
         paddingRight: "10px",
-        paddingLeft: "10px",
-    };
+        paddingLeft: "10px"
+    }
 
-    const button = {
-        backgroundColor: "Green",
-        border: "none",
-        color: "white",
-        padding: "15px 32px",
-        textAlign: "center",
-        textDecoration: "none",
-        display: "inline - block",
-        fontSize: "16px",
-    };
-    const onPressAction = (rowData: any, type: any) => {
-        console.log(rowData);
-        console.log(type);
-    };
+    const [clientNameValid, setClientNameValid] = useState<boolean>();
+    const [endClientNameValid, setEndClientNameValid] = useState<boolean>();
+    const [mspNameValid, setMspNameValid] = useState<boolean>();
+    const [line1Valid, setLine1Valid] = useState<boolean>();
+    const [line2Valid, setLine2Valid] = useState<boolean>();
+    const [cityValid, setCityValid] = useState<boolean>();
+    const [stateValid, setStateValid] = useState<boolean>();
+    const [zipCodeValid, setZipCodeValid] = useState<boolean>();
+    const [countryValid, setCountryValid] = useState<boolean>();
+    const [emailValid, setEmailValid] = useState<boolean>();
+    const [contactValid, setContactValid] = useState<boolean>();
+    const [faxValid, setFaxValid] = useState<boolean>();
+
+    function onSubmitClick() {
+        setClientNameValid(isTextValid(currentClientData?.clientName));
+        setEndClientNameValid(isTextValid(currentClientData?.endClientName));
+        setMspNameValid(isTextValid(currentClientData?.mspName));
+        setLine1Valid(isTextValid(currentClientData?.line1));
+        setLine2Valid(isTextValid(currentClientData?.line2));
+        setCityValid(isTextValid(currentClientData?.city));
+        setStateValid(isTextValid(currentClientData?.state.value));
+        setZipCodeValid(isTextValid(currentClientData?.zipCode));
+        setCountryValid(isTextValid(currentClientData?.country));
+        setEmailValid(isEmailValid(currentClientData?.email));
+        setContactValid(isTextValid(currentClientData?.contactNumber));
+        setFaxValid(isTextValid(currentClientData?.faxNumber));
+
+        console.log('setShowModal: ', setShowModal);
+        if (clientNameValid && endClientNameValid && mspNameValid && line1Valid && line2Valid && cityValid
+            && stateValid && countryValid && emailValid && zipCodeValid && contactValid && faxValid) {
+
+            dispatch(saveClientData(
+                currentClientData?.clientName,
+                currentClientData?.endClientName,
+                currentClientData?.mspName,
+                currentClientData?.email,
+                currentClientData?.contactNumber,
+                currentClientData?.faxNumber,
+                currentClientData?.line1,
+                currentClientData?.line2,
+                currentClientData?.city,
+                currentClientData?.state.value,
+                currentClientData?.zipCode,
+                currentClientData?.country
+            ));
+            setShowModal(false);
+        } else {
+            if (!clientNameValid) {
+                setClientNameError("Client name is Invalid")
+            }
+            if (!endClientNameValid) {
+                setEndClientNameError("End client name is Invalid")
+            }
+            if (!mspNameValid) {
+                setMspNameError("Msp name is Invalid")
+            }
+            if (!line1Valid) {
+                setLine1Error("Line 1 is Invalid")
+            }
+            if (!line2Valid) {
+                setLine2Error("Line 2 is Invalid")
+            }
+            if (!cityValid) {
+                setCityError("City is Invalid")
+            }
+            if (!stateValid) {
+                setStateError("State is Invalid")
+            }
+            if (!zipCodeValid) {
+                setZipCodeError("Zip code is Invalid");
+            }
+            if (!countryValid) {
+                setCountryError("Country is Invalid");
+            }
+            if (!emailValid) {
+                setEmailError("Email is Invalid");
+            }
+            if (!contactValid) {
+                setContactError("Contact is Invalid");
+            }
+            if (!faxValid) {
+                setFaxError("Fax no is Invalid");
+            }
+        }
+    }
+
     return (
         <>
-            <div style={{ display: "flex" }}>
-                <div
-                    style={{ borderRadius: "15px", marginBottom: "10px", width: "90%" }}
-                    className="py-3 px-4"
-                >
-                    <div className="relative max-w">
-                        <label htmlFor="hs-table-search" className="sr-only">
-                            Search
-                        </label>
-
-                        <input
-                            style={{ border: "0.5px solid gray" }}
-                            type="text"
-                            name="hs-table-search"
-                            id="hs-table-search"
-                            className="ml-[-13px] p-2 mt-[1px] pl-10 block w-[35%] border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
-                            placeholder="Search for clients"
-                            onChange={(event) => filterResult(event)}
+            {/* <Box sx={boxStyle}> */}
+            {/* <h6>Client details</h6> */}
+            <div className="pt-5 px-5">
+                <Grid container spacing={2}>
+                    <Grid xs={6} md={6}>
+                        <FloatLabel
+                            label='*Client name'
+                            value={currentClientData?.clientName}
+                            placeholder={""}
+                            handleChange={(event) => {
+                                onValueChange("clientName", event.target.value.replace(/[0-9]/gi, ""));
+                            }}
+                            className=""
                         />
-                        <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none pl-2">
-                            <svg
-                                className="h-3.5 w-3.5 text-gray-400"
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                fill="currentColor"
-                                viewBox="0 0 16 16"
-                            >
-                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                            </svg>
-                        </div>
+                        {!clientNameValid ? (
+                            <p className="" style={{ fontSize: "12px", color: "red" }}>{clientNameError}</p>
+                        ) : null}
+                    </Grid>
+                    <Grid xs={6} md={6}>
+                        <FloatLabel
+                            label='*End client name'
+                            value={currentClientData?.endClientName}
+                            placeholder={""}
+                            handleChange={(event) => {
+                                onValueChange("endClientName", event.target.value.replace(/[0-9]/gi, ""));
+                            }}
+                            className=""
+                        />
+                        {!endClientNameValid ? (
+                            <p className="" style={{ fontSize: "12px", color: "red" }}>{endClientNameError}</p>
+                        ) : null}
+                    </Grid>
+                    <Grid xs={6} md={6}>
+                        <FloatLabel
+                            label='*MSP name'
+                            value={currentClientData?.mspName}
+                            placeholder={""}
+                            handleChange={(event) => {
+                                onValueChange("mspName", event.target.value.replace(/[0-9]/gi, ""));
+                            }}
+                            className=""
+                        />
+                        {!mspNameValid ? (
+                            <p className="" style={{ fontSize: "12px", color: "red" }}>{mspNameError}</p>
+                        ) : null}
+                    </Grid>
+                    <Grid xs={6} md={6}>
+                        <FloatLabel
+                            label='*Email'
+                            value={currentClientData?.email}
+                            placeholder={""}
+                            handleChange={(event) => {
+                                onValueChange("email", event.target.value.replace(/\s/g, ""));
+                            }}
+                            className=""
+                        />
+                        {!emailValid ? (
+                            <p className="" style={{ fontSize: "12px", color: "red" }}>{emailError}</p>
+                        ) : null}
+                    </Grid>
+                    <Grid xs={6} md={6}>
+                        <FloatLabel
+                            label='*Contact number'
+                            value={currentClientData?.contactNumber}
+                            placeholder={""}
+                            handleChange={(event) => {
+                                onValueChange("contactNumber", event.target.value.replace(/[^0-9]/gi, ""));
+                                setContactValid(currentClientData?.contactNumber)
+                            }}
+                            className=""
+                        />
+                        {!contactValid ? (
+                            <p className="" style={{ fontSize: "12px", color: "red" }}>{contactError}</p>
+                        ) : null}
+                    </Grid>
+                    <Grid xs={6} md={6}>
+                        <FloatLabel
+                            label='*Fax number'
+                            value={currentClientData?.faxNumber}
+                            placeholder={""}
+                            handleChange={(event) => {
+                                onValueChange("faxNumber", event.target.value.replace(/[^0-9]/gi, ""));
+                                setFaxValid(currentClientData?.faxNumber)
+                            }}
+                            className=""
+                        />
+                        {!faxValid ? (
+                            <p className="" style={{ fontSize: "12px", color: "red" }}>{faxError}</p>
+                        ) : null}
+                    </Grid>
+                    {/* currentClientData?.email,
+                    currentClientData?.contactNumber,
+                    currentClientData?.faxNumber, */}
+                    <Grid xs={6} md={6}>
+                        <FloatLabel
+                            label='*Address line 1'
+                            value={currentClientData?.line1}
+                            placeholder={""}
+                            handleChange={(event) => {
+                                onValueChange("line1", event?.target?.value);
+                            }}
+                            className=""
+                        />
+                        {!line1Valid ? (
+                            <p className="" style={{ fontSize: "12px", color: "red" }}>{line1Error}</p>
+                        ) : null}
+                    </Grid>
+                    <Grid xs={6} md={6}>
+                        <FloatLabel
+                            label='*Address line 2'
+                            value={currentClientData?.line2}
+                            placeholder={""}
+                            handleChange={(event) => {
+                                onValueChange("line2", event?.target?.value);
+                            }}
+                            className=""
+                        />
+                        {!line2Valid ? (
+                            <p className="" style={{ fontSize: "12px", color: "red" }}>{line2Error}</p>
+                        ) : null}
+                    </Grid>
+                    <Grid xs={6} md={6}>
+                        <FloatLabel
+                            label='*City'
+                            value={currentClientData?.city}
+                            placeholder={""}
+                            handleChange={(event) => {
+                                onValueChange("city", event.target.value.replace(/[0-9]/gi, ""));
+                            }}
+                            className=""
+                        />
+                        {!cityValid ? (
+                            <p className="" style={{ fontSize: "12px", color: "red" }}>{cityError}</p>
+                        ) : null}
+                    </Grid>
+                    <Grid xs={6} md={6}>
+                        <Select
+                            placeholder="Work state"
+                            options={locationName}
+                            value={currentClientData?.state}
+                            getOptionLabel={(option) => option.label}
+                            getOptionValue={(option) => option.value}
+                            onChange={(e: any) => {
+                                onValueChange("state", e);
+                            }}
+                            isSearchable={true}
+                        />
+                        {!stateValid ? (
+                            <p className="" style={{ fontSize: "12px", color: "red" }}>{stateError}</p>
+                        ) : null}
+                    </Grid>
+                    <Grid xs={6} md={6}>
+                        <FloatLabel
+                            label='*Zip code'
+                            value={currentClientData?.zipCode}
+                            placeholder={""}
+                            handleChange={(event) => {
+                                onValueChange("zipCode", event.target.value.replace(/[^0-9]/gi, ""));
+                            }}
+                            className=""
+                        />
+                        {!zipCodeValid ? (
+                            <p className="" style={{ fontSize: "12px", color: "red" }}>{zipCodeError}</p>
+                        ) : null}
+                    </Grid>
+                    <Grid xs={6} md={6}>
+                        {/* <span>*Client country</span> */}
+                        <FloatLabel
+                            label='*Client country'
+                            value={currentClientData?.country}
+                            placeholder={""}
+                            handleChange={(event) => {
+                                onValueChange("country", event.target.value.replace(/[0-9]/gi, ""));
+                            }}
+                            className=""
+                        />
+                        {!countryValid ? (
+                            <p className="" style={{ fontSize: "12px", color: "red" }}>{countryError}</p>
+                        ) : null}
+                    </Grid>
+                </Grid>
+                <Grid xs={12} md={12}>
+                    <div className="rate-revision-btn-div">
+                        <Button
+                            className="submit-btn"
+                            value="Save & Submit"
+                            handleClick={() => onSubmitClick()}
+                        />
                     </div>
-                </div>
-                <div
-                    style={{
-                        width: "10%",
-                        maxHeight: "100%",
-                        justifyContent: "center",
-                        alignContent: "center",
-                        // marginLeft: "-10px",
-                        marginLeft: "3px",
-                        marginRight: "3px",
-                    }}
-                >
-                    {/* <Button
-                        // variant="contained"
-                        // component={Link}
-                        // handleClick={() => {
-                        //     setShowModal(true)
-                        // }}
-                    >
-                        Add client
-                    </Button> */}
-                    <Button
-                        value="Add Client"
-                        handleClick={() => {
-                            setShowModal(true)
-                        }}
-                    />
-                    <Modal
-                        children={
-                            <AddClientDetails setShowModal={setShowModal} />
-                        }
-                        modalStyle={{ marginTop: "50px", height: "78vh", overflow: "scroll", boxShadow: "initial", zIndex: "999px" }}
-                        showModalHeader={true}
-                        modalHeader={"Add Client"}
-                        isFlexible={true}
-                        topRightCloseButtonID={"x-  "}
-                        showModal={showModal}
-                        showBackButton={true}
-                        showBBPSLogo={true}
-                        handleBackClick={handleCloseModal}
-                    ></Modal >
-                </div>
+                </Grid>
             </div>
-            <GenericTable
-                showColumnLink={["fullAddress"]}
-                // onClickRow={onClickRow}
-                tableHeader={TABLE_HEAD}
-                onPressAction={onPressAction}
-                tableData={filteredData}
-                // actionType={null}
-                showCheckbox={false}
-                showAvatar={false}
-                actionType={["Edit", "Delete"]}
-                // sortValue={""}
-                loading={true}
-                onPageChange={function (page: number): void {
-                    throw new Error("Function not implemented.");
-                }}
-                count={0}
-            />
         </>
-    );
-};
+    )
+}
 
-export default ShowClientTable;
+export default AddClientDetails;
