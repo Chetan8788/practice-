@@ -1,138 +1,50 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
+import Grid from "@mui/material/Unstable_Grid2";
+import { TextField } from "../../common/TextField/TextField";
+import { TextArea } from "../../common/TextArea/TextArea";
+import { saveJobData, setJobInputBoxValue } from "../../actions/job";
 import { useAppDispatch, useAppSelector } from "../../hooks/app";
 import { RootState } from "../../redux/store";
+import { DropDown } from "../../common/DropDown/DropDown";
 import { Button } from "../../common/Button/Button";
+import Select from "react-select";
+import { isTextValid } from "../../helpers/validate";
+import {
+  JobTypeList,
+  LineOfBusinessList,
+  ResumeSourceList,
+  WorkTypeList,
+} from "../../constants/jobconstants";
+import { FloatLabel } from "../../common/FloatLabel/FloatLabel";
 
-import { Link } from "react-router-dom";
-import { allClientData } from "../../actions/client";
-import { allJobData, deleteJobData } from "../../actions/job";
-import ShowJob from "./ShowIndividualJob";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-// import { MDBDataTable } from "mdbreact";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { GenericTable } from "../../common/GenericTable/GenricTable";
-import moment from "moment";
-import { Modal } from "../../common/Modal/Modal";
-import AddClientDetails from "../Client/AddClient";
-import AddJobDetails from "./AddJob";
+interface Props {
+  setShowModal: any;
+}
 
-const TABLE_HEAD: any = [
-  { label: "Job Title", key: "jobTitle" },
-  { label: "Job Type", key: "jobType" },
-  { label: "Line Of Business", key: "lineOfBusiness" },
-  { label: "Added date", key: "Addeddate" },
-  { label: "Action", key: "action" },
-];
-
-const ShowJobTable: React.FC = () => {
+const AddJobDetails: React.FC<Props> = ({ setShowModal }) => {
   const dispatch = useAppDispatch();
-  let jobData = useAppSelector((state: RootState) => state.job.allJobData);
-  let jobDataRow = jobData;
+  const currentJobData = useAppSelector(
+    (state: RootState) => state.job.jobData
+  );
+  const workType = WorkTypeList;
+  const jobType = JobTypeList;
+  const resumeSource = ResumeSourceList;
+  const lineOfBusiness = LineOfBusinessList;
 
-  const [open, setOpen] = useState(false);
-  const [singleJobData, setSingleJobData] = useState({});
-  const [filteredData, setFilteredData] = useState(jobData);
-  console.log("jobData", jobData);
-  const [count, setCount] = useState(true);
+  const [requestIDError, setRequestIDError] = useState<any>();
+  const [jobDivaIDError, setJobDivaIDError] = useState<any>();
+  const [jobTitleError, setJobTitleError] = useState<any>();
+  const [workingFromError, setWorkingFromError] = useState<any>();
+  const [workTypeError, setWorkTypeError] = useState<any>();
+  const [jobTypeError, setJobTypeError] = useState<any>();
+  const [resumeSourceError, setResumeSourceError] = useState<any>();
+  const [lineOfBusinessError, setLineOfBusinessError] = useState<any>();
+  const [skillSetError, setSkillSetError] = useState<any>();
+  const [jobDescriptiontError, setJobDescriptionError] = useState<any>();
 
-  console.log("filteredData after sort", filteredData);
-
-  const [showModal, setShowModal] = useState<boolean>(false);
-
-  const handleCloseModal = () => {
-    setShowModal(false);
+  const onValueChange = (key: any, value: any) => {
+    dispatch(setJobInputBoxValue(key, value));
   };
-
-  useEffect(() => {
-    const jobList = jobData.map((jobdate: any) => {
-      const jobTitle = jobdate?.jobTitle;
-      const jobType = jobdate?.jobType;
-      const lineOfBusiness = jobdate?.lineOfBusiness;
-      const Addeddate = moment.utc(jobdate?.createdAt).format("YYYY-MM-DD");
-
-      return {
-        ...jobdate,
-        jobTitle,
-        jobType,
-        lineOfBusiness,
-        Addeddate,
-      };
-    });
-    setFilteredData(jobList);
-    if (count) {
-      if (jobData?.length !== 0) {
-        setFilteredData(
-          jobData?.filter((cd: { jobdate: any }) =>
-            cd?.jobdate?.jobName?.toLowerCase()?.includes("")
-          )
-        );
-        setCount(false);
-      }
-      // else {
-      //   dispatch(allJobData());
-      // }
-    }
-  }, [jobData, count]);
-
-  const filterResult = (event: any) => {
-    // debugger;
-    setFilteredData(jobDataRow);
-    let value: string = event.target.value;
-    if (jobData?.length !== 0) {
-      const data: any = jobData?.filter(
-        (ele?: any) =>
-          ele?.jobTitle?.toLowerCase()?.includes(value.toLowerCase()) ||
-          ele?.jobType?.toLowerCase()?.includes(value.toLowerCase()) ||
-          ele?.lineOfBusiness?.toLowerCase()?.includes(value.toLowerCase()) ||
-          ele?.createdAt?.toLowerCase()?.includes(value.toLowerCase())
-      );
-      console.log("filteredData inside search: ", data);
-      const jobList = data?.map((jobdate: any) => {
-        const jobTitle = jobdate?.jobTitle;
-        const jobType = jobdate?.jobType;
-        const lineOfBusiness = jobdate?.lineOfBusiness;
-        const Addeddate = moment.utc(jobdate?.createdAt).format("YYYY-MM-DD");
-
-        return {
-          ...jobdate,
-          jobTitle,
-          jobType,
-          lineOfBusiness,
-          Addeddate,
-        };
-      });
-      setFilteredData(jobList);
-      console.log("jobList: ", jobList);
-    } else {
-      const jobList = jobData?.map((jobdate: any) => {
-        const jobTitle = jobdate?.jobTitle;
-        const jobType = jobdate?.jobType;
-        const lineOfBusiness = jobdate?.lineOfBusiness;
-        const Addeddate = moment.utc(jobdate?.createdAt).format("YYYY-MM-DD");
-
-        return {
-          ...jobdate,
-          jobTitle,
-          jobType,
-          lineOfBusiness,
-          Addeddate,
-        };
-      });
-      console.log("jobList: ", jobList);
-      setFilteredData(jobList);
-    }
-  };
-  //   const showJob = (data: any) => {
-  //     setSingleJobData(data);
-  //     setOpen(true);
-  //   };
-
-  //   function deleteJob(id: any): void {
-  //     dispatch(deleteJobData(id));
-  //     setCount(true);
-  //   }
-
   const boxStyle = {
     alignItems: "center",
     border: "none",
@@ -140,121 +52,212 @@ const ShowJobTable: React.FC = () => {
     marginTop: "3%",
     overflowY: "auto",
     overflowX: "hidden",
-    height: "60vh",
+    height: "70vh",
     paddingRight: "10px",
     paddingLeft: "10px",
   };
 
-  const button = {
-    backgroundColor: "Green",
-    border: "none",
-    color: "white",
-    padding: "15px 32px",
-    textAlign: "center",
-    textDecoration: "none",
-    display: "inline - block",
-    fontSize: "16px",
-  };
+  const [requestIDValid, setRequestIDValid] = useState<boolean>();
+  const [jobDivaIDValid, setJobDivaIDValid] = useState<any>();
+  const [jobTitleValid, setJobTitleValid] = useState<any>();
+  const [jobTypeValid, setJobTypeValid] = useState<any>();
+  const [lineOfBusinessValid, setLineOfBusinessValid] = useState<any>();
+  const [jobDescriptiontValid, setJobDescriptionValid] = useState<any>();
 
-  const onPressAction = (rowData: any, type: any) => {
-    console.log(rowData);
-    console.log(type);
-  };
+  function onSubmitClick() {
+    setRequestIDValid(isTextValid(currentJobData?.requestID));
+    setJobDivaIDValid(isTextValid(currentJobData?.jobDivaID));
+    setJobTitleValid(isTextValid(currentJobData?.jobTitle));
+    setJobTypeValid(isTextValid(currentJobData?.jobType.value));
+    setLineOfBusinessValid(isTextValid(currentJobData?.lineOfBusiness.value));
+    setJobDescriptionValid(isTextValid(currentJobData?.jobDescription));
+    console.log("setShowModal: ", setShowModal);
+
+    if (
+      requestIDValid &&
+      jobDivaIDValid &&
+      jobTitleValid &&
+      jobTypeValid &&
+      lineOfBusinessValid &&
+      jobDescriptiontValid
+    ) {
+      dispatch(
+        saveJobData(
+          currentJobData?.requestID,
+          currentJobData?.jobDivaID,
+          currentJobData?.jobTitle,
+          currentJobData?.jobType.value,
+          currentJobData?.lineOfBusiness.value,
+          currentJobData?.jobDescription
+        )
+      );
+      setShowModal(false);
+    } else {
+      if (!requestIDValid) {
+        setRequestIDError("Request id is Invalid");
+      }
+      if (!jobDivaIDValid) {
+        setJobDivaIDError("Job diva id is Invalid");
+      }
+      if (!jobTitleValid) {
+        setJobTitleError("Job title is Invalid");
+      }
+      if (!jobTypeValid) {
+        setJobTypeError("Job type is Invalid");
+      }
+      if (!lineOfBusinessValid) {
+        setLineOfBusinessError("Line of business is Invalid");
+      }
+      if (!jobDescriptiontValid) {
+        setJobDescriptionError("Job description is Invalid");
+      }
+    }
+  }
+
   return (
     <>
-      <div style={{ display: "flex" }}>
-        <div
-          style={{ borderRadius: "15px", marginBottom: "10px", width: "90%" }}
-          className="py-3 px-4"
-        >
-          <div className="relative max-w">
-            <label htmlFor="hs-table-search" className="sr-only">
-              Search
-            </label>
-            <input
-              style={{ border: "0.5px solid gray" }}
-              type="text"
-              name="hs-table-search"
-              id="hs-table-search"
-              className="ml-[-13px] p-2 mt-[15px] pl-10 block w-[35%] border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
-              placeholder="Search for jobs"
-              onChange={(event) => filterResult(event)}
+      <div className="pt-5 px-5">
+        {/* <h1 className="mb-14 ml-5  text-xl font-serif text-center border-solid border-2 block w-[300px] py-3 text-white bg-[#1f7ebc] rounded-lg">
+          Job Details
+        </h1> */}
+        <Grid container spacing={2}>
+          <Grid xs={6} md={6}>
+            <FloatLabel
+              label="*Request Id"
+              value={currentJobData?.requestID}
+              placeholder={""}
+              handleChange={(event) => {
+                onValueChange(
+                  "requestID",
+                  event.target.value.replace(/[^0-9]/gi, "")
+                );
+                setRequestIDValid(isTextValid(currentJobData?.requestID));
+              }}
+              className=""
             />
-
-            <div className="absolute mt-[-27px] left-0 flex items-center pointer-events-none pl-2">
-              <svg
-                className="h-3.5 w-3.5 text-gray-400"
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                viewBox="0 0 16 16"
-              >
-                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-              </svg>
-            </div>
+            {!requestIDValid ? (
+              <p className="" style={{ fontSize: "12px", color: "red" }}>
+                {requestIDError}
+              </p>
+            ) : null}
+          </Grid>
+          <Grid xs={6} md={6}>
+            <FloatLabel
+              label="*Job diva ID"
+              value={currentJobData?.jobDivaID}
+              placeholder={""}
+              handleChange={(event) => {
+                onValueChange(
+                  "jobDivaID",
+                  event.target.value.replace(/[^0-9]/gi, "")
+                );
+                setJobDivaIDValid(isTextValid(currentJobData?.jobDivaID));
+              }}
+              className=""
+            />
+            {!jobDivaIDValid ? (
+              <p className="" style={{ fontSize: "12px", color: "red" }}>
+                {jobDivaIDError}
+              </p>
+            ) : null}
+          </Grid>
+          <Grid xs={6} md={6}>
+            <FloatLabel
+              label="*Job title/Position name"
+              value={currentJobData?.jobTitle}
+              placeholder={""}
+              handleChange={(event) => {
+                onValueChange(
+                  "jobTitle",
+                  event.target.value.replace(/[0-9]/gi, "")
+                );
+                setJobTitleValid(isTextValid(currentJobData?.jobTitle));
+              }}
+              className=""
+            />
+            {!jobTitleValid ? (
+              <p className="" style={{ fontSize: "12px", color: "red" }}>
+                {jobTitleError}
+              </p>
+            ) : null}
+          </Grid>
+          <Grid xs={6} md={6}>
+            {/* <span className="font-serif">Job type</span> */}
+            <Select
+              placeholder="*Job type"
+              className="font-bold text-sm "
+              options={jobType}
+              value={currentJobData?.jobType}
+              getOptionLabel={(option) => option.label}
+              getOptionValue={(option) => option.value}
+              onChange={(e: any) => {
+                onValueChange("jobType", e);
+                setJobTypeValid(isTextValid(currentJobData?.jobType.value));
+              }}
+              // showLabel={false}
+            />
+            {!jobTypeValid ? (
+              <p className="" style={{ fontSize: "12px", color: "red" }}>
+                {jobTypeError}
+              </p>
+            ) : null}
+          </Grid>
+          <Grid xs={6} md={6}>
+            {/* <span className="font-serif">Line of Business</span> */}
+            <Select
+              placeholder="Line of Business"
+              className="font-bold text-sm "
+              options={lineOfBusiness}
+              value={currentJobData?.lineOfBusiness}
+              getOptionLabel={(option) => option.label}
+              getOptionValue={(option) => option.value}
+              onChange={(e: any) => {
+                onValueChange("lineOfBusiness", e);
+                setLineOfBusinessValid(
+                  isTextValid(currentJobData?.lineOfBusiness.value)
+                );
+              }}
+              isSearchable={true}
+            />
+            {!lineOfBusinessValid ? (
+              <p className="" style={{ fontSize: "12px", color: "red" }}>
+                {lineOfBusinessError}
+              </p>
+            ) : null}
+          </Grid>
+          <Grid xs={6} md={6}>
+            {/* <span className="font-serif">Job Description</span> */}
+            <FloatLabel
+              label="Job Description"
+              value={currentJobData?.jobDescription}
+              placeholder={""}
+              handleChange={(event) => {
+                onValueChange("jobDescription", event?.target?.value);
+                setJobDescriptionValid(
+                  isTextValid(currentJobData?.jobDescription)
+                );
+              }}
+              className=""
+            />
+            {!jobDescriptiontValid ? (
+              <p className="" style={{ fontSize: "10px", color: "red" }}>
+                {jobDescriptiontError}
+              </p>
+            ) : null}
+          </Grid>
+        </Grid>
+        <Grid xs={6} md={6}>
+          <div className="rate-revision-btn-div  ">
+            <Button
+              className="submit-btn"
+              value="Save & Submit"
+              handleClick={() => onSubmitClick()}
+            />
           </div>
-        </div>
-        <div
-          style={{
-            width: "10%",
-            maxHeight: "100%",
-            justifyContent: "center",
-            alignContent: "center",
-            marginLeft: "3px",
-            marginRight: "3px",
-          }}
-        >
-          {/* <Button value component={Link} to={"/add-job"}>
-            Add job
-          </Button> */}
-          <Button
-            className="py-1 mx-30 mt-7 text-white"
-            value="Add Job"
-            handleClick={() => {
-              setShowModal(true);
-            }}
-          />
-          <Modal
-            children={<AddJobDetails setShowModal={setShowModal} />}
-            modalStyle={{
-              marginTop: "50px",
-              // height: "78vh",
-              overflow: "scroll",
-              boxShadow: "initial",
-              zIndex: "999px",
-            }}
-            showModalHeader={true}
-            modalHeader={"Add Job"}
-            isFlexible={true}
-            topRightCloseButtonID={"x-  "}
-            showModal={showModal}
-            showBackButton={true}
-            showBBPSLogo={true}
-            handleBackClick={handleCloseModal}
-          ></Modal>
-        </div>
+        </Grid>
       </div>
-
-      <GenericTable
-        showColumnLink={["fullAddress"]}
-        // onClickRow={onClickRow}
-        tableHeader={TABLE_HEAD}
-        onPressAction={onPressAction}
-        tableData={filteredData}
-        // actionType={null}
-        showCheckbox={false}
-        showAvatar={false}
-        actionType={["Edit", "Delete"]}
-        // sortValue={""}
-        loading={true}
-        onPageChange={function (page: number): void {
-          throw new Error("Function not implemented.");
-        }}
-        count={0}
-      />
     </>
   );
 };
 
-export default ShowJobTable;
+export default AddJobDetails;
