@@ -4,86 +4,86 @@ import { RootState } from "../../redux/store";
 import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import ShowWorkAuthorization from "./ShowIndividualWorkAuthorization";
-import { deleteWorkAuthorizationData } from "../../actions/workAuthorization";
+import ShowContractType from "./ShowIndividualContractType";
+import {
+  contractTypeData,
+  deleteContractTypeData,
+} from "../../actions/contractType";
 import { GenericTable } from "../../common/GenericTable/GenricTable";
 
 const TABLE_HEAD: any = [
-  { label: "WorkAuthorization", key: "workAuthorization" },
+  { label: "Contact Type", key: "contractType" },
   { label: "Action", key: "action" },
 ];
 
-const ShowWorkAuthorizationTable: React.FC = () => {
+const ShowContractTypeTable: React.FC = () => {
   console.log("TABLE_HEAD: ", TABLE_HEAD);
 
   const dispatch = useAppDispatch();
-  let workAuthorizationData = useAppSelector(
-    (state: RootState) => state.workAuthorization.allWorkAuthorizationData
+  let contractTypeData = useAppSelector(
+    (state: RootState) => state.contractType.allContractTypeData
   );
-  let workAuthorizationDataRow = workAuthorizationData;
+  let contractTypeDataRow = contractTypeData;
   const [open, setOpen] = useState(false);
-  const [singleWorkAuthorizationData, setSingleWorkAuthorizationData] =
-    useState({});
-  const [filteredData, setFilteredData] = useState(workAuthorizationData);
+  const [singleContractTypeData, setSingleContractTypeData] = useState({});
+  const [filteredData, setFilteredData] = useState(contractTypeData);
   console.log("filteredData", filteredData);
   const [count, setCount] = useState(true);
 
   useEffect(() => {
-    const workAuthorizationList = workAuthorizationData.map((workdate: any) => {
-      const workAuthorization = workdate?.workAuthorization;
+    const contactList = contractTypeData.map((contactdate: any) => {
+      const contractType = contactdate?.contractType;
 
       return {
-        ...workdate,
-        workAuthorization,
+        ...contactdate,
+        contractType,
       };
     });
-    setFilteredData(workAuthorizationList);
+    setFilteredData(contactList);
 
     if (count) {
-      if (workAuthorizationData?.length !== 0) {
+      if (contractTypeData?.length !== 0) {
         setFilteredData(
-          workAuthorizationData?.filter((cd: { workdate: any }) =>
-            cd?.workdate?.workAuthorizationName?.toLowerCase()?.includes("")
+          contractTypeData?.filter((cd: { contactdate: any }) =>
+            cd?.contactdate?.contactName?.toLowerCase()?.includes("")
           )
         );
         setCount(false);
       }
     }
-  }, [workAuthorizationData, count]);
+  }, [contractTypeData, count]);
 
   const filterResult = (event: any) => {
-    setFilteredData(workAuthorizationDataRow);
+    setFilteredData(contractTypeDataRow);
     let value: string = event.target.value;
 
-    if (workAuthorizationData?.length !== 0) {
-      const data: any = workAuthorizationData?.filter((ele: any) =>
-        ele?.workAuthorization?.toLowerCase()?.includes(value.toLowerCase())
+    if (contractTypeData?.length !== 0) {
+      const data: any = contractTypeData?.filter((ele: any) =>
+        ele?.contractType?.toLowerCase()?.includes(value.toLowerCase())
       );
       console.log("filteredData inside search: ", data);
 
-      const workAuthorizationList = data?.map((workdate: any) => {
-        const workAuthorization = workdate?.workAuthorization;
+      const contactList = data?.map((contactdate: any) => {
+        const contractType = contactdate?.contractType;
 
         return {
-          ...workdate,
-          workAuthorization,
+          ...contactdate,
+          contractType,
         };
       });
-      setFilteredData(workAuthorizationList);
-      console.log("workAuthorizationList: ", workAuthorizationList);
+      setFilteredData(contactList);
+      console.log("contactList: ", contactList);
     } else {
-      const workAuthorizationList = workAuthorizationData.map(
-        (workdate: any) => {
-          const workAuthorization = workdate?.workAuthorization;
+      const contactList = contractTypeData?.map((contactdate: any) => {
+        const contractType = contactdate?.contractType;
 
-          return {
-            ...workdate,
-            workAuthorization,
-          };
-        }
-      );
-      console.log("workAuthorizationList: ", workAuthorizationList);
-      setFilteredData(workAuthorizationList);
+        return {
+          ...contactdate,
+          contractType,
+        };
+      });
+      console.log("contactList: ", contractTypeData);
+      setFilteredData(contactList);
     }
   };
 
@@ -91,6 +91,7 @@ const ShowWorkAuthorizationTable: React.FC = () => {
     console.log(rowData);
     console.log(type);
   };
+
   return (
     <>
       <div style={{ display: "flex" }}>
@@ -109,7 +110,7 @@ const ShowWorkAuthorizationTable: React.FC = () => {
               name="hs-table-search"
               id="hs-table-search"
               className="ml-[-13px] mt-[5px] p-2 pl-10 block w-[35%] border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
-              placeholder="Search for work authorizations"
+              placeholder="Search for contract types"
               onChange={(event) => filterResult(event)}
             />
             <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none pl-2">
@@ -139,23 +140,20 @@ const ShowWorkAuthorizationTable: React.FC = () => {
           <Button
             variant="contained"
             component={Link}
-            to={"/add-work-authorization"}
+            to={"/add-contract-type"}
           >
-            Add work authorization
+            Add contract type
           </Button>
         </div>
       </div>
       <GenericTable
         showColumnLink={["fullAddress"]}
-        // onClickRow={onClickRow}
         tableHeader={TABLE_HEAD}
         onPressAction={onPressAction}
         tableData={filteredData}
-        // actionType={null}
         showCheckbox={false}
         showAvatar={false}
         actionType={["Edit", "Delete"]}
-        // sortValue={""}
         loading={true}
         onPageChange={function (page: number): void {
           throw new Error("Function not implemented.");
@@ -166,4 +164,4 @@ const ShowWorkAuthorizationTable: React.FC = () => {
   );
 };
 
-export default ShowWorkAuthorizationTable;
+export default ShowContractTypeTable;
