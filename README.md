@@ -1,344 +1,302 @@
-// chetan patil - [21/07/2023] - Rate revision page
-import { TextField } from "../../common/TextField/TextField";
-import { TextArea } from "../../common/TextArea/TextArea";
-import "./RateRevision.css";
-import Grid from "@mui/material/Unstable_Grid2";
-import { yesNoList } from "../../constants/constants";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/app";
 import { RootState } from "../../redux/store";
-import { setInputBoxValueRateRevision } from "../../actions/raterevision";
-import { Submit } from "../Submit/Submit";
-import Select from "react-select";
-import { useLocation } from "react-router";
-import { useEffect } from "react";
+// import Button from "@mui/material/Button";
+import { Link } from "react-router-dom";
+import {
+  allVendorData,
+  deleteVendorData,
+  vendorData,
+} from "../../actions/vendor";
+import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ShowVendor from "./ShowIndividualVendor";
+import Swal from "sweetalert2";
+import { GenericTable } from "../../common/GenericTable/GenricTable";
+import moment from "moment";
+// import AddClientDetails from "./AddClient";
+import AddVendor from "./AddVendor";
+import { Modal } from "../../common/Modal/Modal";
+import { Button } from "../../common/Button/Button";
 
-export const RateRevision: React.FC = () => {
+const TABLE_HEAD: any = [
+  { label: "Company Name", key: "companyName" },
+  { label: "Contact Person", key: "contactPerson" },
+  { label: "Added date", key: "Addeddate" },
+  { label: "Address", key: "Address" },
+  { label: "Contact Number", key: "contactNumber" },
+  { label: "Email", key: "email" },
+  { label: "Action", key: "action" },
+];
+
+const ShowVendorTable: React.FC = () => {
+  console.log("TABLE_HEAD: ", TABLE_HEAD);
+
   const dispatch = useAppDispatch();
-  const currentRateRevisionData = useAppSelector(
-    (state: RootState) => state?.rateRevision?.rateRevisionData
-  );
-  const location = useLocation();
+  // const [open, setOpen] = useState(false);
 
-  const onValueChange = (key: any, value: any) => {
-    dispatch(setInputBoxValueRateRevision(key, value));
+  const vendorData = useAppSelector(
+    (state: RootState) => state.vendor.allVendorData
+  );
+  let vendorDataRow = vendorData;
+  console.log("vendordeteData", vendorData);
+
+  const [filteredData, setFilteredData] = useState(vendorData);
+  console.log("filteredData", filteredData);
+  const [count, setCount] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [singleVendorData, setSingleVendorData] = useState({});
+  const [expanded, setExpanded] = useState<string | false>(false);
+
+  const [showModal, setShowModal] = useState<boolean>(false);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+  useEffect(() => {
+    const venderList = vendorData.map((venderdate: any) => {
+      const companyName = venderdate?.vendorId?.companyName;
+      console.log("companyName", companyName);
+      const contactPerson = venderdate?.vendorId?.contactPerson;
+      const Addeddate = moment
+        .utc(venderdate?.addressId[0]?.createdAt)
+        .format("YYYY-MM-DD");
+
+      const Address =
+        venderdate?.addressId[0]?.city + ", " + venderdate?.addressId[0]?.state;
+      const contactNumber =
+        venderdate?.addressId[0]?.contactDetailId?.contactNumber;
+      const email = venderdate?.addressId[0]?.contactDetailId?.email;
+
+      return {
+        ...venderdate,
+        companyName,
+        contactPerson,
+        Addeddate,
+        Address,
+        contactNumber,
+        email,
+      };
+    });
+    setFilteredData(venderList);
+    if (count) {
+      if (vendorData?.length !== 0) {
+        setFilteredData(
+          vendorData?.filter((cd: { venderdate: any }) =>
+            cd?.venderdate?.companyName?.toLowerCase()?.includes("")
+          )
+        );
+        setCount(false);
+      }
+    }
+  }, [vendorData, count]);
+
+  const filterResult = (event: any) => {
+    // debugger;
+    setFilteredData(vendorDataRow);
+    let value: string = event.target.value;
+
+    if (vendorData?.length !== 0) {
+      const data: any = vendorData?.filter(
+        (cd: { vendorId: any; addressId: any }) =>
+          cd?.vendorId?.companyName
+            ?.toLowerCase()
+            ?.includes(value.toLowerCase()) ||
+          cd?.vendorId?.contactPerson
+            ?.toLowerCase()
+            ?.includes(value.toLowerCase()) ||
+          cd?.addressId[0]?.contactDetailId?.createdAt
+            ?.toLowerCase()
+            ?.includes(value.toLowerCase()) ||
+          cd?.addressId[0]?.city
+            ?.toLowerCase()
+            ?.includes(value.toLowerCase()) ||
+          cd?.addressId[0]?.state
+            ?.toLowerCase()
+            ?.includes(value.toLowerCase()) ||
+          cd?.addressId[0]?.contactDetailId?.contactNumber == value ||
+          cd?.addressId[0]?.contactDetailId?.email
+            ?.toLowerCase()
+            ?.includes(value.toLowerCase())
+      );
+      console.log("filteredData inside search: ", data);
+      const venderList = data?.map((venderdate: any) => {
+        const companyName = venderdate?.vendorId?.companyName;
+        const contactPerson = venderdate?.vendorId?.contactPerson;
+        const Addeddate = moment
+          .utc(venderdate?.addressId[0]?.createdAt)
+          .format("YYYY-MM-DD");
+
+        const Address =
+          venderdate?.addressId[0]?.city +
+          ", " +
+          venderdate?.addressId[0]?.state;
+        const contactNumber =
+          venderdate?.addressId[0]?.contactDetailId?.contactNumber;
+        const email = venderdate?.addressId[0]?.contactDetailId?.email;
+
+        return {
+          ...venderdate,
+          companyName,
+          contactPerson,
+          Addeddate,
+          Address,
+          contactNumber,
+          email,
+        };
+      });
+      setFilteredData(venderList);
+      console.log("venderList if: ", venderList);
+    } else {
+      const venderList = vendorData?.map((venderdate: any) => {
+        const companyName = venderdate?.vendorId?.companyName;
+        const contactPerson = venderdate?.vendorId?.contactPerson;
+        const Addeddate = moment
+          .utc(venderdate?.addressId[0]?.createdAt)
+          .format("YYYY-MM-DD");
+
+        const Address =
+          venderdate?.addressId[0]?.city +
+          ", " +
+          venderdate?.addressId[0]?.state;
+        const contactNumber =
+          venderdate?.addressId[0]?.contactDetailId?.contactNumber;
+        const email = venderdate?.addressId[0]?.contactDetailId?.email;
+
+        return {
+          ...venderdate,
+          companyName,
+          contactPerson,
+          Addeddate,
+          Address,
+          contactNumber,
+          email,
+        };
+      });
+      console.log("venderList else: ", venderList);
+      setFilteredData(venderList);
+    }
+  };
+  const boxStyle = {
+    alignItems: "center",
+    border: "none",
+    flexGrow: 1,
+    marginTop: "3%",
+    overflowY: "auto",
+    overflowX: "hidden",
+    height: "60vh",
+    paddingRight: "10px",
+    paddingLeft: "10px",
   };
 
-  // function onSubmitClick() {
-  //   const candidateDataToSend: typeof EMPTY_CANDIDATE_DATA = {
-  //     firstName: currentCandidateData.firstName,
-  //     middleName: currentCandidateData.middleName,
-  //     lastName: currentCandidateData.lastName,
-  //     line1: currentCandidateData.line1,
-  //     line2: currentCandidateData.line2,
-  //     city: currentCandidateData.city,
-  //     state: currentCandidateData.state.value,
-  //     zipCode: currentCandidateData.zipCode,
-  //     country: currentCandidateData.country,
-  //     email: currentCandidateData.email,
-  //     contactNumber: currentCandidateData.contactNumber,
-  //     workAuthorization: currentCandidateData.workAuthorization.value,
-  //     workAuthorizationExpiryDate: currentCandidateData.workAuthorizationExpiryDate,
-  //   }
-  //   dispatch(sendAllData(candidateDataToSend, currentClientData, currentVendorData, currentReferralData, currentJobData, currentBGCData, currentDocumentationData, currentStartEndOperationsData, currentRateRevisionData));
-  // }
+  const button = {
+    backgroundColor: "Green",
+    border: "none",
+    color: "white",
+    padding: "15px 32px",
+    textAlign: "center",
+    textDecoration: "none",
+    display: "inline - block",
+    fontSize: "16px",
+  };
+  const onPressAction = (rowData: any, type: any) => {
+    console.log(rowData);
+    console.log(type);
+  };
 
   return (
     <>
-      {/* <Grid container spacing={4}>
-        <Grid xs={6} md={3}>
-          
-        </Grid>
+      <div style={{ display: "flex" }} className="flex flex-row">
+        <div
+          style={{ borderRadius: "15px", marginBottom: "10px", width: "90%" }}
+          className="py-3 px-4"
+        >
+          <div className="relative max-w ">
+            <label htmlFor="hs-table-search" className="sr-only  ">
+              Search
+            </label>
 
-        <Grid xs={6} md={3}>
-          
-        </Grid>
-
-        <Grid xs={6} md={3}>
-          
-        </Grid>
-
-        <Grid xs={6} md={3}>
-         
-        </Grid>
-
-        <Grid xs={6} md={3}>
-          
-        </Grid>
-
-        <Grid xs={6} md={3}>
-          
-        </Grid>
-
-        <Grid xs={6} md={3}>
-          
-        </Grid>
-
-        <Grid xs={6} md={3}>
-          
-        </Grid>
-
-        <Grid xs={6} md={3}>
-         
-        </Grid>
-
-        <Grid xs={6} md={3}>
-         
-        </Grid>
-
-        <Grid xs={6} md={3}>
-          
-        </Grid>
-
-        <Grid xs={6} md={3}>
-          
-        </Grid>
-
-        <Grid xs={3} md={12}>
-         
-        </Grid>
-
-        <Submit />
-      </Grid> */}
-      Rate revision details
-      <div className="flex gap-5 " style={{ margin: "auto", width: "100%" }}>
-        <div className="relative w-[100%] mt-10 border border-solid">
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-              <tr>
-                <th scope="col" className="px-6 py-3">
-                  {/* <span> Rate revision</span> */}
-                </th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Gross BR</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentRateRevisionData?.grossBr}
-                    handleChange={(event) => {
-                      onValueChange("grossBr", event?.target?.value);
-                    }}
-                    // className="rate-revision-textfield"
-                    // styles={{ width: "" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>MSP fee in percentage</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentRateRevisionData?.mspFeePercentage}
-                    // placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("mspFeePercentage", event?.target?.value);
-                    }}
-                    // className="rate-revision-textfield"
-                    // styles={{ width: "" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>MSP fee</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentRateRevisionData?.mspFee}
-                    // placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("mspFee", event?.target?.value);
-                    }}
-                    // className="rate-revision-textfield"
-                    // styles={{ width: "" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Net bill rate</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentRateRevisionData?.netBillRate}
-                    // placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("netBillRate", event?.target?.value);
-                    }}
-                    // className="rate-revision-textfield"
-                    // styles={{ width: "" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Pay rate</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentRateRevisionData?.payRate}
-                    // placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("payRate", event?.target?.value);
-                    }}
-                    // className="rate-revision-textfield"
-                    // styles={{ width: "" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Referral fee</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentRateRevisionData?.refFee}
-                    // placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("refFee", event?.target?.value);
-                    }}
-                    // className="rate-revision-textfield"
-                    // styles={{ width: "" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Tax OH percentage</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentRateRevisionData?.taxOHPercentage}
-                    // placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("taxOHPercentage", event?.target?.value);
-                    }}
-                    // className="rate-revision-textfield"
-                    // styles={{ width: "" }}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
+            <input
+              style={{ border: "0.5px solid gray" }}
+              type="text"
+              name="hs-table-search"
+              id="hs-table-search"
+              className="ml-[-13px] p-2 mt-[0px] pl-10 block w-[35%] border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+              placeholder="Search for vendors"
+              onChange={(event) => filterResult(event)}
+            />
+            <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none pl-2">
+              <svg
+                className="h-3.5 w-3.5 text-gray-400"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                viewBox="0 0 16 16"
+              >
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+              </svg>
+            </div>
+          </div>
         </div>
-        <div className="relative w-[100%] mt-10 border border-solid">
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-              <tr>
-                <th scope="col" className="px-6 py-3">
-                  {/* <span> Rate revision</span> */}
-                </th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Opted for health benefits</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={yesNoList}
-                    value={currentRateRevisionData?.optedForHB}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("optedForHB", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Tax OH</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentRateRevisionData?.taxOH}
-                    // placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("taxOH", event?.target?.value);
-                    }}
-                    // className="rate-revision-textfield"
-                    // styles={{ width: "" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Health benefits cost</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentRateRevisionData?.healthB}
-                    // placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("healthB", event?.target?.value);
-                    }}
-                    // className="rate-revision-textfield"
-                    // styles={{ width: "" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Net purchase</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentRateRevisionData?.netPurchase}
-                    // placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("netPurchase", event?.target?.value);
-                    }}
-                    // className="rate-revision-textfield"
-                    // styles={{ width: "" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Margin</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentRateRevisionData?.margin}
-                    // placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("margin", event?.target?.value);
-                    }}
-                    // className="rate-revision-textfield"
-                    // styles={{ width: "" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Rate revision reason</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    // className="rate-revision-textarea"
-                    value={currentRateRevisionData?.rateRevisionReason}
-                    // placeholder={"Rate Revision Reason"}
-                    handleChange={(event) => {
-                      onValueChange("rateRevisionReason", event?.target?.value);
-                    }}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          {/* <Submit /> */}
+        <div
+          style={{
+            width: "10%",
+            maxHeight: "100%",
+            justifyContent: "center",
+            alignContent: "center",
+            // marginLeft: "-10px",
+            marginLeft: "6px",
+            marginRight: "6px",
+          }}
+        >
+          <Button
+            className="py-1 mx-30 mt-4 text-white"
+            value="Add Vendor"
+            handleClick={() => {
+              setShowModal(true);
+            }}
+          />
+          <Modal
+            children={<AddVendor setShowModal={setShowModal} />}
+            modalStyle={{
+              marginTop: "50px",
+              height: "78vh",
+              overflow: "scroll",
+              boxShadow: "initial",
+              zIndex: "999px",
+            }}
+            showModalHeader={true}
+            modalHeader={"Add Vendor"}
+            isFlexible={true}
+            topRightCloseButtonID={"x-  "}
+            showModal={showModal}
+            showBackButton={true}
+            showBBPSLogo={true}
+            handleBackClick={handleCloseModal}
+          ></Modal>
         </div>
       </div>
-      <Submit />
+
+      <GenericTable
+        showColumnLink={["fullAddress"]}
+        // onClickRow={onClickRow}
+        tableHeader={TABLE_HEAD}
+        onPressAction={onPressAction}
+        tableData={filteredData}
+        // actionType={null}
+        showCheckbox={false}
+        showAvatar={false}
+        actionType={["Edit", "Delete"]}
+        // sortValue={""}
+        loading={true}
+        onPageChange={function (page: number): void {
+          throw new Error("Function not implemented.");
+        }}
+        count={0}
+      />
     </>
   );
 };
+export default ShowVendorTable;
