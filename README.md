@@ -1,179 +1,177 @@
 import React from "react";
-import { RootState } from "../../redux/store";
-import { useAppDispatch, useAppSelector } from "../../hooks/app";
-import { setClientInputBoxValue } from "../../actions/client";
-import {
-  ContractType,
-  LocationName,
-} from "../../constants/candidateclientconstants";
-import Select from "react-select";
 import Grid from "@mui/material/Unstable_Grid2";
-import { yesNoList } from "../../constants/constants";
+import { TextField } from "../../common/TextField/TextField";
+import { useAppDispatch, useAppSelector } from "../../hooks/app";
+import { RootState } from "../../redux/store";
+import { setVendorInputBoxValue } from "../../actions/vendor";
+import { LocationName } from "../../constants/candidateclientconstants";
+import Select from "react-select";
 
-const ClientDetails: React.FC = () => {
+const VendorDetails: React.FC = () => {
   const dispatch = useAppDispatch();
-  const currentClientData = useAppSelector(
-    (state: RootState) => state.client.clientData
+  const currentVendorData = useAppSelector(
+    (state: RootState) => state.vendor.vendorData
   );
-  let contractTypeData = useAppSelector(
-    (state: RootState) => state.contractType.allContractTypeData
+  const allVendorData = useAppSelector(
+    (state: RootState) => state.vendor.allVendorData
   );
-  var result: any = [];
-  if (contractTypeData != undefined) {
-    contractTypeData.forEach((element: { contractType: any }) => {
-      result.push({
-        label: element.contractType,
-        value: element.contractType,
-      });
-    });
-  }
-  const allClientData = useAppSelector(
-    (state: RootState) => state.client.allClientData
-  );
-  let allClientName: object[] = [];
-  if (allClientData.length !== 0) {
-    allClientData.map((a: any) => {
+  let allVendorName: object[] = [];
+  if (allVendorData.length !== 0) {
+    allVendorData.map((a: any) => {
       a?.addressId.map((b: any) => {
         let data = {
-          label: a?.clientId.clientName + " (" + b.city + "/" + b.state + ")",
+          label: a.vendorId.companyName,
           value: {
-            clientId: a?.clientId.id,
-            clientName: a?.clientId.clientName,
-            endClientName: a?.clientId.endClientName,
-            MSPName: a?.clientId.mspName,
-            contactNumber: b.contactDetailId.contactNumber,
-            email: b.contactDetailId.email,
-            faxNumber: b.contactDetailId.faxNumber,
-            line1: b?.line1,
-            line2: b?.line2,
-            city: b?.city,
-            state: b?.state,
-            zipCode: b?.zipCode,
-            country: b?.country,
+            id: a.vendorId.id,
+            companyName: a.vendorId.companyName,
+            federalId: a.vendorId.federalId,
+            contactPerson: a.vendorId.contactPerson,
+            email: b?.contactDetailId?.email,
+            contactNumber: b?.contactDetailId?.contactNumber,
+            faxNumber: b?.contactDetailId?.faxNumber,
+            signAuthority: a.vendorId.signAuthority,
+            signAuthorityDesignation: a.vendorId.signAuthorityDesignation,
+            stateOfIncorporation: a.vendorId.stateOfIncorporation,
+            line1: b.line1,
+            line2: b.line2,
+            city: b.city,
+            zipCode: b.zipCode,
+            state: b.state,
+            country: b.country,
           },
         };
-        allClientName.push(data);
+        allVendorName.push(data);
       });
     });
   }
   const locationName = LocationName;
-  // const contractType = ContractType;
 
-  const onClientValueChange = (key: any, value: any) => {
-    dispatch(setClientInputBoxValue(key, value));
+  const onVendorValueChange = (key: any, value: any) => {
+    dispatch(setVendorInputBoxValue(key, value));
   };
 
-  function displayClientData(value: any) {
-    onClientValueChange("id", value.clientId);
-    onClientValueChange("endClientName", value.endClientName);
-    onClientValueChange("mspName", value.MSPName);
-    onClientValueChange("contactNumber", value.contactNumber);
-    onClientValueChange("email", value.email);
-    onClientValueChange("faxNumber", value.faxNumber);
-    onClientValueChange("line1", value.line1);
-    onClientValueChange("line2", value.line2);
-    onClientValueChange("city", value.city);
-    onClientValueChange("state", { label: value.state, value: value.state });
-    onClientValueChange("zipCode", value.zipCode);
-    onClientValueChange("country", value.country);
+  function displayVendorData(value: any) {
+    onVendorValueChange("id", value.id);
+    onVendorValueChange("federalID", value.federalId);
+    onVendorValueChange("contactPerson", value.contactPerson);
+    onVendorValueChange("email", value.email);
+    onVendorValueChange("contactNumber", value.contactNumber);
+    onVendorValueChange("faxNumber", value.contactNumber);
+    onVendorValueChange("signAuthority", value.signAuthority);
+    onVendorValueChange(
+      "signAuthorityDesignation",
+      value.signAuthorityDesignation
+    );
+    onVendorValueChange("stateOfIncorporation", value.stateOfIncorporation);
+    onVendorValueChange("line1", value.line1);
+    onVendorValueChange("line2", value.line2);
+    onVendorValueChange("city", value.city);
+    onVendorValueChange("zipCode", value.zipCode);
+    onVendorValueChange("state", { label: value.state, value: value.state });
+    onVendorValueChange("country", value.country);
   }
 
   return (
     <>
       <Grid xs={12} md={12}>
-        <h2 style={{ marginTop: "40px" }}>Client details</h2>
+        <h2 style={{ marginTop: "40px" }}>Vendor details</h2>
       </Grid>
       <div className="flex gap-5 " style={{ margin: "auto", width: "100%" }}>
-        <div className="relative w-[100%] mt-10 border border-solid">
+        <div className="relative overflow-x-auto w-[100%] mt-10 border border-solid">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
-                <th scope="col" className="px-6 py-6">
-                  <span>Client name</span>
+                <th scope="col" className="px-6 py-3">
+                  Vendor details
                 </th>
-                <th scope="col" className="px-6 py-0">
+                <th scope="col" className="px-6 py-3">
                   <Select
-                    options={allClientName}
-                    value={currentClientData?.clientName}
+                    options={allVendorName}
+                    value={currentVendorData?.companyName}
                     getOptionLabel={(option) => option.label}
                     getOptionValue={(option) => option.value}
                     onChange={(e: any) => {
-                      displayClientData(e.value);
-                      onClientValueChange("clientName", e);
+                      displayVendorData(e.value);
+                      onVendorValueChange("companyName", e);
                     }}
                     isSearchable={true}
-                    styles={{
-                      control: (baseStyles, state) => ({
-                        ...baseStyles,
-                        backgroundColor: "rgb(249 250 251)",
-                      }),
-                    }}
                   />
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4">Vendor federal ID</td>
+                <td className="px-6 py-4">{currentVendorData?.federalID}</td>
+              </tr>
+              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4">Name of contact person</td>
                 <td className="px-6 py-4">
-                  <span>Contract type</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={result}
-                    value={currentClientData?.contractType}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onClientValueChange("contractType", e);
-                    }}
-                    isSearchable={true}
-                    styles={{
-                      control: (baseStyles, state) => ({
-                        ...baseStyles,
-                      }),
-                    }}
-                  />
+                  {currentVendorData?.contactPerson}
                 </td>
               </tr>
               <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">End client name</td>
+                <td className="px-6 py-4">Vendor company email</td>
+                <td className="px-6 py-4">{currentVendorData?.email}</td>
+              </tr>
+              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4">Vendor company contact number</td>
                 <td className="px-6 py-4">
-                  {currentClientData?.endClientName}
+                  {currentVendorData?.contactNumber}
                 </td>
               </tr>
-              <tr className="bg-white  dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">MSP name</td>
-                <td className="px-6 py-4">{currentClientData?.mspName}</td>
+              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4">Vendor fax number</td>
+                <td className="px-6 py-4">{currentVendorData?.faxNumber}</td>
+              </tr>
+              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4">Name of sign authority</td>
+                <td className="px-6 py-4">
+                  {currentVendorData?.signAuthority}
+                </td>
+              </tr>
+              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4">Designation of sign authority</td>
+                <td className="px-6 py-4">
+                  {currentVendorData?.signAuthorityDesignation}
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
-        <div className="relative w-[100%] mt-10 border border-solid">
+        <div className="relative overflow-x-auto w-[100%] mt-10 border border-solid">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"></thead>
             <tbody>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"></tr>
               <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">Email</td>
-                <td className="px-6 py-4">{currentClientData?.email}</td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">Contact number</td>
+                <td className="px-6 py-4">Vendor state of incorporation</td>
                 <td className="px-6 py-4">
-                  {currentClientData?.contactNumber}
+                  {currentVendorData?.stateOfIncorporation}
                 </td>
               </tr>
               <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">Fax number</td>
-                <td className="px-6 py-4">{currentClientData?.faxNumber}</td>
+                <td className="px-6 py-4">Line 1</td>
+                <td className="px-6 py-4">{currentVendorData?.line1}</td>
               </tr>
-              <tr className="bg-white  dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">Address</td>
-                <td className="px-6 py-4">
-                  {currentClientData?.line1} {currentClientData?.line2},{" "}
-                  {currentClientData?.city}, {currentClientData?.state.label},{" "}
-                  {currentClientData?.zipCode}, {currentClientData?.country}
-                </td>
+              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4">Line 2</td>
+                <td className="px-6 py-4">{currentVendorData?.line2}</td>
+              </tr>
+              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4">City</td>
+                <td className="px-6 py-4">{currentVendorData?.city}</td>
+              </tr>
+              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4">Zipcode</td>
+                <td className="px-6 py-4">{currentVendorData?.zipCode}</td>
+              </tr>
+              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4">State</td>
+                <td className="px-6 py-4">{currentVendorData?.state.value}</td>
+              </tr>
+              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4">Country</td>
+                <td className="px-6 py-4">{currentVendorData?.country}</td>
               </tr>
             </tbody>
           </table>
@@ -183,4 +181,4 @@ const ClientDetails: React.FC = () => {
   );
 };
 
-export default ClientDetails;
+export default VendorDetails;
