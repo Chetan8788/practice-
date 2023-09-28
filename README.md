@@ -1,297 +1,149 @@
-import React, { useEffect, useState } from "react";
-import "./CandidateDetails.css";
-import Grid from "@mui/material/Unstable_Grid2";
-import { TextField } from "../../common/TextField/TextField";
-import { useAppDispatch, useAppSelector } from "../../hooks/app";
+import React from "react";
 import { RootState } from "../../redux/store";
-import { setCandidateInputBoxValue } from "../../actions/candidate";
-import { DropDown } from "../../common/DropDown/DropDown";
+import { useAppDispatch, useAppSelector } from "../../hooks/app";
+import { setClientInputBoxValue } from "../../actions/client";
 import {
+  ContractType,
   LocationName,
-  WorkAuthorization,
 } from "../../constants/candidateclientconstants";
 import Select from "react-select";
+import Grid from "@mui/material/Unstable_Grid2";
 import { yesNoList } from "../../constants/constants";
-import { isTextValid } from "../../helpers/validate";
 
-// interface Props {
-//     nextButtonClick: any;
-//     setNextButtonClick: any;
-//     setValid: any;
-//     valid: any;
-// }
-
-const CandidateDetails: React.FC = () => {
-  // setNextButtonClick(false);
-  // setValid(false);
-
+const ClientDetails: React.FC = () => {
   const dispatch = useAppDispatch();
-  const currentCandidateData = useAppSelector(
-    (state: RootState) => state.candidate.candidateData
+  const currentClientData = useAppSelector(
+    (state: RootState) => state.client.clientData
   );
-  let workAuthorizationData = useAppSelector(
-    (state: RootState) => state.workAuthorization.allWorkAuthorizationData
+  let contractTypeData = useAppSelector(
+    (state: RootState) => state.contractType.allContractTypeData
   );
   var result: any = [];
-  if (workAuthorizationData != undefined) {
-    workAuthorizationData.forEach((element: { workAuthorization: any }) => {
+  if (contractTypeData != undefined) {
+    contractTypeData.forEach((element: { contractType: any }) => {
       result.push({
-        label: element.workAuthorization,
-        value: element.workAuthorization,
+        label: element.contractType,
+        value: element.contractType,
+      });
+    });
+  }
+  const allClientData = useAppSelector(
+    (state: RootState) => state.client.allClientData
+  );
+  let allClientName: object[] = [];
+  if (allClientData.length !== 0) {
+    allClientData.map((a: any) => {
+      a?.addressId.map((b: any) => {
+        let data = {
+          label: a?.clientId.clientName + " (" + b.city + "/" + b.state + ")",
+          value: {
+            clientId: a?.clientId.id,
+            clientName: a?.clientId.clientName,
+            endClientName: a?.clientId.endClientName,
+            MSPName: a?.clientId.mspName,
+            contactNumber: b.contactDetailId.contactNumber,
+            email: b.contactDetailId.email,
+            faxNumber: b.contactDetailId.faxNumber,
+            line1: b?.line1,
+            line2: b?.line2,
+            city: b?.city,
+            state: b?.state,
+            zipCode: b?.zipCode,
+            country: b?.country,
+          },
+        };
+        allClientName.push(data);
       });
     });
   }
   const locationName = LocationName;
-  // const workAuthorization = WorkAuthorization;
+  // const contractType = ContractType;
 
-  const onValueChange = (key: any, value: any) => {
-    dispatch(setCandidateInputBoxValue(key, value));
+  const onClientValueChange = (key: any, value: any) => {
+    dispatch(setClientInputBoxValue(key, value));
   };
 
-  // useEffect(() => {
-  //     console.log('nextButtonClick: out if ', nextButtonClick);
-  //     if (nextButtonClick) {
-  //         console.log('nextButtonClick: ', nextButtonClick);
-  //         if (validateFirstName()) {
-  //             console.log("jrlll");
-
-  //             setValid(true);
-  //             console.log('validateFirstName: ', valid);
-  //         }
-
-  //     }
-  //     // setNextButtonClick(false);
-  // }, [nextButtonClick, valid])
-
-  // const validateFirstName = () => {
-  //     setFirstNameValid(isTextValid(currentCandidateData?.firstName));
-  //     if (!firstNameValid) {
-  //         console.log('firstNameValid: if ', firstNameValid);
-  //         setFirstNameError('First name is required');
-  //         return false;
-  //     }
-  //     console.log('firstNameValid: else ', firstNameValid);
-  //     setFirstNameError('');
-  //     return true;
-  // };
-
-  // const validateMiddleName = () => {
-  //     if (!firstNameValid) {
-  //         setFirstNameError('First name is required');
-  //         return false;
-  //     }
-  //     setFirstNameError('');
-  //     return true;
-  // };
-
-  const [firstNameError, setFirstNameError] = useState<any>();
-  const [middleNameError, setMiddleNameError] = useState<any>();
-  const [lastNameError, setLastNameError] = useState<any>();
-  const [line1Error, setLine1Error] = useState<any>();
-  const [line2Error, setLine2Error] = useState<any>();
-  const [cityError, setCityError] = useState<any>();
-  const [stateError, setStateError] = useState<any>();
-  const [zipCodeError, setZipCodeError] = useState<any>();
-  const [countryError, setCountryError] = useState<any>();
-  const [emailError, setEmailError] = useState<any>();
-  const [contactNumberError, setContactNumberError] = useState<any>();
-  const [workAuthorizationError, setWorkAuthorizationError] = useState<any>();
-  const [
-    workAuthorizationExpiryDateError,
-    setWorkAuthorizationExpiryDateError,
-  ] = useState<any>();
-
-  const [firstNameValid, setFirstNameValid] = useState<boolean>(false);
-  const [middleNameValid, setMiddleNameValid] = useState<boolean>();
-  const [lastNameValid, setLastNameValid] = useState<boolean>();
-  const [line1Valid, setLine1Valid] = useState<boolean>();
-  const [line2Valid, setLine2Valid] = useState<boolean>();
-  const [cityValid, setCityValid] = useState<boolean>();
-  const [stateValid, setStateValid] = useState<boolean>();
-  const [zipCodeValid, setZipCodeValid] = useState<boolean>();
-  const [countryValid, setCountryValid] = useState<boolean>();
-  const [emailValid, setEmailValid] = useState<boolean>();
-  const [contactNumberValid, setContactNumberValid] = useState<boolean>();
-  const [workAuthorizationValid, setWorkAuthorizationValid] =
-    useState<boolean>();
-  const [
-    workAuthorizationExpiryDateValid,
-    setWorkAuthorizationExpiryDateValid,
-  ] = useState<boolean>();
-
-  function validateFields() {
-    if (!firstNameValid) {
-      setFirstNameError("First name is invalid");
-    }
-    if (!middleNameValid) {
-      setMiddleNameError("Middle name is invalid");
-    }
-    if (!lastNameValid) {
-      setLastNameError("Last name is invalid");
-    }
-    if (!line1Valid) {
-      setLine1Error("Line 1 is invalid");
-    }
-    if (!line2Valid) {
-      setLine2Error("Line 2 is invalid");
-    }
-    if (!cityValid) {
-      setCityError("City is invalid");
-    }
-    if (!stateValid) {
-      setStateError("State is invalid");
-    }
-    if (!zipCodeValid) {
-      setZipCodeError("Zip code is invalid");
-    }
-    if (!countryValid) {
-      setCountryError("Country is invalid");
-    }
-    if (!emailValid) {
-      setEmailError("Email is invalid");
-    }
-    if (!contactNumberValid) {
-      setContactNumberError("Contact number is invalid");
-    }
-    if (!workAuthorizationValid) {
-      setWorkAuthorizationError("Work authorization is invalid");
-    }
-    if (!workAuthorizationExpiryDateValid) {
-      setWorkAuthorizationError("Work authorization is invalid");
-    }
+  function displayClientData(value: any) {
+    onClientValueChange("id", value.clientId);
+    onClientValueChange("endClientName", value.endClientName);
+    onClientValueChange("mspName", value.MSPName);
+    onClientValueChange("contactNumber", value.contactNumber);
+    onClientValueChange("email", value.email);
+    onClientValueChange("faxNumber", value.faxNumber);
+    onClientValueChange("line1", value.line1);
+    onClientValueChange("line2", value.line2);
+    onClientValueChange("city", value.city);
+    onClientValueChange("state", { label: value.state, value: value.state });
+    onClientValueChange("zipCode", value.zipCode);
+    onClientValueChange("country", value.country);
   }
 
   return (
     <>
-      Candidate details
+      <Grid xs={12} md={12}>
+        <h2 style={{ marginTop: "40px" }}>Client details</h2>
+      </Grid>
       <div className="flex gap-5 " style={{ margin: "auto", width: "100%" }}>
         <div className="relative w-[100%] mt-10 border border-solid">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
-                <th scope="col" className="px-6 py-3">
-                  {/* <span>Client name</span> */}
+                <th scope="col" className="px-6 py-6">
+                  <span>Client name</span>
                 </th>
-                <th></th>
+                <th scope="col" className="px-6 py-0">
+                  <Select
+                    options={allClientName}
+                    value={currentClientData?.clientName}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      displayClientData(e.value);
+                      onClientValueChange("clientName", e);
+                    }}
+                    isSearchable={true}
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        backgroundColor: "rgb(249 250 251)",
+                      }),
+                    }}
+                  />
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4">
-                  <span>Candidate first name</span>
-                </td>
-                <td className="px-6 py-0">
-                  {!firstNameValid ? (
-                    <p className="" style={{ fontSize: "12px", color: "red" }}>
-                      {firstNameError}
-                    </p>
-                  ) : null}
-                  <TextField
-                    value={currentCandidateData?.firstName}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("firstName", event?.target?.value);
-                      // validateFirstName();
-                    }}
-                    className=""
-                    // handleBlur={validateFirstName}
-                  />
-                  {/* {!firstNameValid ? (
-                                        <p className="" style={{ fontSize: "12px", color: "red" }}>{firstNameError}</p>
-                                    ) : null} */}
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Candidate middle name</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentCandidateData?.middleName}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("middleName", event?.target?.value);
-                    }}
-                    className=""
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Candidate last name</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentCandidateData?.lastName}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("lastName", event?.target?.value);
-                    }}
-                    className=""
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Line 1</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentCandidateData?.line1}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("line1", event?.target?.value);
-                    }}
-                    className=""
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Line 2</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentCandidateData?.line2}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("line2", event?.target?.value);
-                    }}
-                    className=""
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>City</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentCandidateData?.city}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("city", event?.target?.value);
-                    }}
-                    className=""
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>State</span>
+                  <span>Contract type</span>
                 </td>
                 <td className="px-6 py-0">
                   <Select
-                    options={locationName}
-                    value={currentCandidateData?.state}
+                    options={result}
+                    value={currentClientData?.contractType}
                     getOptionLabel={(option) => option.label}
                     getOptionValue={(option) => option.value}
                     onChange={(e: any) => {
-                      onValueChange("state", e);
+                      onClientValueChange("contractType", e);
                     }}
                     isSearchable={true}
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                      }),
+                    }}
                   />
                 </td>
+              </tr>
+              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4">End client name</td>
+                <td className="px-6 py-4">
+                  {currentClientData?.endClientName}
+                </td>
+              </tr>
+              <tr className="bg-white  dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4">MSP name</td>
+                <td className="px-6 py-4">{currentClientData?.mspName}</td>
               </tr>
             </tbody>
           </table>
@@ -299,107 +151,28 @@ const CandidateDetails: React.FC = () => {
         <div className="relative w-[100%] mt-10 border border-solid">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"></thead>
-            <tbody className=" font-serif">
+            <tbody>
+              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"></tr>
+              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4">Email</td>
+                <td className="px-6 py-4">{currentClientData?.email}</td>
+              </tr>
+              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4">Contact number</td>
+                <td className="px-6 py-4">
+                  {currentClientData?.contactNumber}
+                </td>
+              </tr>
+              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4">Fax number</td>
+                <td className="px-6 py-4">{currentClientData?.faxNumber}</td>
+              </tr>
               <tr className="bg-white  dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4">Address</td>
                 <td className="px-6 py-4">
-                  {/* <span>Candidate first name</span> */}
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Zip code</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentCandidateData?.zipCode}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("zipCode", event?.target?.value);
-                    }}
-                    className=""
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Country</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentCandidateData?.country}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("country", event?.target?.value);
-                    }}
-                    className=""
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Candidate email address</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentCandidateData?.email}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("email", event?.target?.value);
-                    }}
-                    className=""
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Candidate contact no.</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentCandidateData?.contactNumber}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("contactNumber", event?.target?.value);
-                    }}
-                    className=""
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Work authorization</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    // options={workAuthorization}
-                    options={yesNoList}
-                    value={currentCandidateData?.workAuthorization}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("workAuthorization", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4">
-                  <span>Work authorization expiry date</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentCandidateData?.workAuthorizationExpiryDate}
-                    type="date"
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange(
-                        "workAuthorizationExpiryDate",
-                        event?.target?.value
-                      );
-                    }}
-                    className=""
-                  />
+                  {currentClientData?.line1} {currentClientData?.line2},{" "}
+                  {currentClientData?.city}, {currentClientData?.state.label},{" "}
+                  {currentClientData?.zipCode}, {currentClientData?.country}
                 </td>
               </tr>
             </tbody>
@@ -410,4 +183,4 @@ const CandidateDetails: React.FC = () => {
   );
 };
 
-export default CandidateDetails;
+export default ClientDetails;
