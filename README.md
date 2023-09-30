@@ -1,238 +1,210 @@
-import React, { ChangeEvent, useState } from "react";
-import Grid from "@mui/material/Unstable_Grid2";
-import { TextField } from "../../common/TextField/TextField";
-import { useAppDispatch, useAppSelector } from "../../hooks/app";
+import React from "react";
 import { RootState } from "../../redux/store";
-import { setReferralInputBoxValue } from "../../actions/referral";
-import { DropDown } from "../../common/DropDown/DropDown";
-import { LocationName } from "../../constants/candidateclientconstants";
-import { yesNoList } from "../../constants/constants";
+import { useAppDispatch, useAppSelector } from "../../hooks/app";
+import { setClientInputBoxValue } from "../../actions/client";
+import {
+  ContractType,
+  LocationName,
+} from "../../constants/candidateclientconstants";
 import Select from "react-select";
+import Grid from "@mui/material/Unstable_Grid2";
+import { yesNoList } from "../../constants/constants";
 
-const ReferralDetails: React.FC = () => {
-    const dispatch = useAppDispatch();
-    const currentReferralData = useAppSelector(
-        (state: RootState) => state.referral.referralData
-    );
-    const locationName = LocationName;
+const ClientDetails: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const currentClientData = useAppSelector(
+    (state: RootState) => state.client.clientData
+  );
+  let contractTypeData = useAppSelector(
+    (state: RootState) => state.contractType.allContractTypeData
+  );
+  var result: any = [];
+  if (contractTypeData != undefined) {
+    contractTypeData.forEach((element: { contractType: any }) => {
+      result.push({
+        label: element.contractType,
+        value: element.contractType,
+      });
+    });
+  }
+  const allClientData = useAppSelector(
+    (state: RootState) => state.client.allClientData
+  );
+  let allClientName: object[] = [];
+  if (allClientData.length !== 0) {
+    allClientData.map((a: any) => {
+      a?.addressId.map((b: any) => {
+        let data = {
+          label: a?.clientId.clientName + " (" + b.city + "/" + b.state + ")",
+          value: {
+            clientId: a?.clientId.id,
+            clientName: a?.clientId.clientName,
+            endClientName: a?.clientId.endClientName,
+            MSPName: a?.clientId.mspName,
+            contactNumber: b.contactDetailId.contactNumber,
+            email: b.contactDetailId.email,
+            faxNumber: b.contactDetailId.faxNumber,
+            line1: b?.line1,
+            line2: b?.line2,
+            city: b?.city,
+            state: b?.state,
+            zipCode: b?.zipCode,
+            country: b?.country,
+          },
+        };
+        allClientName.push(data);
+      });
+    });
+  }
+  const locationName = LocationName;
+  // const contractType = ContractType;
 
-    const onValueChange = (key: any, value: any) => {
-        dispatch(setReferralInputBoxValue(key, value));
-    };
+  const onClientValueChange = (key: any, value: any) => {
+    dispatch(setClientInputBoxValue(key, value));
+  };
 
-    return (
-        <>
-            <h2 className=" text-center mt-9">Referral details</h2>
-            <div>
-                {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-0">
-            <Select
-              options={yesNoList}
-              value={currentReferralData?.Referraldetails}
-              getOptionLabel={(option) => option.label}
-              getOptionValue={(option) => option.value}
-              onChange={(e: any) => {
-                onValueChange("Referraldetails", e);
-              }}
-              isSearchable={true}
-            />
-          </td>
-        </tr> */}
-            </div>
-            <div className="flex gap-5 " style={{ margin: "auto", width: "100%" }}>
-                <div className="relative overflow-x-auto w-[100%] mt-10 border border-solid">
-                    <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                            <tr>
-                                <th scope="col" className="px-6 py-3">
-                                    Referral company name
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    <TextField
-                                        value={currentReferralData?.companyName}
-                                        placeholder={""}
-                                        handleChange={(event) => {
-                                            onValueChange("companyName", event?.target?.value);
-                                        }}
-                                        className=""
-                                    />
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td className="px-6 py-4">Referral federal ID</td>
-                                <TextField
-                                    value={currentReferralData?.federalID}
-                                    placeholder={""}
-                                    handleChange={(event) => {
-                                        onValueChange("federalID", event?.target?.value);
-                                    }}
-                                    className=""
-                                />
-                            </tr>
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td className="px-6 py-4">Name of contact person</td>
-                                <TextField
-                                    value={currentReferralData?.contactPerson}
-                                    placeholder={""}
-                                    handleChange={(event) => {
-                                        onValueChange("contactPerson", event?.target?.value);
-                                    }}
-                                    className=""
-                                />
-                            </tr>
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td className="px-6 py-4">Referral company email ID</td>
-                                <TextField
-                                    value={currentReferralData?.companyEmailID}
-                                    placeholder={""}
-                                    handleChange={(event) => {
-                                        onValueChange("companyEmailID", event?.target?.value);
-                                    }}
-                                    className=""
-                                />
-                            </tr>
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td className="px-6 py-4">Referral company contact no.</td>
-                                <TextField
-                                    value={currentReferralData?.contactNo}
-                                    placeholder={""}
-                                    handleChange={(event) => {
-                                        onValueChange("contactNo", event?.target?.value);
-                                    }}
-                                    className=""
-                                />
-                            </tr>
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td className="px-6 py-4">Referral fax no.</td>
-                                <TextField
-                                    value={currentReferralData?.faxNo}
-                                    placeholder={""}
-                                    handleChange={(event) => {
-                                        onValueChange("faxNo", event?.target?.value);
-                                    }}
-                                    className=""
-                                />
-                            </tr>
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td className="px-6 py-4">Name of sign authority</td>
-                                <TextField
-                                    value={currentReferralData?.signAuthority}
-                                    placeholder={""}
-                                    handleChange={(event) => {
-                                        onValueChange("signAuthority", event?.target?.value);
-                                    }}
-                                    className=""
-                                />
-                            </tr>
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td className="px-6 py-4">Designation of sign authority</td>
-                                <TextField
-                                    value={currentReferralData?.signAuthorityDesignation}
-                                    placeholder={""}
-                                    handleChange={(event) => {
-                                        onValueChange(
-                                            "signAuthorityDesignation",
-                                            event?.target?.value
-                                        );
-                                    }}
-                                    className=""
-                                />
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+  function displayClientData(value: any) {
+    onClientValueChange("id", value.clientId);
+    onClientValueChange("endClientName", value.endClientName);
+    onClientValueChange("mspName", value.MSPName);
+    onClientValueChange("contactNumber", value.contactNumber);
+    onClientValueChange("email", value.email);
+    onClientValueChange("faxNumber", value.faxNumber);
+    onClientValueChange("line1", value.line1);
+    onClientValueChange("line2", value.line2);
+    onClientValueChange("city", value.city);
+    onClientValueChange("state", { label: value.state, value: value.state });
+    onClientValueChange("zipCode", value.zipCode);
+    onClientValueChange("country", value.country);
+  }
 
-                <div className="relative overflow-x-auto w-[100%] mt-10 border border-solid">
-                    <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"></thead>
-                        <tbody>
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td className="px-6 py-4">Referral address line 1</td>
-                                <TextField
-                                    value={currentReferralData?.line1}
-                                    placeholder={""}
-                                    handleChange={(event) => {
-                                        onValueChange("line1", event?.target?.value);
-                                    }}
-                                    className=""
-                                />
-                            </tr>
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td className="px-6 py-4">Referral address line 2</td>
-                                <TextField
-                                    value={currentReferralData?.line2}
-                                    placeholder={""}
-                                    handleChange={(event) => {
-                                        onValueChange("line2", event?.target?.value);
-                                    }}
-                                    className=""
-                                />
-                            </tr>
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td className="px-6 py-4">Referral city</td>
-                                <TextField
-                                    value={currentReferralData?.city}
-                                    placeholder={""}
-                                    handleChange={(event) => {
-                                        onValueChange("city", event?.target?.value);
-                                    }}
-                                    className=""
-                                />
-                            </tr>
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td className="px-6 py-4">Referral Zip Code</td>
-                                <TextField
-                                    value={currentReferralData?.zipCode}
-                                    placeholder={""}
-                                    handleChange={(event) => {
-                                        onValueChange("zipCode", event?.target?.value);
-                                    }}
-                                    className=""
-                                />
-                            </tr>
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td className="px-6 py-4">Referral state</td>
-                                <Select
-                                    options={locationName}
-                                    value={currentReferralData?.state}
-                                    getOptionLabel={(option) => option.label}
-                                    getOptionValue={(option) => option.value}
-                                    onChange={(e: any) => {
-                                        onValueChange("state", e);
-                                    }}
-                                    isSearchable={true}
-                                />
-                            </tr>
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td className="px-6 py-4">Country</td>
-                                <TextField
-                                    value={currentReferralData?.country}
-                                    placeholder={""}
-                                    handleChange={(event) => {
-                                        onValueChange("country", event?.target?.value);
-                                    }}
-                                    className=""
-                                />
-                            </tr>
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td className="px-6 py-4">Referral state of incorporation</td>
-                                <TextField
-                                    value={currentReferralData?.stateOfIncorporation}
-                                    placeholder={""}
-                                    handleChange={(event) => {
-                                        onValueChange("stateOfIncorporation", event?.target?.value);
-                                    }}
-                                    className=""
-                                />
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </>
-    );
+  return (
+    <>
+      <h1 className="mt-7"> Client Details</h1>
+      <div className="flex gap-5 " style={{ margin: "auto", width: "100%" }}>
+        <div className="relative w-[100%] mt-10 ">
+          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th scope="col" className="px-6 py-4">
+                  Initial details
+                </th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold ">
+                  <span>Client name</span>
+                </td>
+                <th scope="col" className="px-6 py-0">
+                  <Select
+                    options={allClientName}
+                    value={currentClientData?.clientName}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      displayClientData(e.value);
+                      onClientValueChange("clientName", e);
+                    }}
+                    isSearchable={true}
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        backgroundColor: "rgb(249 250 251)",
+                      }),
+                    }}
+                  />
+                </th>
+              </tr>
+
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Contact Type</span>
+                </td>
+                <td className="px-6 py-0">
+                  <Select
+                    options={result}
+                    value={currentClientData?.contractType}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onClientValueChange("contractType", e);
+                    }}
+                    isSearchable={true}
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                      }),
+                    }}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>End Client Name</span>
+                </td>
+                <td className="px-6 py-4">
+                  {currentClientData?.endClientName}
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Msp Name</span>
+                </td>{" "}
+                <td className="px-6 py-4">{currentClientData?.mspName}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div className="relative w-[100%] mt-10 bg-[#f8f8f8dd]">
+          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th scope="col" className="px-6 py-4">
+                  Other details
+                </th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Email</span>
+                </td>
+                <td className="px-6 py-4">{currentClientData?.email}</td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Contact Number</span>
+                </td>
+                <td className="px-6 py-4">
+                  {" "}
+                  {currentClientData?.contactNumber}
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Fax No</span>
+                </td>{" "}
+                <td className="px-6 py-4">{currentClientData?.faxNumber}</td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Address</span>
+                </td>
+                <td className="px-6 py-4">
+                  {currentClientData?.line1} {currentClientData?.line2},{" "}
+                  {currentClientData?.city}, {currentClientData?.state.label},{" "}
+                  {currentClientData?.zipCode}, {currentClientData?.country}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
+  );
 };
 
-export default ReferralDetails;
+export default ClientDetails;
