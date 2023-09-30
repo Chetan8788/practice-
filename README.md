@@ -1,137 +1,223 @@
-import React, { ChangeEvent, useState } from "react";
-import Grid from "@mui/material/Unstable_Grid2";
+// Ajay Bagul - [21/07/2023] - Documentation page
+
+import { ChangeEvent, useState } from "react";
 import { TextField } from "../../common/TextField/TextField";
 import { TextArea } from "../../common/TextArea/TextArea";
-import { setJobInputBoxValue } from "../../actions/job";
-import { useAppDispatch, useAppSelector } from "../../hooks/app";
-import { RootState } from "../../redux/store";
-import Select from "react-select";
+import "./Documentation.css";
+import Grid from "@mui/material/Unstable_Grid2";
+import { DropDown } from "../../common/DropDown/DropDown";
 import {
-  JobTypeList,
-  LineOfBusinessList,
-  ResumeSourceList,
-  WorkTypeList,
-} from "../../constants/jobconstants";
+  ArticlesOfIncorporationList,
+  CertificateOfInsuranceList,
+  CipcicaCipcicuList,
+  ClientTaskOrderOrSOWList,
+  ClientTaskOrderOrSOWStepList,
+  ClientTaskOrderSigningList,
+  DirectDepositeAgreementList,
+  DocumentationStatusList,
+  EVerifyList,
+  EemergencyFormList,
+  GoodStandingDocumentationList,
+  I9FormList,
+  ListADocumentsList,
+  ListBDocumentsList,
+  ListCDocumentsList,
+  MSAList,
+  SOWList,
+  VaccinationStatusList,
+  VoidCheckEmailList,
+  W9W4List,
+  WorkAuthorizeDocumentationList,
+  yesNoList,
+} from "../../constants/constants";
+import { Button } from "../../common/Button/Button";
+import { RootState } from "../../redux/store";
+import { useAppDispatch, useAppSelector } from "../../hooks/app";
+import { setDocumentationCheckInputBoxValue } from "../../actions/documentation";
+import { useDispatch } from "react-redux";
+import Select from "react-select";
 
-const JobDetails: React.FC = () => {
+export const Documentation: React.FC = () => {
   const dispatch = useAppDispatch();
-  const currentJobData = useAppSelector(
-    (state: RootState) => state.job.jobData
+  const currentDocumentationData = useAppSelector(
+    (state: RootState) => state?.documentation?.documentationData
   );
-  const allJobData = useAppSelector((state: RootState) => state.job.allJobData);
-  let allJobName: object[] = [];
-  if (allJobData.length !== 0) {
-    allJobData.map(
-      (a: {
-        id: number;
-        requestID: number;
-        jobDivaID: number;
-        jobTitle: string;
-        jobType: string;
-        lineOfBusiness: string;
-        jobDescription: string;
-      }) => {
-        let data = {
-          label: a.jobTitle,
-          value: {
-            id: a.id,
-            requestID: a.requestID,
-            jobDivaID: a.jobDivaID,
-            jobTitle: a.jobTitle,
-            jobType: a.jobType,
-            lineOfBusiness: a.lineOfBusiness,
-            jobDescription: a.jobDescription,
-          },
-        };
-        allJobName.push(data);
-      }
-    );
-  }
-  const workType = WorkTypeList;
-  const jobType = JobTypeList;
-  const resumeSource = ResumeSourceList;
-  const lineOfBusiness = LineOfBusinessList;
 
-  const onJobValueChange = (key: any, value: any) => {
-    dispatch(setJobInputBoxValue(key, value));
+  // const [articlesOfIncorporation, setArticlesOfIncorporation] = useState<any>();
+  // const [W9W4, setW9W4] = useState<any>();
+  // const [directDepositAgreement, setDirectDepositAgreement] = useState<any>();
+  // const [voidCheckEmail, setVoidCheckEmail] = useState<any>();
+  // const [cipcicaCipcicu, setCipcicaCipcicu] = useState<any>();
+  // const [goodStandingDocumentation, setGoodStandingDocumentation] =
+  //   useState<any>();
+  // const [workAuthorizeDocumentation, setWorkAuthorizeDocumentation] =
+  //   useState<any>();
+  // const [i9Form, setI9Form] = useState<any>();
+  // const [listADocuments, setListADocuments] = useState<any>();
+  // const [listBDocuments, setListBDocuments] = useState<any>();
+  // const [listCDocuments, setListCDocuments] = useState<any>();
+  // const [eVerify, setEVerify] = useState<any>();
+  // const [eVerificationDate, setEVerificationDate] = useState<any>();
+  // const [emergencyForm, setEmergencyForm] = useState<any>();
+  // const [vaccinationStatus, setVaccinationStatus] = useState<any>();
+  // const [MSA, setMSA] = useState<any>();
+  // const [SOW, setSOW] = useState<any>();
+  // const [SOWValidity, setSOWValidity] = useState<any>();
+  // const [certificateOfInsurance, setCertificateOfInsurance] = useState<any>();
+  // const [certificateOfInsuranceDate, setCertificateOfInsuranceDate] =
+  //   useState<any>();
+  // const [clientTaskOrderOrSOW, setClientTaskOrderOrSOW] = useState<any>();
+  // const [clientTaskOrderOrSOWStep, setClientTaskOrderOrSOWStep] =
+  //   useState<any>();
+  // const [clientTaskOrderSigning, setClientTaskOrderSigning] = useState<any>();
+  // const [taskOrderExpiryDate, setTaskOrderExpiryDate] = useState<any>();
+  // const [documentationStatus, setDocumentationStatus] = useState<any>();
+  // const [documentationRemark, setDocumentationRemark] = useState<any>();
+  // const [docuCompletionDate, setDocuCompletionDate] = useState<any>();
+
+  const onValueChange = (key: any, value: any) => {
+    if (key && value) {
+      dispatch(setDocumentationCheckInputBoxValue(key, value));
+    }
   };
-
-  function displayJobData(value: any) {
-    onJobValueChange("id", value.id);
-    onJobValueChange("requestID", value.requestID);
-    onJobValueChange("jobDivaID", value.jobDivaID);
-    // onJobValueChange("jobTitle", value.jobTitle);
-    onJobValueChange("jobType", { label: value.jobType, value: value.jobType });
-    onJobValueChange("lineOfBusiness", {
-      label: value.lineOfBusiness,
-      value: value.lineOfBusiness,
-    });
-    onJobValueChange("jobDescription", value.jobDescription);
-    onJobValueChange("zipCode", value.zipCode);
-    onJobValueChange("country", value.country);
-  }
 
   return (
     <>
-      <h1 className="mt-7">Job Details</h1>
+      {/* <Grid container spacing={4}>
+        <Grid xs={6} md={3}>
+          <span>Articles of incorporation</span>
+          
+        </Grid>
+
+        <Grid xs={6} md={3}>
+          
+        </Grid>
+
+        <Grid xs={6} md={3}>
+          
+        </Grid>
+
+        <Grid xs={6} md={3}>
+         
+        </Grid>
+
+        <Grid xs={6} md={3}>
+          
+        </Grid>
+
+        <Grid xs={6} md={3}>
+          
+        </Grid>
+
+        <Grid xs={6} md={3}>
+          
+        </Grid>
+
+        <Grid xs={6} md={3}>
+          
+        </Grid>
+
+        <Grid xs={6} md={3}>
+          
+        </Grid>
+
+        <Grid xs={6} md={3}>
+        
+        </Grid>
+
+        <Grid xs={6} md={3}>
+          
+        </Grid>
+
+        <Grid xs={6} md={3}>
+          
+        </Grid>
+
+        <Grid xs={6} md={3}>
+         
+        </Grid>
+
+        <Grid xs={6} md={3}>
+          
+        </Grid>
+
+        <Grid xs={6} md={3}>
+         
+        </Grid>
+
+        <Grid xs={6} md={3}>
+          
+        </Grid>
+
+        <Grid xs={6} md={3}>
+          
+        </Grid>
+
+        <Grid xs={6} md={3}>
+          
+        </Grid>
+
+        <Grid xs={6} md={3}>
+         
+        </Grid>
+
+        <Grid xs={6} md={3}>
+          
+        </Grid>
+
+        <Grid xs={6} md={3}>
+         
+        </Grid>
+
+        <Grid xs={6} md={3}>
+          
+        </Grid>
+
+        <Grid xs={6} md={3}>
+          
+        </Grid>
+        <Grid xs={6} md={3}>
+         
+        </Grid>
+        <Grid xs={6} md={3}>
+          
+        </Grid>
+
+        <Grid xs={6} md={3}>
+          
+        </Grid>
+
+        <Grid xs={6} md={12}>
+          
+        </Grid>
+      </Grid> */}
+      Documentation details
       <div className="flex gap-5 " style={{ margin: "auto", width: "100%" }}>
         <div className="relative w-[100%] mt-10 ">
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
+        <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead className='text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400'>
               <tr>
-                <th scope="col" className="px-6 py-4">
-                  Initial details
-                </th>
-                <th></th>
-              </tr>
+                                <th scope="col" className="px-6 py-4">
+                                    Initial details
+                                </th>
+                                <th></th>
+                            </tr>
             </thead>
             <tbody>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold ">
-                  <span> Job title/Position name</span>
-                </td>
-                <th scope="col" className="px-6 py-0">
-                  <Select
-                    options={allJobName}
-                    value={currentJobData?.jobTitle}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      displayJobData(e.value);
-                      onJobValueChange("jobTitle", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </th>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold ">
-                  <span>Working From</span>
-                </td>
-                <td className="px-6 py-0 ">
-                  <TextField
-                    value={currentJobData?.workingFrom}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onJobValueChange("workingFrom", event?.target?.value);
-                    }}
-                    className=""
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Work Type</span>
+                  <span>Articles of incorporation</span>
                 </td>
                 <td className="px-6 py-0">
                   <Select
-                    options={workType}
-                    value={currentJobData?.workType}
+                    options={ArticlesOfIncorporationList}
+                    value={
+                      currentDocumentationData?.articlesOrCertificateOFIncorporation
+                    }
                     getOptionLabel={(option) => option.label}
                     getOptionValue={(option) => option.value}
                     onChange={(e: any) => {
-                      onJobValueChange("workType", e);
+                      onValueChange("articlesOrCertificateOFIncorporation", e);
                     }}
                     isSearchable={true}
                   />
@@ -139,82 +225,462 @@ const JobDetails: React.FC = () => {
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Resume Resource</span>
+                  <span>W9 Or W4</span>
                 </td>
                 <td className="px-6 py-0">
                   <Select
-                    options={resumeSource}
-                    value={currentJobData?.resumeSource}
+                    options={W9W4List}
+                    value={currentDocumentationData?.w9Orw4}
                     getOptionLabel={(option) => option.label}
                     getOptionValue={(option) => option.value}
                     onChange={(e: any) => {
-                      onJobValueChange("resumeSource", e);
+                      onValueChange("w9Orw4", e);
                     }}
                     isSearchable={true}
                   />
                 </td>
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold ">
-                  <span>Skill Set</span>
+                <td className="px-6 py-4 font-semibold">
+                  <span>Direct deposit agreement</span>
                 </td>
-                <td className="px-6 py-0 ">
-                  <TextField
-                    value={currentJobData?.skillSet}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onJobValueChange("skillSet", event?.target?.value);
+                <td className="px-6 py-0">
+                  <Select
+                    options={DirectDepositeAgreementList}
+                    value={currentDocumentationData?.directDepositAgreement}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("directDepositAgreement", e);
                     }}
-                    className=""
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                    isSearchable={true}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Void check email</span>
+                </td>
+                <td className="px-6 py-0">
+                  <Select
+                    options={VoidCheckEmailList}
+                    value={currentDocumentationData?.voidCheckOrEmailContent}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("voidCheckOrEmailContent", e);
+                    }}
+                    isSearchable={true}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>CIPCIA Or CIPCICU</span>
+                </td>
+                <td className="px-6 py-0">
+                  <Select
+                    options={CipcicaCipcicuList}
+                    value={currentDocumentationData?.CIPCICICAOrCIPCICU}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("CIPCICICAOrCIPCICU", e);
+                    }}
+                    isSearchable={true}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Good standing documentation</span>
+                </td>
+                <td className="px-6 py-0">
+                  <Select
+                    options={GoodStandingDocumentationList}
+                    value={currentDocumentationData?.goodStandingDocument}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("goodStandingDocument", e);
+                    }}
+                    isSearchable={true}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Work authorization documentation</span>
+                </td>
+                <td className="px-6 py-0">
+                  <Select
+                    options={WorkAuthorizeDocumentationList}
+                    value={currentDocumentationData?.workAuthorizationDocument}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("workAuthorizationDocument", e);
+                    }}
+                    isSearchable={true}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>I9 Form</span>
+                </td>
+                <td className="px-6 py-0">
+                  <Select
+                    options={I9FormList}
+                    value={currentDocumentationData?.I9Form}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("I9Form", e);
+                    }}
+                    isSearchable={true}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>List A documents</span>
+                </td>
+                <td className="px-6 py-0">
+                  <Select
+                    options={ListADocumentsList}
+                    value={currentDocumentationData?.listADocument}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("listADocument", e);
+                    }}
+                    isSearchable={true}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>List B documents</span>
+                </td>
+                <td className="px-6 py-0">
+                  <Select
+                    options={ListBDocumentsList}
+                    value={currentDocumentationData?.listBDocument}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("listBDocument", e);
+                    }}
+                    isSearchable={true}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>List C documents</span>
+                </td>
+                <td className="px-6 py-0">
+                  <Select
+                    options={ListCDocumentsList}
+                    value={currentDocumentationData?.listCDocument}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("listCDocument", e);
+                    }}
+                    isSearchable={true}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>E-Verify</span>
+                </td>
+                <td className="px-6 py-0">
+                  <Select
+                    options={EVerifyList}
+                    value={currentDocumentationData?.E_verify}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("E_verify", e);
+                    }}
+                    isSearchable={true}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>E-Verification date</span>
+                </td>
+                <td className="px-6 py-0">
+                  <TextField
+                    value={currentDocumentationData?.E_verificationDate}
+                    type="date"
+                    handleChange={(e: any) => {
+                      onValueChange("E_verificationDate", e.target.value);
+                    }}
+                  // className="documentation-textfield"
+                  // styles={{ width: "" }}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Emergency form</span>
+                </td>
+                <td className="px-6 py-0">
+                  <Select
+                    options={EemergencyFormList}
+                    value={currentDocumentationData?.emergencyForm}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("emergencyForm", e);
+                    }}
+                    isSearchable={true}
                   />
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
-        <div className="relative w-[100%] mt-10 bg-[#f8f8f8dd]">
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
-              <tr>
-                <th scope="col" className="px-6 py-4">
-                  Other details
-                </th>
-                <th></th>
-              </tr>
-            </thead>
+        <div className="relative w-[100%] mt-10">
+        <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead className='text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400'>
+                            <tr>
+                                <th scope="col" className="px-6 py-4">
+                                    Other details
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
             <tbody>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Request Id</span>
+                  <span>Vaccination status</span>
                 </td>
-                <td className="px-6 py-4">{currentJobData?.requestID}</td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Job Diva Id</span>
-                </td>
-                <td className="px-6 py-4">{currentJobData?.jobDivaID}</td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Job Type</span>
-                </td>
-                <td className="px-6 py-4">{currentJobData?.jobType.value}</td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Line Of Business</span>
-                </td>
-                <td className="px-6 py-4">
-                  {currentJobData?.lineOfBusiness.value}
+                <td className="px-6 py-0">
+                  <Select
+                    options={VaccinationStatusList}
+                    value={currentDocumentationData?.vaccinationStatus}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("vaccinationStatus", e);
+                    }}
+                    isSearchable={true}
+                  />
                 </td>
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Job Discription</span>
+                  <span>Client task order or SOW step</span>
                 </td>
-                <td className="px-6 py-4">{currentJobData?.jobDescription}</td>
+                <td className="px-6 py-0">
+                  <Select
+                    options={ClientTaskOrderOrSOWStepList}
+                    value={currentDocumentationData?.clientTaskOrderOrSOWst}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("clientTaskOrderOrSOWst", e);
+                    }}
+                    isSearchable={true}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>MSA</span>
+                </td>
+                <td className="px-6 py-0">
+                  <Select
+                    options={MSAList}
+                    value={currentDocumentationData?.MSA}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("MSA", e);
+                    }}
+                    isSearchable={true}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>SOW</span>
+                </td>
+                <td className="px-6 py-0">
+                  <Select
+                    options={SOWList}
+                    value={currentDocumentationData?.SOW}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("SOW", e);
+                    }}
+                    isSearchable={true}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>SOW Validity</span>
+                </td>
+                <td className="px-6 py-0">
+                  <TextField
+                    value={currentDocumentationData?.SOWValidity}
+                    type="date"
+                    handleChange={(e: any) => {
+                      onValueChange("SOWValidity", e.target.value);
+                    }}
+                  // className="documentation-textfield"
+                  // styles={{ width: "" }}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Certificate of insurance</span>
+                </td>
+                <td className="px-6 py-0">
+                  <Select
+                    options={CertificateOfInsuranceList}
+                    value={
+                      currentDocumentationData?.certificateOFInsuranceOrCOI
+                    }
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("certificateOFInsuranceOrCOI", e);
+                    }}
+                    isSearchable={true}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Client task order signing</span>
+                </td>
+                <td className="px-6 py-0">
+                  <Select
+                    options={ClientTaskOrderSigningList}
+                    value={currentDocumentationData?.clientTaskOrderSigning}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("clientTaskOrderSigning", e);
+                    }}
+                    isSearchable={true}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Task order expiry date</span>
+                </td>
+                <td className="px-6 py-0">
+                  <TextField
+                    value={currentDocumentationData?.TaskOrderExpiryDate}
+                    type="date"
+                    handleChange={(e: any) => {
+                      onValueChange("TaskOrderExpiryDate", e.target.value);
+                    }}
+                  // className="documentation-textfield"
+                  // styles={{ width: "" }}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Certificate of insurance date</span>
+                </td>
+                <td className="px-6 py-0">
+                  <TextField
+                    value={currentDocumentationData?.certificationOfInsurance}
+                    type="date"
+                    handleChange={(e: any) => {
+                      onValueChange("certificationOfInsurance", e.target.value);
+                    }}
+                  // className="documentation-textfield"
+                  // styles={{ width: "" }}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Client task order or SOW</span>
+                </td>
+                <td className="px-6 py-0">
+                  <Select
+                    options={ClientTaskOrderOrSOWList}
+                    value={currentDocumentationData?.clientTaskOrderOrSOW}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("clientTaskOrderOrSOW", e);
+                    }}
+                    isSearchable={true}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Documentation status</span>
+                </td>
+                <td className="px-6 py-0">
+                  <Select
+                    options={DocumentationStatusList}
+                    value={currentDocumentationData?.documentationStatus}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("documentationStatus", e);
+                    }}
+                    isSearchable={true}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Documents completion date</span>
+                </td>
+                <td className="px-6 py-0">
+                  <TextField
+                    value={
+                      currentDocumentationData?.documentationCompletionDate
+                    }
+                    type="date"
+                    handleChange={(e: any) => {
+                      onValueChange(
+                        "documentationCompletionDate",
+                        e.target.value
+                      );
+                    }}
+                  // className="documentation-textfield"
+                  // styles={{ width: "" }}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Documentation remarks</span>
+                </td>
+                <td className="px-6 py-0">
+                  <TextField
+                    value={currentDocumentationData?.documentationRemark}
+                    placeholder={""}
+                    handleChange={(event) => {
+                      onValueChange(
+                        "documentationRemark",
+                        event?.target?.value
+                      );
+                    }}
+                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                  />
+                </td>
               </tr>
             </tbody>
           </table>
@@ -223,5 +689,3 @@ const JobDetails: React.FC = () => {
     </>
   );
 };
-
-export default JobDetails;
