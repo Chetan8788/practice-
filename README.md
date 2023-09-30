@@ -1,28 +1,79 @@
 import React, { ChangeEvent, useState } from "react";
 import Grid from "@mui/material/Unstable_Grid2";
 import { TextField } from "../../common/TextField/TextField";
+import { TextArea } from "../../common/TextArea/TextArea";
+import { setJobInputBoxValue } from "../../actions/job";
 import { useAppDispatch, useAppSelector } from "../../hooks/app";
 import { RootState } from "../../redux/store";
-import { setReferralInputBoxValue } from "../../actions/referral";
-import { DropDown } from "../../common/DropDown/DropDown";
-import { LocationName } from "../../constants/candidateclientconstants";
-import { yesNoList } from "../../constants/constants";
 import Select from "react-select";
+import {
+  JobTypeList,
+  LineOfBusinessList,
+  ResumeSourceList,
+  WorkTypeList,
+} from "../../constants/jobconstants";
 
-const ReferralDetails: React.FC = () => {
+const JobDetails: React.FC = () => {
   const dispatch = useAppDispatch();
-  const currentReferralData = useAppSelector(
-    (state: RootState) => state.referral.referralData
+  const currentJobData = useAppSelector(
+    (state: RootState) => state.job.jobData
   );
-  const locationName = LocationName;
+  const allJobData = useAppSelector((state: RootState) => state.job.allJobData);
+  let allJobName: object[] = [];
+  if (allJobData.length !== 0) {
+    allJobData.map(
+      (a: {
+        id: number;
+        requestID: number;
+        jobDivaID: number;
+        jobTitle: string;
+        jobType: string;
+        lineOfBusiness: string;
+        jobDescription: string;
+      }) => {
+        let data = {
+          label: a.jobTitle,
+          value: {
+            id: a.id,
+            requestID: a.requestID,
+            jobDivaID: a.jobDivaID,
+            jobTitle: a.jobTitle,
+            jobType: a.jobType,
+            lineOfBusiness: a.lineOfBusiness,
+            jobDescription: a.jobDescription,
+          },
+        };
+        allJobName.push(data);
+      }
+    );
+  }
+  const workType = WorkTypeList;
+  const jobType = JobTypeList;
+  const resumeSource = ResumeSourceList;
+  const lineOfBusiness = LineOfBusinessList;
 
-  const onValueChange = (key: any, value: any) => {
-    dispatch(setReferralInputBoxValue(key, value));
+  const onJobValueChange = (key: any, value: any) => {
+    dispatch(setJobInputBoxValue(key, value));
   };
+
+  function displayJobData(value: any) {
+    onJobValueChange("id", value.id);
+    onJobValueChange("requestID", value.requestID);
+    onJobValueChange("jobDivaID", value.jobDivaID);
+    // onJobValueChange("jobTitle", value.jobTitle);
+    onJobValueChange("jobType", { label: value.jobType, value: value.jobType });
+    onJobValueChange("lineOfBusiness", {
+      label: value.lineOfBusiness,
+      value: value.lineOfBusiness,
+    });
+    onJobValueChange("jobDescription", value.jobDescription);
+    onJobValueChange("zipCode", value.zipCode);
+    onJobValueChange("country", value.country);
+  }
 
   return (
     <>
-      Referral details
+      <h1 className="mt-7">Job Details</h1>
       <div className="flex gap-5 " style={{ margin: "auto", width: "100%" }}>
         <div className="relative w-[100%] mt-10 ">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -37,32 +88,32 @@ const ReferralDetails: React.FC = () => {
             <tbody>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold ">
-                  <span> Referral company name</span>
+                  <span> Job title/Position name</span>
                 </td>
-
-                <th scope="col" className="px-6 py-3">
-                  <TextField
-                    value={currentReferralData?.companyName}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("companyName", event?.target?.value);
+                <th scope="col" className="px-6 py-0">
+                  <Select
+                    options={allJobName}
+                    value={currentJobData?.jobTitle}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      displayJobData(e.value);
+                      onJobValueChange("jobTitle", e);
                     }}
-                    className=""
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                    isSearchable={true}
                   />
                 </th>
               </tr>
-
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Referral Fedaral Id</span>
+                <td className="px-6 py-4 font-semibold ">
+                  <span>Working From</span>
                 </td>
-                <td className="px-6 py-0">
+                <td className="px-6 py-0 ">
                   <TextField
-                    value={currentReferralData?.federalID}
+                    value={currentJobData?.workingFrom}
                     placeholder={""}
                     handleChange={(event) => {
-                      onValueChange("federalID", event?.target?.value);
+                      onJobValueChange("workingFrom", event?.target?.value);
                     }}
                     className=""
                     styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
@@ -71,97 +122,48 @@ const ReferralDetails: React.FC = () => {
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Name Of Contact Person</span>
+                  <span>Work Type</span>
                 </td>
                 <td className="px-6 py-0">
-                  <TextField
-                    value={currentReferralData?.contactPerson}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("contactPerson", event?.target?.value);
+                  <Select
+                    options={workType}
+                    value={currentJobData?.workType}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onJobValueChange("workType", e);
                     }}
-                    className=""
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                    isSearchable={true}
                   />
                 </td>
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Referral Company Email Id</span>
+                  <span>Resume Resource</span>
                 </td>
                 <td className="px-6 py-0">
-                  <TextField
-                    value={currentReferralData?.companyEmailID}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("companyEmailID", event?.target?.value);
+                  <Select
+                    options={resumeSource}
+                    value={currentJobData?.resumeSource}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onJobValueChange("resumeSource", e);
                     }}
-                    className=""
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                    isSearchable={true}
                   />
                 </td>
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Referral Company Contact No</span>
+                <td className="px-6 py-4 font-semibold ">
+                  <span>Skill Set</span>
                 </td>
-                <td className="px-6 py-0">
+                <td className="px-6 py-0 ">
                   <TextField
-                    value={currentReferralData?.contactNo}
+                    value={currentJobData?.skillSet}
                     placeholder={""}
                     handleChange={(event) => {
-                      onValueChange("contactNo", event?.target?.value);
-                    }}
-                    className=""
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Referral Fax No</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentReferralData?.faxNo}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("faxNo", event?.target?.value);
-                    }}
-                    className=""
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Name Of Sign Authority</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentReferralData?.signAuthority}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("signAuthority", event?.target?.value);
-                    }}
-                    className=""
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Designation of sign authority</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentReferralData?.signAuthorityDesignation}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange(
-                        "signAuthorityDesignation",
-                        event?.target?.value
-                      );
+                      onJobValueChange("skillSet", event?.target?.value);
                     }}
                     className=""
                     styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
@@ -171,7 +173,6 @@ const ReferralDetails: React.FC = () => {
             </tbody>
           </table>
         </div>
-
         <div className="relative w-[100%] mt-10 bg-[#f8f8f8dd]">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
@@ -185,119 +186,35 @@ const ReferralDetails: React.FC = () => {
             <tbody>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Referral address line 1</span>
+                  <span>Request Id</span>
                 </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentReferralData?.line1}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("line1", event?.target?.value);
-                    }}
-                    className=""
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
+                <td className="px-6 py-4">{currentJobData?.requestID}</td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Job Diva Id</span>
+                </td>
+                <td className="px-6 py-4">{currentJobData?.jobDivaID}</td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Job Type</span>
+                </td>
+                <td className="px-6 py-4">{currentJobData?.jobType.value}</td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Line Of Business</span>
+                </td>
+                <td className="px-6 py-4">
+                  {currentJobData?.lineOfBusiness.value}
                 </td>
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Referral address line 2</span>
+                  <span>Job Discription</span>
                 </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentReferralData?.line2}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("line2", event?.target?.value);
-                    }}
-                    className=""
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Referral City</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentReferralData?.city}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("city", event?.target?.value);
-                    }}
-                    className=""
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Referral Zip Code</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentReferralData?.zipCode}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("zipCode", event?.target?.value);
-                    }}
-                    className=""
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Referral State</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={locationName}
-                    value={currentReferralData?.state}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("state", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Country</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentReferralData?.country}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("country", event?.target?.value);
-                    }}
-                    className=""
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Referral State Incorporation</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentReferralData?.stateOfIncorporation}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange(
-                        "stateOfIncorporation",
-                        event?.target?.value
-                      );
-                    }}
-                    className=""
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                </td>
+                <td className="px-6 py-4">{currentJobData?.jobDescription}</td>
               </tr>
             </tbody>
           </table>
@@ -307,4 +224,4 @@ const ReferralDetails: React.FC = () => {
   );
 };
 
-export default ReferralDetails;
+export default JobDetails;
