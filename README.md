@@ -1,454 +1,419 @@
-// Ajay Bagul - [21/07/2023] - Documentation page
+// chetan patil - [21/07/2023] - Start End Operations Page
 
 import { ChangeEvent, useState } from "react";
 import { TextField } from "../../common/TextField/TextField";
 import { TextArea } from "../../common/TextArea/TextArea";
-import "./Documentation.css";
-import Grid from "@mui/material/Unstable_Grid2";
+import "./StartEndOperations.css";
 import { DropDown } from "../../common/DropDown/DropDown";
 import {
-  ArticlesOfIncorporationList,
-  CertificateOfInsuranceList,
-  CipcicaCipcicuList,
-  ClientTaskOrderOrSOWList,
-  ClientTaskOrderOrSOWStepList,
-  ClientTaskOrderSigningList,
-  DirectDepositeAgreementList,
-  DocumentationStatusList,
-  EVerifyList,
-  EemergencyFormList,
-  GoodStandingDocumentationList,
-  I9FormList,
-  ListADocumentsList,
-  ListBDocumentsList,
-  ListCDocumentsList,
-  MSAList,
-  SOWList,
-  VaccinationStatusList,
-  VoidCheckEmailList,
-  W9W4List,
-  WorkAuthorizeDocumentationList,
-  yesNoList,
+    EndReasonList,
+    ExitClearanceList,
+    FFInvoiceStatusList,
+    JobLevelList,
+    JoiningStatusList,
+    JoiningTypeList,
+    yesNoList,
 } from "../../constants/constants";
+import { FloatLabel } from "../../common/FloatLabel/FloatLabel";
+import Grid from "@mui/material/Unstable_Grid2";
 import { Button } from "../../common/Button/Button";
-import { RootState } from "../../redux/store";
 import { useAppDispatch, useAppSelector } from "../../hooks/app";
-import { setDocumentationCheckInputBoxValue } from "../../actions/documentation";
-import { useDispatch } from "react-redux";
+import { RootState } from "../../redux/store";
+import { setStartEndInputBoxValue } from "../../actions/startendoperations";
 import Select from "react-select";
 
-export const Documentation: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const currentDocumentationData = useAppSelector(
-    (state: RootState) => state?.documentation?.documentationData
-  );
+export const StartEndOperations: React.FC = () => {
+    const dispatch = useAppDispatch();
+    const currentStartEndOperationsData = useAppSelector(
+        (state: RootState) => state.startEndOperations.startEndOperationsData
+    );
 
-  // const [articlesOfIncorporation, setArticlesOfIncorporation] = useState<any>();
-  // const [W9W4, setW9W4] = useState<any>();
-  // const [directDepositAgreement, setDirectDepositAgreement] = useState<any>();
-  // const [voidCheckEmail, setVoidCheckEmail] = useState<any>();
-  // const [cipcicaCipcicu, setCipcicaCipcicu] = useState<any>();
-  // const [goodStandingDocumentation, setGoodStandingDocumentation] =
-  //   useState<any>();
-  // const [workAuthorizeDocumentation, setWorkAuthorizeDocumentation] =
-  //   useState<any>();
-  // const [i9Form, setI9Form] = useState<any>();
-  // const [listADocuments, setListADocuments] = useState<any>();
-  // const [listBDocuments, setListBDocuments] = useState<any>();
-  // const [listCDocuments, setListCDocuments] = useState<any>();
-  // const [eVerify, setEVerify] = useState<any>();
-  // const [eVerificationDate, setEVerificationDate] = useState<any>();
-  // const [emergencyForm, setEmergencyForm] = useState<any>();
-  // const [vaccinationStatus, setVaccinationStatus] = useState<any>();
-  // const [MSA, setMSA] = useState<any>();
-  // const [SOW, setSOW] = useState<any>();
-  // const [SOWValidity, setSOWValidity] = useState<any>();
-  // const [certificateOfInsurance, setCertificateOfInsurance] = useState<any>();
-  // const [certificateOfInsuranceDate, setCertificateOfInsuranceDate] =
-  //   useState<any>();
-  // const [clientTaskOrderOrSOW, setClientTaskOrderOrSOW] = useState<any>();
-  // const [clientTaskOrderOrSOWStep, setClientTaskOrderOrSOWStep] =
-  //   useState<any>();
-  // const [clientTaskOrderSigning, setClientTaskOrderSigning] = useState<any>();
-  // const [taskOrderExpiryDate, setTaskOrderExpiryDate] = useState<any>();
-  // const [documentationStatus, setDocumentationStatus] = useState<any>();
-  // const [documentationRemark, setDocumentationRemark] = useState<any>();
-  // const [docuCompletionDate, setDocuCompletionDate] = useState<any>();
+    const onValueChange = (key: any, value: any) => {
+        dispatch(setStartEndInputBoxValue(key, value));
+    };
 
-  const onValueChange = (key: any, value: any) => {
-    if (key && value) {
-      dispatch(setDocumentationCheckInputBoxValue(key, value));
-    }
-  };
+    return (
+        <>
+            {/* <Grid container spacing={4}>
+                <Grid xs={6} md={3}>
+                   
+                </Grid>
 
-  return (
-    <>
-      {/* <Grid container spacing={4}>
-        <Grid xs={6} md={3}>
-          <span>Articles of incorporation</span>
-          
-        </Grid>
+                <Grid xs={6} md={3}>
+                   
+                </Grid>
 
-        <Grid xs={6} md={3}>
-          
-        </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
 
-        <Grid xs={6} md={3}>
-          
-        </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
 
-        <Grid xs={6} md={3}>
-         
-        </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
+                <Grid xs={6} md={3}>
+                   
+                </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
+                <Grid xs={6} md={3}>
+                   
+                </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
 
-        <Grid xs={6} md={3}>
-          
-        </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
 
-        <Grid xs={6} md={3}>
-          
-        </Grid>
+                <Grid xs={6} md={3}>
+                   
+                </Grid>
 
-        <Grid xs={6} md={3}>
-          
-        </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
 
-        <Grid xs={6} md={3}>
-          
-        </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
 
-        <Grid xs={6} md={3}>
-          
-        </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
 
-        <Grid xs={6} md={3}>
-        
-        </Grid>
+                <Grid xs={6} md={3}>
+                   
+                </Grid>
 
-        <Grid xs={6} md={3}>
-          
-        </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
 
-        <Grid xs={6} md={3}>
-          
-        </Grid>
+                <Grid xs={6} md={3}>
+                   
+                </Grid>
 
-        <Grid xs={6} md={3}>
-         
-        </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
 
-        <Grid xs={6} md={3}>
-          
-        </Grid>
+                <Grid xs={6} md={3}>
+                   
+                </Grid>
 
-        <Grid xs={6} md={3}>
-         
-        </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
 
-        <Grid xs={6} md={3}>
-          
-        </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
 
-        <Grid xs={6} md={3}>
-          
-        </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
 
-        <Grid xs={6} md={3}>
-          
-        </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
 
-        <Grid xs={6} md={3}>
-         
-        </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
 
-        <Grid xs={6} md={3}>
-          
-        </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
 
-        <Grid xs={6} md={3}>
-         
-        </Grid>
+                <Grid xs={6} md={3}>
+                    
+                </Grid>
 
-        <Grid xs={6} md={3}>
-          
-        </Grid>
+                <Grid xs={6} md={12}>
+                   
+                </Grid>
 
-        <Grid xs={6} md={3}>
-          
-        </Grid>
-        <Grid xs={6} md={3}>
-         
-        </Grid>
-        <Grid xs={6} md={3}>
-          
-        </Grid>
+                <Grid xs={6} md={12}>
+                    
+                </Grid>
 
-        <Grid xs={6} md={3}>
-          
-        </Grid>
 
-        <Grid xs={6} md={12}>
-          
-        </Grid>
-      </Grid> */}
-      Documentation details
-      <div className="flex gap-5 " style={{ margin: "auto", width: "100%" }}>
-        <div className="relative w-[100%] mt-10 ">
-        <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            </Grid> */}
+            Start End operations details
+            <div className="flex gap-5 " style={{ margin: "auto", width: "100%" }}>
+                <div className="relative w-[100%] mt-10 ">
+                <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                         <thead className='text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400'>
-              <tr>
+                        <tr>
                                 <th scope="col" className="px-6 py-4">
                                     Initial details
                                 </th>
                                 <th></th>
                             </tr>
-            </thead>
-            <tbody>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Articles of incorporation</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={ArticlesOfIncorporationList}
-                    value={
-                      currentDocumentationData?.articlesOrCertificateOFIncorporation
-                    }
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("articlesOrCertificateOFIncorporation", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>W9 Or W4</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={W9W4List}
-                    value={currentDocumentationData?.w9Orw4}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("w9Orw4", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Direct deposit agreement</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={DirectDepositeAgreementList}
-                    value={currentDocumentationData?.directDepositAgreement}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("directDepositAgreement", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Void check email</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={VoidCheckEmailList}
-                    value={currentDocumentationData?.voidCheckOrEmailContent}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("voidCheckOrEmailContent", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>CIPCIA Or CIPCICU</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={CipcicaCipcicuList}
-                    value={currentDocumentationData?.CIPCICICAOrCIPCICU}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("CIPCICICAOrCIPCICU", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Good standing documentation</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={GoodStandingDocumentationList}
-                    value={currentDocumentationData?.goodStandingDocument}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("goodStandingDocument", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Work authorization documentation</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={WorkAuthorizeDocumentationList}
-                    value={currentDocumentationData?.workAuthorizationDocument}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("workAuthorizationDocument", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>I9 Form</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={I9FormList}
-                    value={currentDocumentationData?.I9Form}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("I9Form", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>List A documents</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={ListADocumentsList}
-                    value={currentDocumentationData?.listADocument}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("listADocument", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>List B documents</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={ListBDocumentsList}
-                    value={currentDocumentationData?.listBDocument}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("listBDocument", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>List C documents</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={ListCDocumentsList}
-                    value={currentDocumentationData?.listCDocument}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("listCDocument", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>E-Verify</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={EVerifyList}
-                    value={currentDocumentationData?.E_verify}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("E_verify", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>E-Verification date</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentDocumentationData?.E_verificationDate}
-                    type="date"
-                    handleChange={(e: any) => {
-                      onValueChange("E_verificationDate", e.target.value);
-                    }}
-                  // className="documentation-textfield"
-                  // styles={{ width: "" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Emergency form</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={EemergencyFormList}
-                    value={currentDocumentationData?.emergencyForm}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("emergencyForm", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div className="relative w-[100%] mt-10">
-        <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                        <thead className='text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400'>
+                        </thead>
+                        <tbody>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Recruiter name</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.recruiter}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("recruiter", event?.target?.value);
+                                        }}
+                                        styles={{ border:"1px solid hsl(0, 0%, 80%)"}}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Team lead name</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.teamLead}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("teamLead", event?.target?.value);
+                                        }}
+                                        styles={{ border:"1px solid hsl(0, 0%, 80%)"}}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>CRM</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.crm}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("crm", event?.target?.value);
+                                        }}
+                                        styles={{ border:"1px solid hsl(0, 0%, 80%)"}}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Team manager</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.teamManager}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("teamManager", event?.target?.value);
+                                        }}
+                                        styles={{ border:"1px solid hsl(0, 0%, 80%)"}}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Senior manager</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.seniorManager}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("seniorManager", event?.target?.value);
+                                        }}
+                                        styles={{ border:"1px solid hsl(0, 0%, 80%)"}}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Associate director</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.assoDirector}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("assoDirector", event?.target?.value);
+                                        }}
+                                        styles={{ border:"1px solid hsl(0, 0%, 80%)"}}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Center head</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.centerHead}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("centerHead", event?.target?.value);
+                                        }}
+                                        styles={{ border:"1px solid hsl(0, 0%, 80%)"}}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Onsite account director</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.onsiteAccDirector}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("onsiteAccDirector", event?.target?.value);
+                                        }}
+                                        styles={{ border:"1px solid hsl(0, 0%, 80%)"}}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Onboarding coordinator</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.onboCoordinator}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("onboCoordinator", event?.target?.value);
+                                        }}
+                                        styles={{ border:"1px solid hsl(0, 0%, 80%)"}}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>End date</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.endDate}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("endDate", event?.target?.value);
+                                        }}
+                                        type="date"
+                                        styles={{ border:"1px solid hsl(0, 0%, 80%)"}}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Gross BR</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.grossBr}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("grossBr", event?.target?.value);
+                                        }}
+                                        styles={{ border:"1px solid hsl(0, 0%, 80%)"}}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>MSP fee in percentage</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.mspFeePercentage}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("mspFeePercentage", event?.target?.value);
+                                        }}
+                                    styles={{ border:"1px solid hsl(0, 0%, 80%)"}}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>MSP fee</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.mspFee}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("mspFee", event?.target?.value);
+                                        }}
+                                        styles={{ border:"1px solid hsl(0, 0%, 80%)"}}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Pay rate</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.payRate}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("payRate", event?.target?.value);
+                                        }}
+                                        styles={{ border:"1px solid hsl(0, 0%, 80%)"}}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Referral fee</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.refFee}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("refFee", event?.target?.value);
+                                        }}
+                                        styles={{ border:"1px solid hsl(0, 0%, 80%)"}}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Tax OH percentage</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.taxOHPercentage}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("taxOHPercentage", event?.target?.value);
+                                        }}
+                                        styles={{ border:"1px solid hsl(0, 0%, 80%)"}}
+                                    />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div className="relative w-[100%] mt-10 ">
+                    <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead className='text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400'>
                             <tr>
                                 <th scope="col" className="px-6 py-4">
                                     Other details
@@ -456,236 +421,260 @@ export const Documentation: React.FC = () => {
                                 <th></th>
                             </tr>
                         </thead>
-            <tbody>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Vaccination status</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={VaccinationStatusList}
-                    value={currentDocumentationData?.vaccinationStatus}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("vaccinationStatus", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Client task order or SOW step</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={ClientTaskOrderOrSOWStepList}
-                    value={currentDocumentationData?.clientTaskOrderOrSOWst}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("clientTaskOrderOrSOWst", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>MSA</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={MSAList}
-                    value={currentDocumentationData?.MSA}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("MSA", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>SOW</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={SOWList}
-                    value={currentDocumentationData?.SOW}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("SOW", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>SOW Validity</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentDocumentationData?.SOWValidity}
-                    type="date"
-                    handleChange={(e: any) => {
-                      onValueChange("SOWValidity", e.target.value);
-                    }}
-                  // className="documentation-textfield"
-                  // styles={{ width: "" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Certificate of insurance</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={CertificateOfInsuranceList}
-                    value={
-                      currentDocumentationData?.certificateOFInsuranceOrCOI
-                    }
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("certificateOFInsuranceOrCOI", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Client task order signing</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={ClientTaskOrderSigningList}
-                    value={currentDocumentationData?.clientTaskOrderSigning}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("clientTaskOrderSigning", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Task order expiry date</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentDocumentationData?.TaskOrderExpiryDate}
-                    type="date"
-                    handleChange={(e: any) => {
-                      onValueChange("TaskOrderExpiryDate", e.target.value);
-                    }}
-                  // className="documentation-textfield"
-                  // styles={{ width: "" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Certificate of insurance date</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentDocumentationData?.certificationOfInsurance}
-                    type="date"
-                    handleChange={(e: any) => {
-                      onValueChange("certificationOfInsurance", e.target.value);
-                    }}
-                  // className="documentation-textfield"
-                  // styles={{ width: "" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Client task order or SOW</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={ClientTaskOrderOrSOWList}
-                    value={currentDocumentationData?.clientTaskOrderOrSOW}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("clientTaskOrderOrSOW", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Documentation status</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={DocumentationStatusList}
-                    value={currentDocumentationData?.documentationStatus}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("documentationStatus", e);
-                    }}
-                    isSearchable={true}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Documents completion date</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={
-                      currentDocumentationData?.documentationCompletionDate
-                    }
-                    type="date"
-                    handleChange={(e: any) => {
-                      onValueChange(
-                        "documentationCompletionDate",
-                        e.target.value
-                      );
-                    }}
-                  // className="documentation-textfield"
-                  // styles={{ width: "" }}
-                  />
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Documentation remarks</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentDocumentationData?.documentationRemark}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange(
-                        "documentationRemark",
-                        event?.target?.value
-                      );
-                    }}
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </>
-  );
+                        <tbody className="">
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Tax OH</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.taxOH}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("taxOH", event?.target?.value);
+                                        }}
+                                        styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Opted for health benefits</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <Select
+                                        options={yesNoList}
+                                        value={currentStartEndOperationsData.hBenefitesOpted}
+                                        getOptionLabel={(option) => option.label}
+                                        getOptionValue={(option) => option.value}
+                                        onChange={(e: any) => {
+                                            onValueChange("hBenefitesOpted", e);
+                                        }}
+                                        isSearchable={true}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Health benefits cost</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.hBenefitesCost}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("hBenefitesCost", event?.target?.value);
+                                        }}
+                                        styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Net bill rate</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.netBillRate}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("netBillRate", event?.target?.value);
+                                        }}
+                                        styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Net purchase</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.netPurchase}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("netPurchase", event?.target?.value);
+                                        }}
+                                        styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Margin</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.margin}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("margin", event?.target?.value);
+                                        }}
+                                        styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Full time salary offered</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentStartEndOperationsData.fullTimeSalaryOffered}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange(
+                                                "fullTimeSalaryOffered",
+                                                event?.target?.value
+                                            );
+                                        }}
+                                        styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Joining status</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <Select
+                                        options={JoiningStatusList}
+                                        value={currentStartEndOperationsData.joiningStatus}
+                                        getOptionLabel={(option) => option.label}
+                                        getOptionValue={(option) => option.value}
+                                        onChange={(e: any) => {
+                                            onValueChange("joiningStatus", e);
+                                        }}
+                                        isSearchable={true}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Joining type</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <Select
+                                        options={JoiningTypeList}
+                                        value={currentStartEndOperationsData.joiningType}
+                                        getOptionLabel={(option) => option.label}
+                                        getOptionValue={(option) => option.value}
+                                        onChange={(e: any) => {
+                                            onValueChange("joiningType", e);
+                                        }}
+                                        isSearchable={true}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Exit clearance type</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <Select
+                                        options={ExitClearanceList}
+                                        value={currentStartEndOperationsData.exitClearance}
+                                        getOptionLabel={(option) => option.label}
+                                        getOptionValue={(option) => option.value}
+                                        onChange={(e: any) => {
+                                            onValueChange("exitClearance", e);
+                                        }}
+                                        isSearchable={true}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>End reason type</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <Select
+                                        options={EndReasonList}
+                                        value={currentStartEndOperationsData.endReason}
+                                        getOptionLabel={(option) => option.label}
+                                        getOptionValue={(option) => option.value}
+                                        onChange={(e: any) => {
+                                            onValueChange("endReason", e);
+                                        }}
+                                        isSearchable={true}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Job level</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <Select
+                                        options={JobLevelList}
+                                        value={currentStartEndOperationsData.jobLevel}
+                                        getOptionLabel={(option) => option.label}
+                                        getOptionValue={(option) => option.value}
+                                        onChange={(e: any) => {
+                                            onValueChange("jobLevel", e);
+                                        }}
+                                        isSearchable={true}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Select FF invoice status</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <Select
+                                        options={FFInvoiceStatusList}
+                                        value={currentStartEndOperationsData.ffInvoiceStatus}
+                                        getOptionLabel={(option) => option.label}
+                                        getOptionValue={(option) => option.value}
+                                        onChange={(e: any) => {
+                                            onValueChange("ffInvoiceStatus", e);
+                                        }}
+                                        isSearchable={true}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Joining status remarks</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        // className="start-end-textarea"
+                                        // label="Joining Status Remarks"
+                                        value={currentStartEndOperationsData.joiningStatusRemark}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange(
+                                                "joiningStatusRemark",
+                                                event?.target?.value
+                                            );
+                                        }}
+                                        styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>End remarks</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        // className="start-end-textarea"
+                                        // label="End Remarks"
+                                        value={currentStartEndOperationsData.endRemarks}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("endRemarks", event?.target?.value);
+                                        }}
+                                        styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                                    />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </>
+    );
 };
