@@ -1,86 +1,79 @@
 import React from "react";
-import { RootState } from "../../redux/store";
-import { useAppDispatch, useAppSelector } from "../../hooks/app";
-import { setClientInputBoxValue } from "../../actions/client";
-import {
-  ContractType,
-  LocationName,
-} from "../../constants/candidateclientconstants";
-import Select from "react-select";
 import Grid from "@mui/material/Unstable_Grid2";
-import { yesNoList } from "../../constants/constants";
+import { TextField } from "../../common/TextField/TextField";
+import { useAppDispatch, useAppSelector } from "../../hooks/app";
+import { RootState } from "../../redux/store";
+import { setVendorInputBoxValue } from "../../actions/vendor";
+import { LocationName } from "../../constants/candidateclientconstants";
+import Select from "react-select";
 
-const ClientDetails: React.FC = () => {
+const VendorDetails: React.FC = () => {
   const dispatch = useAppDispatch();
-  const currentClientData = useAppSelector(
-    (state: RootState) => state.client.clientData
+  const currentVendorData = useAppSelector(
+    (state: RootState) => state.vendor.vendorData
   );
-  let contractTypeData = useAppSelector(
-    (state: RootState) => state.contractType.allContractTypeData
+  const allVendorData = useAppSelector(
+    (state: RootState) => state.vendor.allVendorData
   );
-  var result: any = [];
-  if (contractTypeData != undefined) {
-    contractTypeData.forEach((element: { contractType: any }) => {
-      result.push({
-        label: element.contractType,
-        value: element.contractType,
-      });
-    });
-  }
-  const allClientData = useAppSelector(
-    (state: RootState) => state.client.allClientData
-  );
-  let allClientName: object[] = [];
-  if (allClientData.length !== 0) {
-    allClientData.map((a: any) => {
+  let allVendorName: object[] = [];
+  if (allVendorData.length !== 0) {
+    allVendorData.map((a: any) => {
       a?.addressId.map((b: any) => {
         let data = {
-          label: a?.clientId.clientName + " (" + b.city + "/" + b.state + ")",
+          label: a.vendorId.companyName,
           value: {
-            clientId: a?.clientId.id,
-            clientName: a?.clientId.clientName,
-            endClientName: a?.clientId.endClientName,
-            MSPName: a?.clientId.mspName,
-            contactNumber: b.contactDetailId.contactNumber,
-            email: b.contactDetailId.email,
-            faxNumber: b.contactDetailId.faxNumber,
-            line1: b?.line1,
-            line2: b?.line2,
-            city: b?.city,
-            state: b?.state,
-            zipCode: b?.zipCode,
-            country: b?.country,
+            id: a.vendorId.id,
+            companyName: a.vendorId.companyName,
+            federalId: a.vendorId.federalId,
+            contactPerson: a.vendorId.contactPerson,
+            email: b?.contactDetailId?.email,
+            contactNumber: b?.contactDetailId?.contactNumber,
+            faxNumber: b?.contactDetailId?.faxNumber,
+            signAuthority: a.vendorId.signAuthority,
+            signAuthorityDesignation: a.vendorId.signAuthorityDesignation,
+            stateOfIncorporation: a.vendorId.stateOfIncorporation,
+            line1: b.line1,
+            line2: b.line2,
+            city: b.city,
+            zipCode: b.zipCode,
+            state: b.state,
+            country: b.country,
           },
         };
-        allClientName.push(data);
+        allVendorName.push(data);
       });
     });
   }
   const locationName = LocationName;
-  // const contractType = ContractType;
 
-  const onClientValueChange = (key: any, value: any) => {
-    dispatch(setClientInputBoxValue(key, value));
+  const onVendorValueChange = (key: any, value: any) => {
+    dispatch(setVendorInputBoxValue(key, value));
   };
 
-  function displayClientData(value: any) {
-    onClientValueChange("id", value.clientId);
-    onClientValueChange("endClientName", value.endClientName);
-    onClientValueChange("mspName", value.MSPName);
-    onClientValueChange("contactNumber", value.contactNumber);
-    onClientValueChange("email", value.email);
-    onClientValueChange("faxNumber", value.faxNumber);
-    onClientValueChange("line1", value.line1);
-    onClientValueChange("line2", value.line2);
-    onClientValueChange("city", value.city);
-    onClientValueChange("state", { label: value.state, value: value.state });
-    onClientValueChange("zipCode", value.zipCode);
-    onClientValueChange("country", value.country);
+  function displayVendorData(value: any) {
+    onVendorValueChange("id", value.id);
+    onVendorValueChange("federalID", value.federalId);
+    onVendorValueChange("contactPerson", value.contactPerson);
+    onVendorValueChange("email", value.email);
+    onVendorValueChange("contactNumber", value.contactNumber);
+    onVendorValueChange("faxNumber", value.contactNumber);
+    onVendorValueChange("signAuthority", value.signAuthority);
+    onVendorValueChange(
+      "signAuthorityDesignation",
+      value.signAuthorityDesignation
+    );
+    onVendorValueChange("stateOfIncorporation", value.stateOfIncorporation);
+    onVendorValueChange("line1", value.line1);
+    onVendorValueChange("line2", value.line2);
+    onVendorValueChange("city", value.city);
+    onVendorValueChange("zipCode", value.zipCode);
+    onVendorValueChange("state", { label: value.state, value: value.state });
+    onVendorValueChange("country", value.country);
   }
 
   return (
     <>
-      <h1 className="mt-7"> Client Details</h1>
+      <h1 className="mt-7">Vendor details</h1>
       <div className="flex gap-5 " style={{ margin: "auto", width: "100%" }}>
         <div className="relative w-[100%] mt-10 ">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -95,17 +88,18 @@ const ClientDetails: React.FC = () => {
             <tbody>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold ">
-                  <span>Client name</span>
+                  <span>Vendore Details</span>
                 </td>
+
                 <th scope="col" className="px-6 py-0">
                   <Select
-                    options={allClientName}
-                    value={currentClientData?.clientName}
+                    options={allVendorName}
+                    value={currentVendorData?.companyName}
                     getOptionLabel={(option) => option.label}
                     getOptionValue={(option) => option.value}
                     onChange={(e: any) => {
-                      displayClientData(e.value);
-                      onClientValueChange("clientName", e);
+                      displayVendorData(e.value);
+                      onVendorValueChange("companyName", e);
                     }}
                     isSearchable={true}
                     styles={{
@@ -120,39 +114,53 @@ const ClientDetails: React.FC = () => {
 
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Contact Type</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={result}
-                    value={currentClientData?.contractType}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onClientValueChange("contractType", e);
-                    }}
-                    isSearchable={true}
-                    styles={{
-                      control: (baseStyles, state) => ({
-                        ...baseStyles,
-                      }),
-                    }}
-                  />
+                  <span>Vendore Federal Id</span>
+                </td>{" "}
+                <td className="px-6 py-4">{currentVendorData?.federalID}</td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Name Of Contact Person</span>
+                </td>{" "}
+                <td className="px-6 py-4">
+                  {currentVendorData?.contactPerson}
                 </td>
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>End Client Name</span>
+                  <span>Vendor Company Email</span>
+                </td>{" "}
+                <td className="px-6 py-4">{currentVendorData?.email}</td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Vendore Company Contact Number</span>
+                </td>{" "}
+                <td className="px-6 py-4">
+                  {currentVendorData?.contactNumber}
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Vendore Fax No</span>
+                </td>{" "}
+                <td className="px-6 py-4">{currentVendorData?.faxNumber}</td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Name Of Sign Authority</span>
+                </td>{" "}
+                <td className="px-6 py-4">
+                  {currentVendorData?.signAuthority}
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Designation of sign authority</span>
                 </td>
                 <td className="px-6 py-4">
-                  {currentClientData?.endClientName}
+                  {currentVendorData?.signAuthorityDesignation}
                 </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Msp Name</span>
-                </td>{" "}
-                <td className="px-6 py-4">{currentClientData?.mspName}</td>
               </tr>
             </tbody>
           </table>
@@ -170,34 +178,47 @@ const ClientDetails: React.FC = () => {
             <tbody>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Email</span>
-                </td>
-                <td className="px-6 py-4">{currentClientData?.email}</td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Contact Number</span>
+                  <span>Vendor state of incorporation</span>
                 </td>
                 <td className="px-6 py-4">
-                  {" "}
-                  {currentClientData?.contactNumber}
+                  {currentVendorData?.stateOfIncorporation}
                 </td>
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Fax No</span>
-                </td>{" "}
-                <td className="px-6 py-4">{currentClientData?.faxNumber}</td>
+                  <span>Line 1</span>
+                </td>
+                <td className="px-6 py-4">{currentVendorData?.line1}</td>
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Address</span>
+                  <span>Line 2</span>
                 </td>
-                <td className="px-6 py-4">
-                  {currentClientData?.line1} {currentClientData?.line2},{" "}
-                  {currentClientData?.city}, {currentClientData?.state.label},{" "}
-                  {currentClientData?.zipCode}, {currentClientData?.country}
+                <td className="px-6 py-4">{currentVendorData?.line2}</td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>City</span>
                 </td>
+                <td className="px-6 py-4">{currentVendorData?.city}</td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Zip Code</span>
+                </td>
+                <td className="px-6 py-4">{currentVendorData?.zipCode}</td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>State</span>
+                </td>
+                <td className="px-6 py-4">{currentVendorData?.state.value}</td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Country</span>
+                </td>
+                <td className="px-6 py-4">{currentVendorData?.country}</td>
               </tr>
             </tbody>
           </table>
@@ -207,4 +228,4 @@ const ClientDetails: React.FC = () => {
   );
 };
 
-export default ClientDetails;
+export default VendorDetails;
