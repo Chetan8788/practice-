@@ -1,79 +1,28 @@
-import React from "react";
+import React, { ChangeEvent, useState } from "react";
 import Grid from "@mui/material/Unstable_Grid2";
 import { TextField } from "../../common/TextField/TextField";
 import { useAppDispatch, useAppSelector } from "../../hooks/app";
 import { RootState } from "../../redux/store";
-import { setVendorInputBoxValue } from "../../actions/vendor";
+import { setReferralInputBoxValue } from "../../actions/referral";
+import { DropDown } from "../../common/DropDown/DropDown";
 import { LocationName } from "../../constants/candidateclientconstants";
+import { yesNoList } from "../../constants/constants";
 import Select from "react-select";
 
-const VendorDetails: React.FC = () => {
+const ReferralDetails: React.FC = () => {
   const dispatch = useAppDispatch();
-  const currentVendorData = useAppSelector(
-    (state: RootState) => state.vendor.vendorData
+  const currentReferralData = useAppSelector(
+    (state: RootState) => state.referral.referralData
   );
-  const allVendorData = useAppSelector(
-    (state: RootState) => state.vendor.allVendorData
-  );
-  let allVendorName: object[] = [];
-  if (allVendorData.length !== 0) {
-    allVendorData.map((a: any) => {
-      a?.addressId.map((b: any) => {
-        let data = {
-          label: a.vendorId.companyName,
-          value: {
-            id: a.vendorId.id,
-            companyName: a.vendorId.companyName,
-            federalId: a.vendorId.federalId,
-            contactPerson: a.vendorId.contactPerson,
-            email: b?.contactDetailId?.email,
-            contactNumber: b?.contactDetailId?.contactNumber,
-            faxNumber: b?.contactDetailId?.faxNumber,
-            signAuthority: a.vendorId.signAuthority,
-            signAuthorityDesignation: a.vendorId.signAuthorityDesignation,
-            stateOfIncorporation: a.vendorId.stateOfIncorporation,
-            line1: b.line1,
-            line2: b.line2,
-            city: b.city,
-            zipCode: b.zipCode,
-            state: b.state,
-            country: b.country,
-          },
-        };
-        allVendorName.push(data);
-      });
-    });
-  }
   const locationName = LocationName;
 
-  const onVendorValueChange = (key: any, value: any) => {
-    dispatch(setVendorInputBoxValue(key, value));
+  const onValueChange = (key: any, value: any) => {
+    dispatch(setReferralInputBoxValue(key, value));
   };
-
-  function displayVendorData(value: any) {
-    onVendorValueChange("id", value.id);
-    onVendorValueChange("federalID", value.federalId);
-    onVendorValueChange("contactPerson", value.contactPerson);
-    onVendorValueChange("email", value.email);
-    onVendorValueChange("contactNumber", value.contactNumber);
-    onVendorValueChange("faxNumber", value.contactNumber);
-    onVendorValueChange("signAuthority", value.signAuthority);
-    onVendorValueChange(
-      "signAuthorityDesignation",
-      value.signAuthorityDesignation
-    );
-    onVendorValueChange("stateOfIncorporation", value.stateOfIncorporation);
-    onVendorValueChange("line1", value.line1);
-    onVendorValueChange("line2", value.line2);
-    onVendorValueChange("city", value.city);
-    onVendorValueChange("zipCode", value.zipCode);
-    onVendorValueChange("state", { label: value.state, value: value.state });
-    onVendorValueChange("country", value.country);
-  }
 
   return (
     <>
-      <h1 className="mt-7">Vendor details</h1>
+      Referral details
       <div className="flex gap-5 " style={{ margin: "auto", width: "100%" }}>
         <div className="relative w-[100%] mt-10 ">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -88,83 +37,141 @@ const VendorDetails: React.FC = () => {
             <tbody>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold ">
-                  <span>Vendore Details</span>
+                  <span> Referral company name</span>
                 </td>
 
-                <th scope="col" className="px-6 py-0">
-                  <Select
-                    options={allVendorName}
-                    value={currentVendorData?.companyName}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      displayVendorData(e.value);
-                      onVendorValueChange("companyName", e);
+                <th scope="col" className="px-6 py-3">
+                  <TextField
+                    value={currentReferralData?.companyName}
+                    placeholder={""}
+                    handleChange={(event) => {
+                      onValueChange("companyName", event?.target?.value);
                     }}
-                    isSearchable={true}
-                    styles={{
-                      control: (baseStyles, state) => ({
-                        ...baseStyles,
-                        backgroundColor: "rgb(249 250 251)",
-                      }),
-                    }}
+                    className=""
+                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
                   />
                 </th>
               </tr>
 
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Vendore Federal Id</span>
-                </td>{" "}
-                <td className="px-6 py-4">{currentVendorData?.federalID}</td>
+                  <span>Referral Fedaral Id</span>
+                </td>
+                <td className="px-6 py-0">
+                  <TextField
+                    value={currentReferralData?.federalID}
+                    placeholder={""}
+                    handleChange={(event) => {
+                      onValueChange("federalID", event?.target?.value);
+                    }}
+                    className=""
+                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                  />
+                </td>
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
                   <span>Name Of Contact Person</span>
-                </td>{" "}
-                <td className="px-6 py-4">
-                  {currentVendorData?.contactPerson}
+                </td>
+                <td className="px-6 py-0">
+                  <TextField
+                    value={currentReferralData?.contactPerson}
+                    placeholder={""}
+                    handleChange={(event) => {
+                      onValueChange("contactPerson", event?.target?.value);
+                    }}
+                    className=""
+                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                  />
                 </td>
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Vendor Company Email</span>
-                </td>{" "}
-                <td className="px-6 py-4">{currentVendorData?.email}</td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Vendore Company Contact Number</span>
-                </td>{" "}
-                <td className="px-6 py-4">
-                  {currentVendorData?.contactNumber}
+                  <span>Referral Company Email Id</span>
+                </td>
+                <td className="px-6 py-0">
+                  <TextField
+                    value={currentReferralData?.companyEmailID}
+                    placeholder={""}
+                    handleChange={(event) => {
+                      onValueChange("companyEmailID", event?.target?.value);
+                    }}
+                    className=""
+                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                  />
                 </td>
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Vendore Fax No</span>
-                </td>{" "}
-                <td className="px-6 py-4">{currentVendorData?.faxNumber}</td>
+                  <span>Referral Company Contact No</span>
+                </td>
+                <td className="px-6 py-0">
+                  <TextField
+                    value={currentReferralData?.contactNo}
+                    placeholder={""}
+                    handleChange={(event) => {
+                      onValueChange("contactNo", event?.target?.value);
+                    }}
+                    className=""
+                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Referral Fax No</span>
+                </td>
+                <td className="px-6 py-0">
+                  <TextField
+                    value={currentReferralData?.faxNo}
+                    placeholder={""}
+                    handleChange={(event) => {
+                      onValueChange("faxNo", event?.target?.value);
+                    }}
+                    className=""
+                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                  />
+                </td>
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
                   <span>Name Of Sign Authority</span>
-                </td>{" "}
-                <td className="px-6 py-4">
-                  {currentVendorData?.signAuthority}
+                </td>
+                <td className="px-6 py-0">
+                  <TextField
+                    value={currentReferralData?.signAuthority}
+                    placeholder={""}
+                    handleChange={(event) => {
+                      onValueChange("signAuthority", event?.target?.value);
+                    }}
+                    className=""
+                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                  />
                 </td>
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
                   <span>Designation of sign authority</span>
                 </td>
-                <td className="px-6 py-4">
-                  {currentVendorData?.signAuthorityDesignation}
+                <td className="px-6 py-0">
+                  <TextField
+                    value={currentReferralData?.signAuthorityDesignation}
+                    placeholder={""}
+                    handleChange={(event) => {
+                      onValueChange(
+                        "signAuthorityDesignation",
+                        event?.target?.value
+                      );
+                    }}
+                    className=""
+                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                  />
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
+
         <div className="relative w-[100%] mt-10 bg-[#f8f8f8dd]">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
@@ -178,47 +185,119 @@ const VendorDetails: React.FC = () => {
             <tbody>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Vendor state of incorporation</span>
+                  <span>Referral address line 1</span>
                 </td>
-                <td className="px-6 py-4">
-                  {currentVendorData?.stateOfIncorporation}
+                <td className="px-6 py-0">
+                  <TextField
+                    value={currentReferralData?.line1}
+                    placeholder={""}
+                    handleChange={(event) => {
+                      onValueChange("line1", event?.target?.value);
+                    }}
+                    className=""
+                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                  />
                 </td>
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Line 1</span>
+                  <span>Referral address line 2</span>
                 </td>
-                <td className="px-6 py-4">{currentVendorData?.line1}</td>
+                <td className="px-6 py-0">
+                  <TextField
+                    value={currentReferralData?.line2}
+                    placeholder={""}
+                    handleChange={(event) => {
+                      onValueChange("line2", event?.target?.value);
+                    }}
+                    className=""
+                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                  />
+                </td>
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Line 2</span>
+                  <span>Referral City</span>
                 </td>
-                <td className="px-6 py-4">{currentVendorData?.line2}</td>
+                <td className="px-6 py-0">
+                  <TextField
+                    value={currentReferralData?.city}
+                    placeholder={""}
+                    handleChange={(event) => {
+                      onValueChange("city", event?.target?.value);
+                    }}
+                    className=""
+                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                  />
+                </td>
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>City</span>
+                  <span>Referral Zip Code</span>
                 </td>
-                <td className="px-6 py-4">{currentVendorData?.city}</td>
+                <td className="px-6 py-0">
+                  <TextField
+                    value={currentReferralData?.zipCode}
+                    placeholder={""}
+                    handleChange={(event) => {
+                      onValueChange("zipCode", event?.target?.value);
+                    }}
+                    className=""
+                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                  />
+                </td>
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Zip Code</span>
+                  <span>Referral State</span>
                 </td>
-                <td className="px-6 py-4">{currentVendorData?.zipCode}</td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>State</span>
+                <td className="px-6 py-0">
+                  <Select
+                    options={locationName}
+                    value={currentReferralData?.state}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("state", e);
+                    }}
+                    isSearchable={true}
+                  />
                 </td>
-                <td className="px-6 py-4">{currentVendorData?.state.value}</td>
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
                   <span>Country</span>
                 </td>
-                <td className="px-6 py-4">{currentVendorData?.country}</td>
+                <td className="px-6 py-0">
+                  <TextField
+                    value={currentReferralData?.country}
+                    placeholder={""}
+                    handleChange={(event) => {
+                      onValueChange("country", event?.target?.value);
+                    }}
+                    className=""
+                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                  />
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Referral State Incorporation</span>
+                </td>
+                <td className="px-6 py-0">
+                  <TextField
+                    value={currentReferralData?.stateOfIncorporation}
+                    placeholder={""}
+                    handleChange={(event) => {
+                      onValueChange(
+                        "stateOfIncorporation",
+                        event?.target?.value
+                      );
+                    }}
+                    className=""
+                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                  />
+                </td>
               </tr>
             </tbody>
           </table>
@@ -228,4 +307,4 @@ const VendorDetails: React.FC = () => {
   );
 };
 
-export default VendorDetails;
+export default ReferralDetails;
