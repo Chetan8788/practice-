@@ -1,81 +1,16 @@
-import React, { useEffect, useState } from "react";
-import Grid from "@mui/material/Unstable_Grid2";
-import { TextField } from "../../common/TextField/TextField";
-import { Button } from "../../common/Button/Button";
-import { useAppDispatch, useAppSelector } from "../../hooks/app";
-import { RootState } from "../../redux/store";
-import {
-  saveContractTypeData,
-  setContractTypeInputBoxValue,
-} from "../../actions/contractType";
-import { isTextValid } from "../../helpers/validate";
-import { FloatLabel } from "../../common/FloatLabel/FloatLabel";
-interface Props {
-  setShowModal: any;
-}
-const AddContractType: React.FC<Props> = ({ setShowModal }) => {
-  const dispatch = useAppDispatch();
-  const contractType = useAppSelector(
-    (state: RootState) => state.contractType.contractTypeData
-  );
-
-  const onContractTypeValueChange = (key: any, value: any) => {
-    dispatch(setContractTypeInputBoxValue(key, value));
-  };
-
-  const [contractTypeError, setContractTypeError] = useState<any>();
-
-  const [contractTypeValid, setContractTypeValid] = useState<boolean>();
-
-  useEffect(() => {
-    setContractTypeValid(isTextValid(contractType?.contractType));
-  }, [contractType]);
-
-  function onSubmitClick() {
-    setContractTypeValid(isTextValid(contractType?.contractType));
-    if (contractTypeValid) {
-      dispatch(saveContractTypeData(contractType?.contractType));
-    } else {
-      if (!contractTypeValid) {
-        setContractTypeError("Contract type is invalid");
-      }
-    }
-  }
-
-  return (
-    <>
-      {/* <h2>Contract type</h2> */}
-      <div className="pt-5 px-5">
-        <Grid container spacing={2}>
-          <Grid xs={12} md={12}>
-            <FloatLabel
-              label="*Contract type"
-              value={contractType?.contractType}
-              placeholder={""}
-              handleChange={(event) => {
-                onContractTypeValueChange("contractType", event.target.value);
-              }}
-              className=""
-            />
-            {!contractTypeValid ? (
-              <p className="" style={{ fontSize: "12px", color: "red" }}>
-                {contractTypeError}
-              </p>
-            ) : null}
-          </Grid>
-        </Grid>
-        <div className="rate-revision-btn-div">
-          <Grid xs={6} md={6}>
-            <Button
-              className="submit-btn"
-              value="Save & Submit"
-              handleClick={() => onSubmitClick()}
-            />
-          </Grid>
-        </div>
-      </div>
-    </>
-  );
-};
-
-export default AddContractType;
+Date	Project Name	Task Description
+ 2/10/2023	Onboarding	1) Add candidate page first tab redesign  (front end task)
+		2) Vendor popup menu added in add candidate page (front end)
+3/10/2023	Onboarding	1) Update service, controller and DTO created for update a individual Vendor (Back end)
+		2) Update service, controller and DTO created for update a individual Client (Back end)
+4/10/2023	Onboarding	1) Generics tables added for all old tables (front end)
+		2) Searching functionality added in each table with every column (front end)
+5/10/2023	Onboarding	1) Validations added in redux to achieve a add candidate 5 page form (front end)
+		2) next and previous design in a slider of add candidate form (front end)
+6/10/2023	Onboarding	1) candidate details validations added (front end)
+		2) job details validations added (front end)
+		3) client details validations added (front end)
+		4) vendor details validations added (front end)
+		5) Background check details validations added (front end)
+		6) Documentation details validations added (front end)
+![image](https://github.com/Chetan8788/practice-/assets/106315786/e5fa13e8-394c-46c2-a977-8dde23f8a251)
