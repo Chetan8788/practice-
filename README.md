@@ -1,60 +1,46 @@
-// chetan patil - [21/07/2023] - Start End Operations Page
-
-import { ChangeEvent, useState } from "react";
+// chetan patil - [21/07/2023] - Rate revision page
 import { TextField } from "../../common/TextField/TextField";
 import { TextArea } from "../../common/TextArea/TextArea";
-import "./StartEndOperations.css";
-import { DropDown } from "../../common/DropDown/DropDown";
-import {
-  EndReasonList,
-  ExitClearanceList,
-  FFInvoiceStatusList,
-  JobLevelList,
-  JoiningStatusList,
-  JoiningTypeList,
-  yesNoList,
-} from "../../constants/constants";
-import { FloatLabel } from "../../common/FloatLabel/FloatLabel";
+import "./RateRevision.css";
 import Grid from "@mui/material/Unstable_Grid2";
-import { Button } from "../../common/Button/Button";
+import { yesNoList } from "../../constants/constants";
 import { useAppDispatch, useAppSelector } from "../../hooks/app";
 import { RootState } from "../../redux/store";
 import {
-  setStartEndInputBoxValue,
-  setStartEndValidation,
-} from "../../actions/startendoperations";
+  setInputBoxValueRateRevision,
+  setRateRevisionValidation,
+} from "../../actions/raterevision";
+import { Submit } from "../Submit/Submit";
 import Select from "react-select";
+import { useLocation } from "react-router";
+import { useEffect } from "react";
 import { isTextValid } from "../../helpers/validate";
 
-export const StartEndOperations: React.FC = () => {
+export const RateRevision: React.FC = () => {
   const dispatch = useAppDispatch();
-  const currentStartEndOperationsData = useAppSelector(
-    (state: RootState) => state?.startEndOperations?.startEndOperationsData
+  const currentRateRevisionData = useAppSelector(
+    (state: RootState) => state?.rateRevision?.rateRevisionData
   );
+  console.log("currentRateRevisionData", currentRateRevisionData);
 
-  const validationStartEndOperationsData = useAppSelector(
-    (state: RootState) => state?.startEndOperations?.startEndValidationData
+  const validationRateRevisionData = useAppSelector(
+    (state: RootState) => state?.rateRevision?.rateRevisionValidationData
   );
+  console.log("validationRateRevisionData: ", validationRateRevisionData);
+  const location = useLocation();
 
-  console.log(
-    "validationStartEndOperationsData: ",
-    validationStartEndOperationsData
-  );
   const onValueChange = (key: any, value: any) => {
-    if (key && value) {
-      dispatch(setStartEndInputBoxValue(key, value));
-    }
+    dispatch(setInputBoxValueRateRevision(key, value));
   };
-
   const onValidationChange = (key: any, value: any) => {
     console.log("key: ", key);
     console.log("value: ", value);
-    dispatch(setStartEndValidation(key, value));
+    dispatch(setRateRevisionValidation(key, value));
   };
 
   return (
     <>
-      Start End operations details
+      Rate revision details
       <div className="flex gap-5 " style={{ margin: "auto", width: "100%" }}>
         <div className="relative w-[100%] mt-10 ">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -69,273 +55,11 @@ export const StartEndOperations: React.FC = () => {
             <tbody>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Recruiter name</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentStartEndOperationsData.recruiter}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("recruiter", event?.target?.value);
-                      if (!isTextValid(event?.target?.value)) {
-                        onValidationChange(
-                          "recruiterValid",
-                          "Recruiter name should not be empty."
-                        );
-                      } else {
-                        onValidationChange("recruiterValid", "");
-                      }
-                    }}
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                  <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.recruiterValid}
-                  </p>
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Team lead name</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentStartEndOperationsData.teamLead}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("teamLead", event?.target?.value);
-                      if (!isTextValid(event?.target?.value)) {
-                        onValidationChange(
-                          "teamLeadValid",
-                          "Team lead name should not be empty."
-                        );
-                      } else {
-                        onValidationChange("  teamLeadValid ", "");
-                      }
-                    }}
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                  <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {/* {validationStartEndOperationsData?.teamLeadValid} */}
-                    {validationStartEndOperationsData?.teamLeadValid}
-                  </p>
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>CRM</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentStartEndOperationsData.crm}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("crm", event?.target?.value);
-                      if (!isTextValid(event?.target?.value)) {
-                        onValidationChange(
-                          "crmValid",
-                          "CRM should not be empty."
-                        );
-                      } else {
-                        onValidationChange("crmValid", "");
-                      }
-                    }}
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                  <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.crmValid}
-                  </p>
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Team manager</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentStartEndOperationsData.teamManager}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("teamManager", event?.target?.value);
-                      if (!isTextValid(event?.target?.value)) {
-                        onValidationChange(
-                          "teamManagerValid",
-                          "Team manager should not be empty."
-                        );
-                      } else {
-                        onValidationChange("teamManagerValid", "");
-                      }
-                    }}
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                  <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.teamManagerValid}
-                  </p>
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Senior manager</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentStartEndOperationsData.seniorManager}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("seniorManager", event?.target?.value);
-                      if (!isTextValid(event?.target?.value)) {
-                        onValidationChange(
-                          "seniorManagerValid",
-                          "Senior manager should not be empty."
-                        );
-                      } else {
-                        onValidationChange("seniorManagerValid", "");
-                      }
-                    }}
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                  <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.seniorManagerValid}
-                  </p>
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Associate director</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentStartEndOperationsData.assoDirector}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("assoDirector", event?.target?.value);
-                      if (!isTextValid(event?.target?.value)) {
-                        onValidationChange(
-                          "assoDirectorValid",
-                          "Associate director should not be empty."
-                        );
-                      } else {
-                        onValidationChange("assoDirectorValid", "");
-                      }
-                    }}
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                  <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.assoDirectorValid}
-                  </p>
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Center head</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentStartEndOperationsData.centerHead}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("centerHead", event?.target?.value);
-                      if (!isTextValid(event?.target?.value)) {
-                        onValidationChange(
-                          "centerHeadValid",
-                          "Center head should not be empty."
-                        );
-                      } else {
-                        onValidationChange("centerHeadValid", "");
-                      }
-                    }}
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                  <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.centerHeadValid}
-                  </p>
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Onsite account director</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentStartEndOperationsData.onsiteAccDirector}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("onsiteAccDirector", event?.target?.value);
-                      if (!isTextValid(event?.target?.value)) {
-                        onValidationChange(
-                          "onsiteAccDirectorValid",
-                          "Onsite account director should not be empty."
-                        );
-                      } else {
-                        onValidationChange("onsiteAccDirectorValid", "");
-                      }
-                    }}
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                  <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.onsiteAccDirectorValid}
-                  </p>
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Onboarding coordinator</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentStartEndOperationsData.onboCoordinator}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("onboCoordinator", event?.target?.value);
-                      if (!isTextValid(event?.target?.value)) {
-                        onValidationChange(
-                          "onboCoordinatorValid",
-                          "Onboarding coordinator should not be empty."
-                        );
-                      } else {
-                        onValidationChange("onboCoordinatorValid", "");
-                      }
-                    }}
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                  <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.onboCoordinatorValid}
-                  </p>
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>End date</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentStartEndOperationsData.endDate}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("endDate", event?.target?.value);
-                      if (!isTextValid(event?.target?.value)) {
-                        onValidationChange(
-                          "endDateValid",
-                          "End date should not be empty."
-                        );
-                      } else {
-                        onValidationChange("endDateValid", "");
-                      }
-                    }}
-                    type="date"
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                  <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.endDateValid}
-                  </p>
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
                   <span>Gross BR</span>
                 </td>
                 <td className="px-6 py-0">
                   <TextField
-                    value={currentStartEndOperationsData.grossBr}
+                    value={currentRateRevisionData?.grossBr}
                     placeholder={""}
                     handleChange={(event) => {
                       onValueChange("grossBr", event?.target?.value);
@@ -345,13 +69,13 @@ export const StartEndOperations: React.FC = () => {
                           "Gross BR should not be empty."
                         );
                       } else {
-                        onValidationChange("grossBrValid", "");
+                        onValidationChange("grossBrValid", " ");
                       }
                     }}
                     styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
                   />
                   <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.grossBrValid}
+                    {validationRateRevisionData?.grossBrValid}
                   </p>
                 </td>
               </tr>
@@ -361,7 +85,7 @@ export const StartEndOperations: React.FC = () => {
                 </td>
                 <td className="px-6 py-0">
                   <TextField
-                    value={currentStartEndOperationsData.mspFeePercentage}
+                    value={currentRateRevisionData?.mspFeePercentage}
                     placeholder={""}
                     handleChange={(event) => {
                       onValueChange("mspFeePercentage", event?.target?.value);
@@ -377,7 +101,7 @@ export const StartEndOperations: React.FC = () => {
                     styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
                   />
                   <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.mspFeePercentageValid}
+                    {validationRateRevisionData?.mspFeePercentageValid}
                   </p>
                 </td>
               </tr>
@@ -387,7 +111,7 @@ export const StartEndOperations: React.FC = () => {
                 </td>
                 <td className="px-6 py-0">
                   <TextField
-                    value={currentStartEndOperationsData.mspFee}
+                    value={currentRateRevisionData?.mspFee}
                     placeholder={""}
                     handleChange={(event) => {
                       onValueChange("mspFee", event?.target?.value);
@@ -403,7 +127,33 @@ export const StartEndOperations: React.FC = () => {
                     styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
                   />
                   <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.mspFeeValid}
+                    {validationRateRevisionData?.mspFeeValid}
+                  </p>
+                </td>
+              </tr>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Net bill rate</span>
+                </td>
+                <td className="px-6 py-0">
+                  <TextField
+                    value={currentRateRevisionData?.netBillRate}
+                    placeholder={""}
+                    handleChange={(event) => {
+                      onValueChange("netBillRate", event?.target?.value);
+                      if (!isTextValid(event?.target?.value)) {
+                        onValidationChange(
+                          "netBillRateValid",
+                          "Net bill rate should not be empty."
+                        );
+                      } else {
+                        onValidationChange("netBillRateValid", "");
+                      }
+                    }}
+                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
+                  />
+                  <p className="" style={{ fontSize: "12px", color: "red" }}>
+                    {validationRateRevisionData?.netBillRateValid}
                   </p>
                 </td>
               </tr>
@@ -413,7 +163,7 @@ export const StartEndOperations: React.FC = () => {
                 </td>
                 <td className="px-6 py-0">
                   <TextField
-                    value={currentStartEndOperationsData.payRate}
+                    value={currentRateRevisionData?.payRate}
                     placeholder={""}
                     handleChange={(event) => {
                       onValueChange("payRate", event?.target?.value);
@@ -429,7 +179,7 @@ export const StartEndOperations: React.FC = () => {
                     styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
                   />
                   <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.payRateValid}
+                    {validationRateRevisionData?.payRateValid}
                   </p>
                 </td>
               </tr>
@@ -439,7 +189,7 @@ export const StartEndOperations: React.FC = () => {
                 </td>
                 <td className="px-6 py-0">
                   <TextField
-                    value={currentStartEndOperationsData.refFee}
+                    value={currentRateRevisionData?.refFee}
                     placeholder={""}
                     handleChange={(event) => {
                       onValueChange("refFee", event?.target?.value);
@@ -455,7 +205,7 @@ export const StartEndOperations: React.FC = () => {
                     styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
                   />
                   <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.refFeeValid}
+                    {validationRateRevisionData?.refFeeValid}
                   </p>
                 </td>
               </tr>
@@ -463,9 +213,9 @@ export const StartEndOperations: React.FC = () => {
                 <td className="px-6 py-4 font-semibold">
                   <span>Tax OH percentage</span>
                 </td>
-                <td className="px-6 py-0">
+                <td className="px-6 py-0 ">
                   <TextField
-                    value={currentStartEndOperationsData.taxOHPercentage}
+                    value={currentRateRevisionData?.taxOHPercentage}
                     placeholder={""}
                     handleChange={(event) => {
                       onValueChange("taxOHPercentage", event?.target?.value);
@@ -481,7 +231,7 @@ export const StartEndOperations: React.FC = () => {
                     styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
                   />
                   <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.taxOHPercentageValid}
+                    {validationRateRevisionData?.taxOHPercentageValid}
                   </p>
                 </td>
               </tr>
@@ -498,14 +248,42 @@ export const StartEndOperations: React.FC = () => {
                 <th></th>
               </tr>
             </thead>
-            <tbody className="">
+            <tbody>
+              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                <td className="px-6 py-4 font-semibold">
+                  <span>Opted for health benefits</span>
+                </td>
+                <td className="px-6 py-0">
+                  <Select
+                    options={yesNoList}
+                    value={currentRateRevisionData?.optedForHB}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    onChange={(e: any) => {
+                      onValueChange("optedForHB", e);
+                      if (!isTextValid(e?.value)) {
+                        onValidationChange(
+                          "optedForHBValid",
+                          "Opted for health benefits should not be empty."
+                        );
+                      } else {
+                        onValidationChange("optedForHBValid", "");
+                      }
+                    }}
+                    isSearchable={true}
+                  />{" "}
+                  <p className="" style={{ fontSize: "12px", color: "red" }}>
+                    {validationRateRevisionData?.optedForHBValid}
+                  </p>
+                </td>
+              </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
                   <span>Tax OH</span>
                 </td>
                 <td className="px-6 py-0">
                   <TextField
-                    value={currentStartEndOperationsData.taxOH}
+                    value={currentRateRevisionData?.taxOH}
                     placeholder={""}
                     handleChange={(event) => {
                       onValueChange("taxOH", event?.target?.value);
@@ -521,35 +299,7 @@ export const StartEndOperations: React.FC = () => {
                     styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
                   />
                   <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.taxOHValid}
-                  </p>
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Opted for health benefits</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={yesNoList}
-                    value={currentStartEndOperationsData.hBenefitesOpted}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("hBenefitesOpted", e);
-                      if (!isTextValid(e?.value)) {
-                        onValidationChange(
-                          "hBenefitesOptedValid",
-                          "Opted for health benefits should not be empty."
-                        );
-                      } else {
-                        onValidationChange("hBenefitesOptedValid", "");
-                      }
-                    }}
-                    isSearchable={true}
-                  />
-                  <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.hBenefitesOptedValid}
+                    {validationRateRevisionData?.taxOHValid}
                   </p>
                 </td>
               </tr>
@@ -559,49 +309,23 @@ export const StartEndOperations: React.FC = () => {
                 </td>
                 <td className="px-6 py-0">
                   <TextField
-                    value={currentStartEndOperationsData.hBenefitesCost}
+                    value={currentRateRevisionData?.healthB}
                     placeholder={""}
                     handleChange={(event) => {
-                      onValueChange("hBenefitesCost", event?.target?.value);
+                      onValueChange("healthB", event?.target?.value);
                       if (!isTextValid(event?.target?.value)) {
                         onValidationChange(
-                          "hBenefitesCostValid",
+                          "healthBValid",
                           "Health benefits cost should not be empty."
                         );
                       } else {
-                        onValidationChange("hBenefitesCostValid", "");
+                        onValidationChange("healthBValid", "");
                       }
                     }}
                     styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
                   />
                   <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.hBenefitesCostValid}
-                  </p>
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Net bill rate</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    value={currentStartEndOperationsData.netBillRate}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("netBillRate", event?.target?.value);
-                      if (!isTextValid(event?.target?.value)) {
-                        onValidationChange(
-                          "netBillRateValid",
-                          "Net bill rate should not be empty."
-                        );
-                      } else {
-                        onValidationChange("netBillRateValid", "");
-                      }
-                    }}
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                  <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.netBillRateValid}
+                    {validationRateRevisionData?.healthBValid}
                   </p>
                 </td>
               </tr>
@@ -611,7 +335,7 @@ export const StartEndOperations: React.FC = () => {
                 </td>
                 <td className="px-6 py-0">
                   <TextField
-                    value={currentStartEndOperationsData.netPurchase}
+                    value={currentRateRevisionData?.netPurchase}
                     placeholder={""}
                     handleChange={(event) => {
                       onValueChange("netPurchase", event?.target?.value);
@@ -627,7 +351,7 @@ export const StartEndOperations: React.FC = () => {
                     styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
                   />
                   <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.netPurchaseValid}
+                    {validationRateRevisionData?.netPurchaseValid}
                   </p>
                 </td>
               </tr>
@@ -637,7 +361,7 @@ export const StartEndOperations: React.FC = () => {
                 </td>
                 <td className="px-6 py-0">
                   <TextField
-                    value={currentStartEndOperationsData.margin}
+                    value={currentRateRevisionData?.margin}
                     placeholder={""}
                     handleChange={(event) => {
                       onValueChange("margin", event?.target?.value);
@@ -653,272 +377,43 @@ export const StartEndOperations: React.FC = () => {
                     styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
                   />
                   <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.marginValid}
+                    {validationRateRevisionData?.marginValid}
                   </p>
                 </td>
               </tr>
               <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
                 <td className="px-6 py-4 font-semibold">
-                  <span>Full time salary offered</span>
+                  <span>Rate revision reason</span>
                 </td>
                 <td className="px-6 py-0">
                   <TextField
-                    value={currentStartEndOperationsData.fullTimeSalaryOffered}
+                    // className="rate-revision-textarea"
+                    value={currentRateRevisionData?.rateRevisionReason}
                     placeholder={""}
                     handleChange={(event) => {
-                      onValueChange(
-                        "fullTimeSalaryOffered",
-                        event?.target?.value
-                      );
+                      onValueChange("rateRevisionReason", event?.target?.value);
                       if (!isTextValid(event?.target?.value)) {
                         onValidationChange(
-                          "fullTimeSalaryOfferedValid",
-                          "Full time salary offered should not be empty."
+                          "rateRevisionReasonValid",
+                          "Rate revision reason should not be empty."
                         );
                       } else {
-                        onValidationChange("fullTimeSalaryOfferedValid", "");
+                        onValidationChange("rateRevisionReasonValid", "");
                       }
                     }}
                     styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
                   />
                   <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {
-                      validationStartEndOperationsData?.fullTimeSalaryOfferedValid
-                    }
-                  </p>
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Joining status</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={JoiningStatusList}
-                    value={currentStartEndOperationsData.joiningStatus}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("joiningStatus", e);
-                      if (!isTextValid(e?.value)) {
-                        onValidationChange(
-                          "joiningStatusValid",
-                          "Joining status should not be empty."
-                        );
-                      } else {
-                        onValidationChange("joiningStatusValid", "");
-                      }
-                    }}
-                    isSearchable={true}
-                  />
-                  <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.joiningStatusValid}
-                  </p>
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Joining type</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={JoiningTypeList}
-                    value={currentStartEndOperationsData.joiningType}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("joiningType", e);
-                      if (!isTextValid(e?.value)) {
-                        onValidationChange(
-                          "joiningTypeValid",
-                          "Joining type should not be empty."
-                        );
-                      } else {
-                        onValidationChange("joiningTypeValid", "");
-                      }
-                    }}
-                    isSearchable={true}
-                  />
-                  <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.joiningTypeValid}
-                  </p>
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Exit clearance type</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={ExitClearanceList}
-                    value={currentStartEndOperationsData.exitClearance}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("exitClearance", e);
-                      if (!isTextValid(e?.value)) {
-                        onValidationChange(
-                          "exitClearanceValid",
-                          "Exit clearance type should not be empty."
-                        );
-                      } else {
-                        onValidationChange("exitClearanceValid", "");
-                      }
-                    }}
-                    isSearchable={true}
-                  />
-                  <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.exitClearanceValid}
-                  </p>
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>End reason type</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={EndReasonList}
-                    value={currentStartEndOperationsData.endReason}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("endReason", e);
-                      if (!isTextValid(e?.value)) {
-                        onValidationChange(
-                          "endReasonValid",
-                          "End reason type should not be empty."
-                        );
-                      } else {
-                        onValidationChange("endReasonValid", "");
-                      }
-                    }}
-                    isSearchable={true}
-                  />
-                  <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.endReasonValid}
-                  </p>
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Job level</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={JobLevelList}
-                    value={currentStartEndOperationsData.jobLevel}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("jobLevel", e);
-                      if (!isTextValid(e?.value)) {
-                        onValidationChange(
-                          "jobLevelValid",
-                          "Job levelshould not be empty."
-                        );
-                      } else {
-                        onValidationChange("jobLevelValid", "");
-                      }
-                    }}
-                    isSearchable={true}
-                  />
-                  <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.jobLevelValid}
-                  </p>
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Select FF invoice status</span>
-                </td>
-                <td className="px-6 py-0">
-                  <Select
-                    options={FFInvoiceStatusList}
-                    value={currentStartEndOperationsData.ffInvoiceStatus}
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value}
-                    onChange={(e: any) => {
-                      onValueChange("ffInvoiceStatus", e);
-                      if (!isTextValid(e?.value)) {
-                        onValidationChange(
-                          "ffInvoiceStatusValid",
-                          "Select FF invoice status should not be empty."
-                        );
-                      } else {
-                        onValidationChange("ffInvoiceStatusValid", "");
-                      }
-                    }}
-                    isSearchable={true}
-                  />
-                  <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.ffInvoiceStatusValid}
-                  </p>
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>Joining status remarks</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    // className="start-end-textarea"
-                    // label="Joining Status Remarks"
-                    value={currentStartEndOperationsData.joiningStatusRemark}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange(
-                        "joiningStatusRemark",
-                        event?.target?.value
-                      );
-                      if (!isTextValid(event?.target?.value)) {
-                        onValidationChange(
-                          "joiningStatusRemarkValid",
-                          "Joining status remarks should not be empty."
-                        );
-                      } else {
-                        onValidationChange("joiningStatusRemarkValid", "");
-                      }
-                    }}
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                  <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.joiningStatusRemarkValid}
-                  </p>
-                </td>
-              </tr>
-              <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-semibold">
-                  <span>End remarks</span>
-                </td>
-                <td className="px-6 py-0">
-                  <TextField
-                    // className="start-end-textarea"
-                    // label="End Remarks"
-                    value={currentStartEndOperationsData.endRemarks}
-                    placeholder={""}
-                    handleChange={(event) => {
-                      onValueChange("endRemarks", event?.target?.value);
-                      if (!isTextValid(event?.target?.value)) {
-                        onValidationChange(
-                          "endRemarksValid",
-                          "End remarks should not be empty."
-                        );
-                      } else {
-                        onValidationChange("endRemarksValid", "");
-                      }
-                    }}
-                    styles={{ border: "1px solid hsl(0, 0%, 80%)" }}
-                  />
-                  <p className="" style={{ fontSize: "12px", color: "red" }}>
-                    {validationStartEndOperationsData?.endRemarksValid}
+                    {validationRateRevisionData?.rateRevisionReasonValid}
                   </p>
                 </td>
               </tr>
             </tbody>
           </table>
+          {/* <Submit /> */}
         </div>
       </div>
+      <Submit />
     </>
   );
 };
