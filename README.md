@@ -1,47 +1,24 @@
+
 import * as React from "react";
-import Backdrop from "@mui/material/Backdrop";
-import Box from "@mui/material/Box";
-// import Modal from '@mui/material/Modal';
-// import Button from '@mui/material/Button';
-import Typography from "@mui/material/Typography";
 import { useSpring, animated } from "@react-spring/web";
-import CloseIcon from "@mui/icons-material/Close";
-import EditIcon from "@mui/icons-material/Edit";
-import DoneIcon from "@mui/icons-material/Done";
-import { TextField } from "../../common/TextField/TextField";
+import { Grid, TextField as TextField1 } from "@mui/material";
+
+// import { TextField } from "../../common/TextField/TextField";
 import { useAppDispatch, useAppSelector } from "../../hooks/app";
 import {
-  ArticlesOfIncorporationList,
-  CertificateOfInsuranceList,
-  CipcicaCipcicuList,
-  ClientTaskOrderOrSOWList,
-  ClientTaskOrderOrSOWStepList,
-  ClientTaskOrderSigningList,
-  DirectDepositeAgreementList,
-  DocumentationStatusList,
-  EVerifyList,
-  EemergencyFormList,
-  GoodStandingDocumentationList,
-  I9FormList,
-  ListADocumentsList,
-  ListBDocumentsList,
-  ListCDocumentsList,
-  MSAList,
-  SOWList,
-  VaccinationStatusList,
-  VoidCheckEmailList,
-  W9W4List,
-  WorkAuthorizeDocumentationList,
+  EndReasonList,
+  ExitClearanceList,
+  FFInvoiceStatusList,
+  JobLevelList,
+  JoiningStatusList,
+  JoiningTypeList,
+  yesNoList,
 } from "../../constants/constants";
 import Select from "react-select";
-import { Modal } from "../../common/Modal/Modal";
-import { DropDown } from "../../common/DropDown/DropDown";
-import { DatePicker } from "../../common/DatePicker/DatePicker";
 import moment from "moment";
 import { Button } from "../../common/Button/Button";
-import { editCandidateDocumentationData } from "../../actions/documentation";
+import { editCandidateStartEndOperationsData } from "../../actions/startendoperations";
 import { RootState } from "../../redux/store";
-import { Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 import { isTextValid } from "../../helpers/validate";
 import { FloatLabel } from "../../common/FloatLabel/FloatLabel";
@@ -112,7 +89,7 @@ interface Props {
   setShowModal: any;
 }
 
-const ShowDocumentation: React.FC<Props> = ({
+const ShowStartEndOperations: React.FC<Props> = ({
   open,
   setOpen,
   // data,
@@ -122,1461 +99,1223 @@ const ShowDocumentation: React.FC<Props> = ({
 }) => {
   const dispatch = useAppDispatch();
   let data = useAppSelector(
-    (state: RootState) => state?.documentation?.singleDocumentationData
+    (state: RootState) => state?.startEndOperations?.singleStartEndOperationData
   );
   const [disable, setDisable] = React.useState(true);
 
-  const [
-    articlesOrCertificateOFIncorporation,
-    setArticlesOrCertificateOFIncorporation,
-  ] = React.useState({
-    value: data?.articlesOrCertificateOFIncorporation,
-    label: data?.articlesOrCertificateOFIncorporation,
+  const [joiningStatus, setJoiningStatus] = React.useState({
+    value: data?.joiningStatus,
+    label: data?.joiningStatus,
   });
 
-  const [w9Orw4, setW9Orw4] = React.useState({
-    value: data?.w9Orw4,
-    label: data?.w9Orw4,
+  const [joiningType, setJoiningType] = React.useState({
+    value: data?.joiningType,
+    label: data?.joiningType,
   });
-  const [directDepositAgreement, setDirectDepositAgreement] = React.useState({
-    value: data?.directDepositAgreement,
-    label: data?.directDepositAgreement,
-  });
-  const [voidCheckOrEmailContent, setVoidCheckOrEmailContent] = React.useState({
-    value: data?.voidCheckOrEmailContent,
-    label: data?.voidCheckOrEmailContent,
-  });
-  const [CIPCICICAOrCIPCICU, setCIPCICICAOrCIPCICU] = React.useState({
-    value: data?.CIPCICICAOrCIPCICU,
-    label: data?.CIPCICICAOrCIPCICU,
-  });
-  const [goodStandingDocument, setGoodStandingDocument] = React.useState({
-    value: data?.goodStandingDocument,
-    label: data?.goodStandingDocument,
-  });
-  const [workAuthorizationDocument, setWorkAuthorizationDocument] =
-    React.useState({
-      value: data?.workAuthorizationDocument,
-      label: data?.workAuthorizationDocument,
-    });
-  const [I9Form, setI9Form] = React.useState({
-    value: data?.I9Form,
-    label: data?.I9Form,
-  });
-  const [listADocument, setListADocument] = React.useState({
-    value: data?.listADocument,
-    label: data?.listADocument,
-  });
-  const [listBDocument, setListBDocument] = React.useState({
-    value: data?.listBDocument,
-    label: data?.listBDocument,
-  });
-  const [listCDocument, setListCDocument] = React.useState({
-    value: data?.listCDocument,
-    label: data?.listCDocument,
-  });
-  const [E_verify, setE_verify] = React.useState({
-    value: data?.E_verify,
-    label: data?.E_verify,
-  });
-  const [E_verificationDate, setE_verificationDate] = React.useState(
-    moment.utc(data?.E_verificationDate).format("YYYY-MM-DD")
+
+  const [joiningStatusRemark, setJoiningStatusRemark] = React.useState(
+    data?.joiningStatusRemark
   );
-  const [emergencyForm, setEmergencyForm] = React.useState({
-    value: data?.emergencyForm,
-    label: data?.emergencyForm,
-  });
-  const [vaccinationStatus, setVaccinationStatus] = React.useState({
-    value: data?.vaccinationStatus,
-    label: data?.vaccinationStatus,
-  });
-  const [clientTaskOrderOrSOWst, setClientTaskOrderOrSOWst] = React.useState({
-    value: data?.clientTaskOrderOrSOWst,
-    label: data?.clientTaskOrderOrSOWst,
-  });
-  const [MSA, setMSA] = React.useState({
-    value: data?.MSA,
-    label: data?.MSA,
-  });
-  const [SOW, setSOW] = React.useState({
-    value: data?.SOW,
-    label: data?.SOW,
-  });
-  const [SOWValidity, setSOWValidity] = React.useState(
-    moment.utc(data?.SOWValidity).format("YYYY-MM-DD")
+  const [recruiter, setRecruiter] = React.useState(data?.recruiter);
+  const [teamLead, setTeamLead] = React.useState(data?.teamLead);
+  const [crm, setCrm] = React.useState(data?.crm);
+  const [teamManager, setTeamManager] = React.useState(data?.teamManager);
+  const [seniorManager, setSeniorManager] = React.useState(data?.seniorManager);
+  const [assoDirector, setAssoDirector] = React.useState(data?.assoDirector);
+  const [centerHead, setCenterHead] = React.useState(data?.centerHead);
+  const [onsiteAccDirector, setOnsiteAccDirector] = React.useState(
+    data?.onsiteAccDirector
   );
-  const [certificateOFInsuranceOrCOI, setCertificateOFInsuranceOrCOI] =
-    React.useState({
-      value: data?.certificateOFInsuranceOrCOI,
-      label: data?.certificateOFInsuranceOrCOI,
-    });
-  const [clientTaskOrderSigning, setClientTaskOrderSigning] = React.useState({
-    value: data?.certificateOFInsuranceOrCOI,
-    label: data?.certificateOFInsuranceOrCOI,
-  });
-  const [TaskOrderExpiryDate, setTaskOrderExpiryDate] = React.useState(
-    moment.utc(data?.TaskOrderExpiryDate).format("YYYY-MM-DD")
+  const [onboCoordinator, setOnboCoordinator] = React.useState(
+    data?.onboCoordinator
   );
-  const [certificationOfInsurance, setCertificationOfInsurance] =
-    React.useState(
-      moment.utc(data?.certificationOfInsurance).format("YYYY-MM-DD")
-    );
-  const [clientTaskOrderOrSOW, setClientTaskOrderOrSOW] = React.useState({
-    value: data?.clientTaskOrderOrSOW,
-    label: data?.clientTaskOrderOrSOW,
-  });
-  const [documentationStatus, setDocumentationStatus] = React.useState({
-    value: data?.documentationStatus,
-    label: data?.documentationStatus,
-  });
-  const [documentationCompletionDate, setDocumentationCompletionDate] =
-    React.useState(
-      moment.utc(data?.documentationCompletionDate).format("YYYY-MM-DD")
-    );
-  const [documentationRemark, setDocumentationRemark] = React.useState(
-    data?.documentationRemark
+  const [endDate, setEndDate] = React.useState(
+    moment.utc(data?.endDate).format("YYYY-MM-DD")
   );
+  const [exitClearance, setExitClearance] = React.useState({
+    value: data?.exitClearance,
+    label: data?.exitClearance,
+  });
+
+  const [endReason, setEndReason] = React.useState({
+    value: data?.endReason,
+    label: data?.endReason,
+  });
+
+  const [endRemarks, setEndRemarks] = React.useState(data?.endRemarks);
+  const [grossBr, setGrossBr] = React.useState(data?.grossBr);
+  const [mspFeePercentage, setMspFeePercentage] = React.useState(
+    data?.mspFeePercentage
+  );
+  const [mspFee, setMspFee] = React.useState(data?.mspFee);
+  const [payRate, setPayRate] = React.useState(data?.payRate);
+  const [refFee, setRefFee] = React.useState(data?.refFee);
+  const [taxOHPercentage, setTaxOHPercentage] = React.useState(
+    data?.taxOHPercentage
+  );
+  const [taxOH, setTaxOH] = React.useState(data?.taxOH);
+
+  const [hBenefitesOpted, setHBenefitesOpted] = React.useState({
+    value: data?.hBenefitesOpted,
+    label: data?.hBenefitesOpted,
+  });
+
+  const [hBenefitesCost, setHBenefitesCost] = React.useState(
+    data?.hBenefitesCost
+  );
+  const [netBillRate, setNetBillRate] = React.useState(data?.netBillRate);
+  const [netPurchase, setNetPurchase] = React.useState(data?.netPurchase);
+  const [margin, setMargin] = React.useState(data?.margin);
+  const [fullTimeSalaryOffered, setFullTimeSalaryOffered] = React.useState(
+    data?.fullTimeSalaryOffered
+  );
+
+  const [jobLevel, setJobLevel] = React.useState({
+    value: data?.jobLevel,
+    label: data?.jobLevel,
+  });
+  const [ffInvoiceStatus, setFfInvoiceStatus] = React.useState({
+    value: data?.ffInvoiceStatus,
+    label: data?.ffInvoiceStatus,
+  });
   const [count, setCount] = React.useState(0);
 
   React.useEffect(() => {
-    setArticlesOrCertificateOFIncorporation({
-      value: data?.articlesOrCertificateOFIncorporation,
-      label: data?.articlesOrCertificateOFIncorporation,
+    setJoiningStatus({
+      value: data?.joiningStatus,
+      label: data?.joiningStatus,
     });
-    setW9Orw4({
-      value: data?.w9Orw4,
-      label: data?.w9Orw4,
+    setJoiningType({
+      value: data?.joiningType,
+      label: data?.joiningType,
     });
-    setDirectDepositAgreement({
-      value: data?.directDepositAgreement,
-      label: data?.directDepositAgreement,
+
+    setJoiningStatusRemark(data?.joiningStatusRemark);
+    setRecruiter(data?.recruiter);
+    setTeamLead(data?.teamLead);
+    setCrm(data?.crm);
+    setTeamManager(data?.teamManager);
+    setSeniorManager(data?.seniorManager);
+    setAssoDirector(data?.assoDirector);
+    setCenterHead(data?.centerHead);
+    setOnsiteAccDirector(data?.onsiteAccDirector);
+    setOnboCoordinator(data?.onboCoordinator);
+    setEndDate(moment.utc(data?.endDate).format("YYYY-MM-DD"));
+
+    setExitClearance({
+      value: data?.exitClearance,
+      label: data?.exitClearance,
     });
-    setVoidCheckOrEmailContent({
-      value: data?.voidCheckOrEmailContent,
-      label: data?.voidCheckOrEmailContent,
+
+    setEndReason({
+      value: data?.endReason,
+      label: data?.endReason,
     });
-    setCIPCICICAOrCIPCICU({
-      value: data?.CIPCICICAOrCIPCICU,
-      label: data?.CIPCICICAOrCIPCICU,
+
+    setEndRemarks(data?.endRemarks);
+    setGrossBr(data?.grossBr);
+    setMspFeePercentage(data?.mspFeePercentage);
+    setMspFee(data?.mspFee);
+    setPayRate(data?.payRate);
+    setRefFee(data?.refFee);
+    setTaxOHPercentage(data?.taxOHPercentage);
+    setTaxOH(data?.taxOH);
+
+    setHBenefitesOpted({
+      value: data?.hBenefitesOpted,
+      label: data?.hBenefitesOpted,
     });
-    setGoodStandingDocument({
-      value: data?.goodStandingDocument,
-      label: data?.goodStandingDocument,
+
+    setHBenefitesCost(data?.hBenefitesCost);
+    setNetBillRate(data?.netBillRate);
+    setNetPurchase(data?.netPurchase);
+    setMargin(data?.margin);
+    setFullTimeSalaryOffered(data?.fullTimeSalaryOffered);
+
+    setJobLevel({
+      value: data?.jobLevel,
+      label: data?.jobLevel,
     });
-    setWorkAuthorizationDocument({
-      value: data?.workAuthorizationDocument,
-      label: data?.workAuthorizationDocument,
+    setFfInvoiceStatus({
+      value: data?.ffInvoiceStatus,
+      label: data?.ffInvoiceStatus,
     });
-    setI9Form({
-      value: data?.I9Form,
-      label: data?.I9Form,
-    });
-    setListADocument({
-      value: data?.listADocument,
-      label: data?.listADocument,
-    });
-    setListBDocument({
-      value: data?.listBDocument,
-      label: data?.listBDocument,
-    });
-    setListCDocument({
-      value: data?.listCDocument,
-      label: data?.listCDocument,
-    });
-    setE_verify({
-      value: data?.E_verify,
-      label: data?.E_verify,
-    });
-    setE_verificationDate(
-      moment.utc(data?.E_verificationDate).format("YYYY-MM-DD")
-    );
-    setEmergencyForm({
-      value: data?.emergencyForm,
-      label: data?.emergencyForm,
-    });
-    setVaccinationStatus({
-      value: data?.vaccinationStatus,
-      label: data?.vaccinationStatus,
-    });
-    setClientTaskOrderOrSOWst({
-      value: data?.clientTaskOrderOrSOWst,
-      label: data?.clientTaskOrderOrSOWst,
-    });
-    setMSA({
-      value: data?.MSA,
-      label: data?.MSA,
-    });
-    setSOW({
-      value: data?.SOW,
-      label: data?.SOW,
-    });
-    setSOWValidity(moment.utc(data?.SOWValidity).format("YYYY-MM-DD"));
-    setCertificateOFInsuranceOrCOI({
-      value: data?.certificateOFInsuranceOrCOI,
-      label: data?.certificateOFInsuranceOrCOI,
-    });
-    setClientTaskOrderSigning({
-      value: data?.certificateOFInsuranceOrCOI,
-      label: data?.certificateOFInsuranceOrCOI,
-    });
-    setTaskOrderExpiryDate(
-      moment.utc(data?.TaskOrderExpiryDate).format("YYYY-MM-DD")
-    );
-    setCertificationOfInsurance(
-      moment.utc(data?.certificationOfInsurance).format("YYYY-MM-DD")
-    );
-    setClientTaskOrderOrSOW({
-      value: data?.clientTaskOrderOrSOW,
-      label: data?.clientTaskOrderOrSOW,
-    });
-    setDocumentationStatus({
-      value: data?.documentationStatus,
-      label: data?.documentationStatus,
-    });
-    setDocumentationCompletionDate(
-      moment.utc(data?.documentationCompletionDate).format("YYYY-MM-DD")
-    );
-    setDocumentationRemark(data?.documentationRemark);
     setCount(1);
+    // }
   }, [data]);
+  const [joiningStatusValid, setJoiningStatusValid] = useState<boolean>();
+  const [joiningTypeValid, setJoiningTypeValid] = useState<boolean>();
+  const [joiningStatusRemarkValid, setJoiningStatusRemarkValid] =
+    useState<boolean>();
+  const [recruiterValid, setRecruiterValid] = useState<boolean>();
+  const [teamLeadValid, setTeamLeadValid] = useState<boolean>();
+  const [crmValid, setCrmValid] = useState<boolean>();
+  const [teamManagerValid, setTeamManagerValid] = useState<boolean>();
+  const [seniorManagerValid, setSeniorManagerValid] = useState<boolean>();
+  const [assoDirectorValid, setAssoDirectorValid] = useState<boolean>();
+  const [centerHeadValid, setCenterHeadValid] = useState<boolean>();
+  const [onsiteAccDirectorValid, setOnsiteAccDirectorValid] =
+    useState<boolean>();
+  const [onboCoordinatorValid, setOnboCoordinatorValid] = useState<boolean>();
+  const [endDateValid, setEndDateValid] = useState<boolean>();
+  const [exitClearanceValid, setExitClearanceValid] = useState<boolean>();
+  const [endReasonValid, setEndReasonValid] = useState<boolean>();
+  const [endRemarksValid, setEndRemarksValid] = useState<boolean>();
+  const [grossBrValid, setGrossBrValid] = useState<boolean>();
+  const [mspFeePercentageValid, setMspFeePercentageValid] = useState<boolean>();
+  const [mspFeeValid, setMspFeeValid] = useState<boolean>();
+  const [payRateValid, setPayRateValid] = useState<boolean>();
+  const [refFeeValid, setRefFeeValid] = useState<boolean>();
+  const [taxOHPercentageValid, setTaxOHPercentageValid] = useState<boolean>();
+  const [taxOHValid, setTaxOHValid] = useState<boolean>();
+  const [hBenefitesOptedValid, setHBenefitesOptedValid] = useState<boolean>();
+  const [hBenefitesCostValid, setHBenefitesCostValid] = useState<boolean>();
+  const [netBillRateValid, setNetBillRateValid] = useState<boolean>();
+  const [netPurchaseValid, setNetPurchaseValid] = useState<boolean>();
 
-  const [
-    articlesOrCertificateOFIncorporationValid,
-    setArticlesOrCertificateOFIncorporationValid,
-  ] = useState<boolean>();
+  const [marginValid, setMarginValid] = useState<boolean>();
+  const [fullTimeSalaryOfferedValid, setFullTimeSalaryOfferedValid] =
+    useState<boolean>();
+  const [jobLevelValid, setJobLevelValid] = useState<boolean>();
+  const [ffInvoiceStatusValid, setFfInvoiceStatusValid] = useState<boolean>();
 
-  const [w9Orw4Valid, setW9Orw4Valid] = useState<boolean>();
-  const [directDepositAgreementValid, setDirectDepositAgreementValid] =
-    useState<boolean>();
-  const [voidCheckOrEmailContentValid, setVoidCheckOrEmailContentValid] =
-    useState<boolean>();
-  const [CIPCICICAOrCIPCICUValid, setCIPCICICAORCIPCICUValid] =
-    useState<boolean>();
-  const [goodStandingDocumentValid, setGoodStandingDocumentValid] =
-    useState<boolean>();
-  const [workAuthorizationDocumentValid, setWorkAuthorizationDocumentValid] =
-    useState<boolean>();
-  const [I9FormValid, setI9FOrmValid] = useState<boolean>();
-  const [listADocumentValid, setListADocumentValid] = useState<boolean>();
-  const [listBDocumentValid, setListBDocumentValid] = useState<boolean>();
-  const [listCDocumentValid, setListCDocumentValid] = useState<boolean>();
-  const [E_verifyValid, setE_VerifyValid] = useState<boolean>();
-  const [E_verificationDateValid, setE_VerificationDateValid] =
-    useState<boolean>();
-  const [emergencyFormValid, setemergencyFormValid] = useState<boolean>();
-  const [vaccinationStatusValid, setVaccinationStatusValid] =
-    useState<boolean>();
-  const [clientTaskOrderOrSOWstValid, setClientTaskOrderOrSOWstValid] =
-    useState<boolean>();
-  const [MSAValid, setMSAValid] = useState<boolean>();
-  const [SOWValid, setSOWValid] = useState<boolean>();
-  const [SOWValidityValid, setSOWVAlidityValid] = useState<boolean>();
-  const [
-    certificateOFInsuranceOrCOIValid,
-    setCertificateOFInsuranceOrCOIValid,
-  ] = useState<boolean>();
-  const [clientTaskOrderSigningValid, setClientTaskOrderSigningValid] =
-    useState<boolean>();
-  const [TaskOrderExpiryDateValid, setTAskOrderExpiryDateValid] =
-    useState<boolean>();
-  const [certificationOfInsuranceValid, setCertificationOfInsuranceValid] =
-    useState<boolean>();
+  const [joiningStatusError, setJoiningStatusError] = useState<any>();
+  const [joiningTypeError, setJoiningTypeError] = useState<any>();
+  const [joiningStatusRemarkError, setJoiningStatusRemarkError] =
+    useState<any>();
+  const [recruiterError, setRecruiterError] = useState<any>();
+  const [teamLeadError, setTeamLeadError] = useState<any>();
+  const [crmError, setCrmError] = useState<any>();
+  const [teamManagerError, setTeamManagerError] = useState<any>();
+  const [seniorManagerError, setSeniorManagerError] = useState<any>();
+  const [assoDirectorError, setAssoDirectorError] = useState<any>();
+  const [centerHeadError, setCenterHeadError] = useState<any>();
+  const [onsiteAccDirectorError, setOnsiteAccDirectorError] = useState<any>();
+  const [onboCoordinatorError, setOnboCoordinatorError] = useState<any>();
+  const [endDateError, setEndDateError] = useState<any>();
+  const [exitClearanceError, setExitClearanceError] = useState<any>();
+  const [endReasonError, setEndReasonError] = useState<any>();
+  const [endRemarksError, setEndRemarksError] = useState<any>();
+  const [grossBrError, setGrossBrError] = useState<any>();
+  const [mspFeePercentageError, setMspFeePercentageError] = useState<any>();
+  const [mspFeeError, setMspFeeError] = useState<any>();
+  const [payRateError, setPayRateError] = useState<any>();
+  const [refFeeError, setRefFeeError] = useState<any>();
+  const [taxOHPercentageError, setTaxOHPercentageError] = useState<any>();
+  const [taxOHError, setTaxOHError] = useState<any>();
+  const [hBenefitesOptedError, setHBenefitesOptedError] = useState<any>();
+  const [hBenefitesCostError, setHBenefitesCostError] = useState<any>();
+  const [netBillRateError, setNetBillRateError] = useState<any>();
+  const [netPurchaseError, setNetPurchaseError] = useState<any>();
 
-  const [documentationStatusValid, setDocumentationStatusValid] =
-    useState<boolean>();
-  const [clientTaskOrderOrSOWValid, setClientTaskOrderOrSOWValid] =
-    useState<boolean>();
-  const [documentationRemarkValid, setDocumentationRemarkValid] =
-    useState<boolean>();
-  const [
-    documentationCompletionDateValid,
-    setDocumentationCompletionDateValid,
-  ] = useState<boolean>();
+  const [marginError, setMarginError] = useState<any>();
+  const [fullTimeSalaryOfferedError, setFullTimeSalaryOfferedError] =
+    useState<any>();
+  const [jobLevelError, setJobLevelError] = useState<any>();
+  const [ffInvoiceStatusError, setFfInvoiceStatusError] = useState<any>();
 
-  const [
-    articlesOrCertificateOFIncorporationError,
-    setArticlesOrCertificateOFIncorporationError,
-  ] = useState<any>();
-
-  const [w9Orw4Error, setW9Orw4Error] = useState<any>();
-  const [directDepositAgreementError, setDirectDepositAgreementError] =
-    useState<any>();
-  const [voidCheckOrEmailContentError, setVoidCheckOrEmailContentError] =
-    useState<any>();
-  const [CIPCICICAOrCIPCICUError, setCIPCICICAORCIPCICUError] = useState<any>();
-  const [goodStandingDocumentError, setGoodStandingDocumentError] =
-    useState<any>();
-  const [workAuthorizationDocumentError, setWorkAuthorizationDocumentError] =
-    useState<any>();
-  const [I9FormError, setI9FOrmError] = useState<any>();
-  const [listADocumentError, setListADocumentError] = useState<any>();
-  const [listBDocumentError, setListBDocumentError] = useState<any>();
-  const [listCDocumentError, setListCDocumentError] = useState<any>();
-  const [E_verifyError, setE_VerifyError] = useState<any>();
-  const [E_verificationDateError, setE_VerificationDateError] = useState<any>();
-  const [emergencyFormError, setemergencyFormError] = useState<any>();
-  const [vaccinationStatusError, setVaccinationStatusError] = useState<any>();
-  const [clientTaskOrderOrSOWstError, setClientTaskOrderOrSOWstError] =
-    useState<any>();
-  const [MSAError, setMSAError] = useState<any>();
-  const [SOWError, setSOWError] = useState<any>();
-  const [SOWValidityError, setSOWVAlidityError] = useState<any>();
-  const [
-    certificateOFInsuranceOrCOIError,
-    setCertificateOFInsuranceOrCOIError,
-  ] = useState<any>();
-  const [clientTaskOrderSigningError, setClientTaskOrderSigningError] =
-    useState<any>();
-  const [TaskOrderExpiryDateError, setTAskOrderExpiryDateError] =
-    useState<any>();
-  const [certificationOfInsuranceError, setCertificationOfInsuranceError] =
-    useState<any>();
-
-  const [documentationStatusError, setDocumentationStatusError] =
-    useState<any>();
-  const [clientTaskOrderOrSOWError, setClientTaskOrderOrSOWError] =
-    useState<any>();
-  const [documentationRemarkError, setDocumentationRemarkError] =
-    useState<any>();
-  const [
-    documentationCompletionDateError,
-    setDocumentationCompletionDateError,
-  ] = useState<any>();
-
-  function updateCandidateDocumentation() {
-    setArticlesOrCertificateOFIncorporationValid(
-      isTextValid(articlesOrCertificateOFIncorporation.value)
-    );
-    setW9Orw4Valid(isTextValid(w9Orw4.value));
-    setDirectDepositAgreementValid(isTextValid(directDepositAgreement.value));
-    setVoidCheckOrEmailContentValid(isTextValid(voidCheckOrEmailContent.value));
-    setCIPCICICAORCIPCICUValid(isTextValid(CIPCICICAOrCIPCICU.value));
-    setGoodStandingDocumentValid(isTextValid(goodStandingDocument.value));
-    setWorkAuthorizationDocumentValid(
-      isTextValid(workAuthorizationDocument.value)
-    );
-    setI9FOrmValid(isTextValid(I9Form.value));
-    setListADocumentValid(isTextValid(listADocument.value));
-    setListBDocumentValid(isTextValid(listBDocument.value));
-    setListCDocumentValid(isTextValid(listCDocument.value));
-    setE_VerifyValid(isTextValid(E_verify.value));
-    setE_VerificationDateValid(isTextValid(E_verificationDate));
-    setemergencyFormValid(isTextValid(emergencyForm.value));
-    setVaccinationStatusValid(isTextValid(vaccinationStatus.value));
-    setClientTaskOrderOrSOWstValid(isTextValid(clientTaskOrderOrSOWst.value));
-
-    setMSAValid(isTextValid(MSA.value));
-    setSOWValid(isTextValid(SOW.value));
-    setSOWVAlidityValid(isTextValid(SOWValidity));
-    setCertificateOFInsuranceOrCOIValid(
-      isTextValid(certificateOFInsuranceOrCOI.value)
-    );
-    setClientTaskOrderSigningValid(isTextValid(clientTaskOrderSigning.value));
-    setTAskOrderExpiryDateValid(isTextValid(TaskOrderExpiryDate));
-    setCertificationOfInsuranceValid(isTextValid(certificationOfInsurance));
-    setClientTaskOrderOrSOWValid(isTextValid(clientTaskOrderOrSOW.value));
-    setDocumentationStatusValid(isTextValid(documentationStatus.value));
-    setDocumentationCompletionDateValid(
-      isTextValid(documentationCompletionDate)
-    );
-    setDocumentationRemarkValid(isTextValid(documentationRemark));
+  function updateCandidateStartEndOperations() {
+    setJoiningStatusValid(isTextValid(joiningStatus.value));
+    setJoiningTypeValid(isTextValid(joiningType.value));
+    setJoiningStatusRemarkValid(isTextValid(joiningStatusRemark));
+    setRecruiterValid(isTextValid(recruiter));
+    setTeamLeadValid(isTextValid(teamLead));
+    setCrmValid(isTextValid(crm));
+    setTeamManagerValid(isTextValid(teamManager));
+    setSeniorManagerValid(isTextValid(seniorManager));
+    setAssoDirectorValid(isTextValid(assoDirector));
+    setCenterHeadValid(isTextValid(centerHead));
+    setOnsiteAccDirectorValid(isTextValid(onsiteAccDirector));
+    setOnboCoordinatorValid(isTextValid(onboCoordinator));
+    setEndDateValid(isTextValid(endDate));
+    setExitClearanceValid(isTextValid(exitClearance.value));
+    setEndReasonValid(isTextValid(endReason.value));
+    setEndRemarksValid(isTextValid(endRemarks));
+    setGrossBrValid(isTextValid(grossBr));
+    setMspFeePercentageValid(isTextValid(mspFeePercentage));
+    setMspFeeValid(isTextValid(mspFee));
+    setPayRateValid(isTextValid(payRate));
+    setRefFeeValid(isTextValid(refFee));
+    setTaxOHPercentageValid(isTextValid(taxOHPercentage));
+    setTaxOHValid(isTextValid(taxOH));
+    setHBenefitesOptedValid(isTextValid(hBenefitesOpted.value));
+    setHBenefitesCostValid(isTextValid(hBenefitesCost));
+    setNetBillRateValid(isTextValid(netBillRate));
+    setNetPurchaseValid(isTextValid(netPurchase));
+    setMarginValid(isTextValid(margin));
+    setFullTimeSalaryOfferedValid(isTextValid(fullTimeSalaryOffered));
+    setJobLevelValid(isTextValid(jobLevel.value));
+    setFfInvoiceStatusValid(isTextValid(ffInvoiceStatus.value));
 
     if (
-      articlesOrCertificateOFIncorporationValid &&
-      w9Orw4Valid &&
-      directDepositAgreementValid &&
-      voidCheckOrEmailContentValid &&
-      CIPCICICAOrCIPCICUValid &&
-      goodStandingDocumentValid &&
-      workAuthorizationDocumentValid &&
-      I9FormValid &&
-      listADocumentValid &&
-      listBDocumentValid &&
-      listCDocumentValid &&
-      E_verifyValid &&
-      E_verificationDateValid &&
-      emergencyFormValid &&
-      vaccinationStatusValid &&
-      clientTaskOrderOrSOWstValid &&
-      MSAValid &&
-      SOWValid &&
-      SOWValidityValid &&
-      certificateOFInsuranceOrCOIValid &&
-      clientTaskOrderSigningValid &&
-      TaskOrderExpiryDateValid &&
-      certificationOfInsuranceValid &&
-      documentationStatusValid &&
-      clientTaskOrderOrSOWValid &&
-      documentationRemarkValid &&
-      documentationCompletionDateValid
+      joiningStatusValid &&
+      joiningTypeValid &&
+      joiningStatusRemarkValid &&
+      recruiterValid &&
+      teamLeadValid &&
+      crmValid &&
+      teamManagerValid &&
+      seniorManagerValid &&
+      assoDirectorValid &&
+      centerHeadValid &&
+      onsiteAccDirectorValid &&
+      onboCoordinatorValid &&
+      endDateValid &&
+      exitClearanceValid &&
+      endReasonValid &&
+      endRemarksValid &&
+      grossBrValid &&
+      mspFeePercentageValid &&
+      mspFeeValid &&
+      payRateValid &&
+      refFeeValid &&
+      taxOHPercentageValid &&
+      taxOHValid &&
+      hBenefitesOptedValid &&
+      hBenefitesCostValid &&
+      netBillRateValid &&
+      netPurchaseValid &&
+      marginValid &&
+      fullTimeSalaryOfferedValid &&
+      jobLevelValid &&
+      ffInvoiceStatusValid
     ) {
+      // console.log('voidCheckOrEmailContent: ', voidCheckOrEmailContent);
       dispatch(
-        editCandidateDocumentationData(
-          articlesOrCertificateOFIncorporation,
-          w9Orw4,
-          directDepositAgreement,
-          voidCheckOrEmailContent,
-          CIPCICICAOrCIPCICU,
-          goodStandingDocument,
-          workAuthorizationDocument,
-          I9Form,
-          listADocument,
-          listBDocument,
-          listCDocument,
-          E_verify,
-          E_verificationDate,
-          emergencyForm,
-          vaccinationStatus,
-          clientTaskOrderOrSOWst,
-          MSA,
-          SOW,
-          SOWValidity,
-          certificateOFInsuranceOrCOI,
-          clientTaskOrderSigning,
-          TaskOrderExpiryDate,
-          certificationOfInsurance,
-          clientTaskOrderOrSOW,
-          documentationStatus,
-          documentationCompletionDate,
-          documentationRemark,
-
+        editCandidateStartEndOperationsData(
+          joiningStatus,
+          joiningType,
+          joiningStatusRemark,
+          recruiter,
+          teamLead,
+          crm,
+          teamManager,
+          seniorManager,
+          assoDirector,
+          centerHead,
+          onsiteAccDirector,
+          onboCoordinator,
+          endDate,
+          exitClearance,
+          endReason,
+          endRemarks,
+          grossBr,
+          mspFeePercentage,
+          mspFee,
+          payRate,
+          refFee,
+          taxOHPercentage,
+          taxOH,
+          hBenefitesOpted,
+          hBenefitesCost,
+          netBillRate,
+          netPurchase,
+          margin,
+          fullTimeSalaryOffered,
+          jobLevel,
+          ffInvoiceStatus,
           data?.candidateId
         )
       );
       setShowModal(false);
     } else {
-      if (!articlesOrCertificateOFIncorporationValid) {
-        setArticlesOrCertificateOFIncorporationError(
-          "articles Or Certificat eOF Incorporation should not be empty."
+      if (!joiningStatusValid) {
+        setJoiningStatusError("Joining status should not be empty.");
+      }
+      if (!joiningTypeValid) {
+        setJoiningTypeError("Joining type should not be empty.");
+      }
+      if (!joiningStatusRemarkValid) {
+        setJoiningStatusRemarkError(
+          "Joining satus remark should not be empty."
         );
       }
-      if (!w9Orw4Valid) {
-        setW9Orw4Error("w9Orw4 should not be empty.");
+      if (!recruiterValid) {
+        setRecruiterError("Recruiter should not be empty.");
       }
-      if (!directDepositAgreementValid) {
-        setDirectDepositAgreementError(
-          "direct Deposit Agreement should not be empty."
+      if (!teamLeadValid) {
+        setTeamLeadError("Team lead should not be empty.");
+      }
+      if (!crmValid) {
+        setCrmError("Crm should not be empty.");
+      }
+      if (!teamManagerValid) {
+        setTeamManagerError("Team manager should not be empty.");
+      }
+      if (!seniorManagerValid) {
+        setSeniorManagerError("Senior manager should not be empty.");
+      }
+      if (!assoDirectorValid) {
+        setAssoDirectorError("Assodirector should not be empty.");
+      }
+      if (!centerHeadValid) {
+        setCenterHeadError("Center head should not be empty.");
+      }
+      if (!onsiteAccDirectorValid) {
+        setOnsiteAccDirectorError("Onsite acc director should not be empty.");
+      }
+      if (!onboCoordinatorValid) {
+        setOnboCoordinatorError("Onbo coordinator should not be empty.");
+      }
+      if (!endDateValid) {
+        setEndDateError("End date should not be empty.");
+      }
+      if (!exitClearanceValid) {
+        setExitClearanceError("Exit clearance should not be empty.");
+      }
+      if (!endReasonValid) {
+        setEndReasonError("End reason should not be empty.");
+      }
+      if (!endRemarksValid) {
+        setEndRemarksError("End remarks should not be empty.");
+      }
+      if (!grossBrValid) {
+        setGrossBrError("Grossbr should not be empty.");
+      }
+      if (!mspFeePercentageValid) {
+        setMspFeePercentageError("Msp fee percentage should not be empty.");
+      }
+      if (!mspFeeValid) {
+        setMspFeeError("Msp fee should not be empty.");
+      }
+      if (!payRateValid) {
+        setPayRateError("Pay rate should not be empty.");
+      }
+      if (!refFeeValid) {
+        setRefFeeError("Ref fee should not be empty.");
+      }
+      if (!taxOHPercentageValid) {
+        setTaxOHPercentageError("Tax oh percentage should not be empty.");
+      }
+      if (!taxOHValid) {
+        setTaxOHError("Tax oh should not be empty.");
+      }
+      if (!hBenefitesOptedValid) {
+        setHBenefitesOptedError("Hbenefites opted should not be empty.");
+      }
+      if (!hBenefitesCostValid) {
+        setHBenefitesCostError("Hbenefites cost should not be empty.");
+      }
+      if (!netBillRateValid) {
+        setNetBillRateError("Net bill rate should not be empty.");
+      }
+      if (!netPurchaseValid) {
+        setNetPurchaseError("Net purchase should not be empty.");
+      }
+      if (!marginValid) {
+        setMarginError("Margin should not be empty.");
+      }
+      if (!fullTimeSalaryOfferedValid) {
+        setFullTimeSalaryOfferedError(
+          "Full time salary Offered should not be empty."
         );
       }
-
-      if (!voidCheckOrEmailContentValid) {
-        setVoidCheckOrEmailContentError(
-          "void Check Or Email Content should not be empty."
-        );
+      if (!jobLevelValid) {
+        setJobLevelError("Job level should not be empty.");
       }
-      if (!CIPCICICAOrCIPCICUValid) {
-        setCIPCICICAORCIPCICUError("CIPCICICA Or CIPCICU should not be empty.");
-      }
-      if (!goodStandingDocumentValid) {
-        setGoodStandingDocumentError(
-          "good Standing Document should not be empty."
-        );
-      }
-      if (!workAuthorizationDocumentValid) {
-        setWorkAuthorizationDocumentError(
-          "workAuthorization Document should not be empty."
-        );
-      }
-      if (!I9FormValid) {
-        setI9FOrmError("I9 Form should not be empty.");
-      }
-      if (!listADocumentValid) {
-        setListADocumentError("listA Document should not be empty.");
-      }
-      if (!listBDocumentValid) {
-        setListBDocumentError("listB Document should not be empty.");
-      }
-      if (!listCDocumentValid) {
-        setListCDocumentError("listC DocumentValid should not be empty.");
-      }
-      if (!E_verifyValid) {
-        setE_VerifyError("E_verify should not be empty.");
-      }
-      if (!E_verificationDateValid) {
-        setE_VerificationDateError("E_verification Date should not be empty.");
-      }
-      if (!emergencyFormValid) {
-        setemergencyFormError("emergency Form should not be empty.");
-      }
-      if (!vaccinationStatusValid) {
-        setVaccinationStatusError("vaccination Status should not be empty.");
-      }
-      if (!clientTaskOrderOrSOWstValid) {
-        setClientTaskOrderOrSOWError(
-          "client Task Order Or SOWst should not be empty."
-        );
-      }
-      if (!MSAValid) {
-        setMSAError("MSA should not be empty.");
-      }
-      if (!SOWValid) {
-        setSOWError("SOW should not be empty.");
-      }
-      if (!SOWValidityValid) {
-        setSOWVAlidityError("SOW Validity should not be empty.");
-      }
-      if (!certificateOFInsuranceOrCOIValid) {
-        setCertificateOFInsuranceOrCOIError(
-          "certificate OF Insurance Or COI should not be empty."
-        );
-      }
-      if (!clientTaskOrderSigningValid) {
-        setClientTaskOrderSigningError(
-          "client Task Order Signing should not be empty."
-        );
-      }
-      if (!TaskOrderExpiryDateValid) {
-        setTAskOrderExpiryDateError(
-          "Task Order Expiry Date should not be empty."
-        );
-      }
-      if (!certificationOfInsuranceValid) {
-        setCertificationOfInsuranceError(
-          "certification Of Insurance should not be empty."
-        );
-      }
-      if (!documentationStatusValid) {
-        setDocumentationStatusError(
-          "documentation Status should not be empty."
-        );
-      }
-      if (!clientTaskOrderOrSOWValid) {
-        setClientTaskOrderOrSOWError(
-          "client Task OrderOrSOW should not be empty."
-        );
-      }
-      if (!documentationRemarkValid) {
-        setDocumentationRemarkError(
-          "documentation Remark should not be empty."
-        );
-      }
-      if (!documentationCompletionDateValid) {
-        setDocumentationCompletionDateError(
-          "documentation Completion Date should not be empty."
-        );
+      if (!ffInvoiceStatusValid) {
+        setFfInvoiceStatusError("FfInvoice status should not be empty.");
       }
     }
   }
-
   return (
     <div className="pt-10 pl-10 h-[60vh] overflow-auto" id="no-scroll-div">
       <Grid container spacing={2} columnGap={"15px"}>
         <Grid xs={6} md={5.5}>
           <Select
+            aria-label="state"
             className="text-[13px] text-left"
-            value={CIPCICICAOrCIPCICU}
-            options={CipcicaCipcicuList}
+            options={JoiningStatusList}
+            placeholder="state"
+            value={joiningStatus}
+            getOptionLabel={(option) => option.label}
+            getOptionValue={(option) => option.value}
             onChange={(e: any) => {
-              setCIPCICICAOrCIPCICU(e);
-              setCIPCICICAORCIPCICUValid(isTextValid(e?.value));
-              if (!CIPCICICAOrCIPCICUValid) {
-                setCIPCICICAORCIPCICUError(
-                  "CIPCICICAORCIPCICUE should not be empty"
-                );
+              setJoiningStatus(e);
+              setJoiningStatusValid(isTextValid(e?.value));
+              if (!joiningStatusValid) {
+                setJoiningStatusError("State should not be empty.");
               }
             }}
             isSearchable={true}
           />
-          {!CIPCICICAOrCIPCICUValid ? (
+          {!joiningStatusValid ? (
             <p
               className=""
               style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
             >
-              {CIPCICICAOrCIPCICUError}
+              {joiningStatusError}
             </p>
           ) : null}
         </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">E-verification Date</td>
-          <td className="px-6 py-4">
-            <FloatLabel
-              value={E_verificationDate}
-              type="date"
-              handleChange={(e: any) => {
-                setE_verificationDate(e.target.value);
-              }}
-            />
-          </td>
-        </tr> */}
+
+        <Grid xs={6} md={5.5}>
+          <Select
+            aria-label="joining Type"
+            className="text-[13px] text-left"
+            options={JoiningTypeList}
+            placeholder="state"
+            value={joiningType}
+            getOptionLabel={(option) => option.label}
+            getOptionValue={(option) => option.value}
+            onChange={(e: any) => {
+              setJoiningType(e);
+              setJoiningTypeValid(isTextValid(e?.value));
+              if (!joiningTypeValid) {
+                setJoiningTypeError("Joining type should not be empty.");
+              }
+            }}
+            isSearchable={true}
+          />
+          {!joiningTypeValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "15px" }}
+            >
+              {joiningTypeError}
+            </p>
+          ) : null}
+        </Grid>
+
         <Grid xs={6} md={5.5}>
           <FloatLabel
-            label="E_verificationDate"
-            type="date"
-            value={E_verificationDate}
+            label="Joining status remark"
+            value={joiningStatusRemark}
             placeholder={""}
             handleChange={(event) => {
-              setE_verificationDate(event.target.value);
-              setE_VerificationDateValid(isTextValid(event.target.value));
-              if (!E_verificationDateValid) {
-                setE_VerificationDateError(
-                  "E-verification Date should not be empty."
+              setJoiningStatusRemark(event.target.value);
+              setJoiningStatusRemarkValid(isTextValid(event.target.value));
+              if (!joiningStatusRemarkValid) {
+                setJoiningStatusRemarkError(
+                  "Joining status remark should not be empty."
                 );
               }
             }}
             className=""
           />
-          {!E_verificationDateValid ? (
+          {!joiningStatusRemarkValid ? (
             <p
               className=""
               style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
             >
-              {E_verificationDateError}
+              {joiningStatusRemarkError}
             </p>
           ) : null}
         </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">E-verify</td>
-          <td className="px-6 py-4">
-            <Select
-              value={E_verify}
-              options={EVerifyList}
-              onChange={(e: any) => setE_verify(e)}
-            />
-          </td>
-        </tr> */}
-        <Grid xs={6} md={5.5}>
-          <Select
-            className="text-[13px] text-left"
-            value={E_verify}
-            options={EVerifyList}
-            onChange={(e: any) => {
-              setE_verify(e);
-              setE_VerifyValid(isTextValid(e?.value));
-              if (!E_verifyValid) {
-                setE_VerifyError("E-verify should not be empty");
-              }
-            }}
-            isSearchable={true}
-          />
-          {!E_verifyValid ? (
-            <p
-              className=""
-              style={{ fontSize: "12px", color: "red", marginBottom: "10px" }}
-            >
-              {E_verifyError}
-            </p>
-          ) : null}
-        </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">I9 form</td>
-          <td className="px-6 py-4">
-            <Select
-              value={I9Form}
-              options={I9FormList}
-              onChange={(e: any) => setI9Form(e)}
-            />
-          </td>
-        </tr> */}
-        <Grid xs={6} md={5.5}>
-          <Select
-            className="text-[13px] text-left"
-            value={I9Form}
-            options={I9FormList}
-            onChange={(e: any) => {
-              setI9Form(e);
-              setI9FOrmValid(isTextValid(e?.value));
-              if (!I9FormValid) {
-                setI9FOrmError("I9 form should not be empty");
-              }
-            }}
-            isSearchable={true}
-          />
-          {!I9FormValid ? (
-            <p
-              className=""
-              style={{ fontSize: "12px", color: "red", marginBottom: "10px" }}
-            >
-              {I9FormError}
-            </p>
-          ) : null}
-        </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">MSA</td>
-          <td className="px-6 py-4">
-            <Select
-              value={MSA}
-              options={MSAList}
-              onChange={(e: any) => setMSA(e)}
-            />
-          </td>
-        </tr> */}
-        <Grid xs={6} md={5.5}>
-          <Select
-            className="text-[13px] text-left"
-            value={MSA}
-            options={MSAList}
-            onChange={(e: any) => {
-              setMSA(e);
-              setMSAValid(isTextValid(e?.value));
-              if (!MSAValid) {
-                setMSAError("MSA should not be empty");
-              }
-            }}
-            isSearchable={true}
-          />
-          {!MSAValid ? (
-            <p
-              className=""
-              style={{ fontSize: "12px", color: "red", marginBottom: "15px" }}
-            >
-              {MSAError}
-            </p>
-          ) : null}
-        </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">SOW</td>
-          <td className="px-6 py-4">
-            <Select
-              value={SOW}
-              options={SOWList}
-              onChange={(e: any) => setSOW(e)}
-            />
-          </td>
-        </tr> */}{" "}
-        <Grid xs={6} md={5.5}>
-          <Select
-            className="text-[13px] text-left"
-            value={SOW}
-            options={SOWList}
-            onChange={(e: any) => {
-              setSOW(e);
-              setSOWValid(isTextValid(e?.value));
-              if (!SOWValid) {
-                setSOWError("SOW should not be empty");
-              }
-            }}
-            isSearchable={true}
-          />
-          {!SOWValid ? (
-            <p
-              className=""
-              style={{ fontSize: "12px", color: "red", marginBottom: "15px" }}
-            >
-              {SOWError}
-            </p>
-          ) : null}
-        </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">SOW validity</td>
-          <td className="px-6 py-4">
-            <TextField
-              value={SOWValidity}
-              type="date"
-              handleChange={(e: any) => {
-                setSOWValidity(e.target.value);
-              }}
-            />
-          </td>
-        </tr> */}
+
         <Grid xs={6} md={5.5}>
           <FloatLabel
-            label="SOW validity"
-            type="date"
-            value={SOWValidity}
+            label="Recruiter"
+            value={recruiter}
             placeholder={""}
             handleChange={(event) => {
-              setSOWValidity(event.target.value);
-              setSOWVAlidityValid(isTextValid(event.target.value));
-              if (!SOWValidityValid) {
-                setSOWVAlidityError("SOW validity should not be empty.");
+              setRecruiter(event.target.value);
+              setRecruiterValid(isTextValid(event.target.value));
+              if (!recruiterValid) {
+                setRecruiterError("Recruiter should not be empty.");
               }
             }}
             className=""
           />
-          {!SOWValidityValid ? (
+          {!recruiterValid ? (
             <p
               className=""
-              style={{ fontSize: "12px", color: "red", marginBottom: "10px" }}
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
             >
-              {SOWValidityError}
+              {recruiterError}
             </p>
           ) : null}
         </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">Task order expiry date</td>
-          <td className="px-6 py-4">
-            <TextField
-              value={TaskOrderExpiryDate}
-              type="date"
-              handleChange={(e: any) => {
-                setTaskOrderExpiryDate(e.target.value);
-              }}
-            />
-          </td>
-        </tr> */}
+
         <Grid xs={6} md={5.5}>
           <FloatLabel
-            label="Task order expiry date"
-            type="date"
-            value={TaskOrderExpiryDate}
+            label="Team lead"
+            value={teamLead}
             placeholder={""}
             handleChange={(event) => {
-              setTaskOrderExpiryDate(event.target.value);
-              setTAskOrderExpiryDateValid(isTextValid(event.target.value));
-              if (!TaskOrderExpiryDateValid) {
-                setTAskOrderExpiryDateError(
-                  "Task order expiry date should not be empty."
+              setTeamLead(event.target.value);
+              setTeamLeadValid(isTextValid(event.target.value));
+              if (!teamLeadValid) {
+                setTeamLeadError("Team lead should not be empty.");
+              }
+            }}
+            className=""
+          />
+          {!teamLeadValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {teamLeadError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <FloatLabel
+            label="crm"
+            value={crm}
+            placeholder={""}
+            handleChange={(event) => {
+              setCrm(event.target.value);
+              setCrmValid(isTextValid(event.target.value));
+              if (!crmValid) {
+                setCrmError("Crm should not be empty.");
+              }
+            }}
+            className=""
+          />
+          {!crmValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {crmError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <FloatLabel
+            label="Team manager"
+            value={teamManager}
+            placeholder={""}
+            handleChange={(event) => {
+              setTeamManager(event.target.value);
+              setTeamManagerValid(isTextValid(event.target.value));
+              if (!teamManagerValid) {
+                setTeamManagerError("Team manager should not be empty.");
+              }
+            }}
+            className=""
+          />
+          {!teamManagerValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {teamManagerError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <FloatLabel
+            label="Senior manager"
+            value={seniorManager}
+            placeholder={""}
+            handleChange={(event) => {
+              setSeniorManager(event.target.value);
+              setSeniorManagerValid(isTextValid(event.target.value));
+              if (!seniorManagerValid) {
+                setSeniorManagerError("Senior manager should not be empty.");
+              }
+            }}
+            className=""
+          />
+          {!seniorManagerValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {seniorManagerError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <FloatLabel
+            label="Associate director"
+            value={assoDirector}
+            placeholder={""}
+            handleChange={(event) => {
+              setAssoDirector(event.target.value);
+              setAssoDirectorValid(isTextValid(event.target.value));
+              if (!assoDirectorValid) {
+                setAssoDirectorError("Associate director should not be empty.");
+              }
+            }}
+            className=""
+          />
+          {!assoDirectorValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {assoDirectorError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <FloatLabel
+            label="Center head"
+            value={centerHead}
+            placeholder={""}
+            handleChange={(event) => {
+              setCenterHead(event.target.value);
+              setCenterHeadValid(isTextValid(event.target.value));
+              if (!centerHeadValid) {
+                setCenterHeadError("Center head should not be empty.");
+              }
+            }}
+            className=""
+          />
+          {!centerHeadValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {centerHeadError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <FloatLabel
+            label="Onsite account director"
+            value={onsiteAccDirector}
+            placeholder={""}
+            handleChange={(event) => {
+              setOnsiteAccDirector(event.target.value);
+              setOnsiteAccDirectorValid(isTextValid(event.target.value));
+              if (!onsiteAccDirectorValid) {
+                setOnsiteAccDirectorError(
+                  "Onsite account director should not be empty."
                 );
               }
             }}
             className=""
           />
-          {!TaskOrderExpiryDateValid ? (
-            <p
-              className=""
-              style={{ fontSize: "12px", color: "red", marginBottom: "10px" }}
-            >
-              {TaskOrderExpiryDateError}
-            </p>
-          ) : null}
-        </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">
-            Articles or certificate of incorporation
-          </td>
-          <td className="px-6 py-4">
-            <Select
-              value={articlesOrCertificateOFIncorporation}
-              options={ArticlesOfIncorporationList}
-              onChange={(e: any) => setArticlesOrCertificateOFIncorporation(e)}
-            />
-          </td>
-        </tr> */}
-        <Grid xs={6} md={5.5}>
-          <Select
-            className="text-[13px] text-left"
-            value={articlesOrCertificateOFIncorporation}
-            options={ArticlesOfIncorporationList}
-            onChange={(e: any) => {
-              setArticlesOrCertificateOFIncorporation(e);
-              setArticlesOrCertificateOFIncorporationValid(
-                isTextValid(e?.value)
-              );
-              if (!articlesOrCertificateOFIncorporationValid) {
-                setArticlesOrCertificateOFIncorporationError(
-                  "Articles or certificate of incorporation should not be empty"
-                );
-              }
-            }}
-            isSearchable={true}
-          />
-          {!articlesOrCertificateOFIncorporationValid ? (
-            <p
-              className=""
-              style={{ fontSize: "12px", color: "red", marginBottom: "15px" }}
-            >
-              {articlesOrCertificateOFIncorporationError}
-            </p>
-          ) : null}
-        </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">Certificate of insurance or COI</td>
-          <td className="px-6 py-4">
-            <Select
-              value={certificateOFInsuranceOrCOI}
-              options={CertificateOfInsuranceList}
-              onChange={(e: any) => setCertificateOFInsuranceOrCOI(e)}
-            />
-          </td>
-        </tr> */}
-        <Grid xs={6} md={5.5}>
-          <Select
-            className="text-[13px] text-left"
-            value={certificateOFInsuranceOrCOI}
-            options={CertificateOfInsuranceList}
-            onChange={(e: any) => {
-              setCertificateOFInsuranceOrCOI(e);
-              setCertificateOFInsuranceOrCOIValid(isTextValid(e?.value));
-              if (!certificateOFInsuranceOrCOIValid) {
-                setCertificateOFInsuranceOrCOIError(
-                  "Certificate of insurance or COI should not be empty"
-                );
-              }
-            }}
-            isSearchable={true}
-          />
-          {!certificateOFInsuranceOrCOIValid ? (
+          {!onsiteAccDirectorValid ? (
             <p
               className=""
               style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
             >
-              {certificateOFInsuranceOrCOIError}
+              {onsiteAccDirectorError}
             </p>
           ) : null}
         </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">Certificate of insurance Date</td>
-          <td className="px-6 py-4">
-            <TextField
-              value={certificationOfInsurance}
-              type="date"
-              handleChange={(e: any) => {
-                setCertificationOfInsurance(e.target.value);
-              }}
-            />
-          </td>
-        </tr> */}
+
         <Grid xs={6} md={5.5}>
           <FloatLabel
-            label="Certificate of insurance Date"
-            type="date"
-            value={certificationOfInsurance}
+            label="Onboarding coordinator"
+            value={onboCoordinator}
             placeholder={""}
             handleChange={(event) => {
-              setCertificationOfInsurance(event.target.value);
-              setCertificationOfInsuranceValid(isTextValid(event.target.value));
-              if (!certificationOfInsuranceValid) {
-                setCertificationOfInsuranceError(
-                  "Certificate of insurance Date should not be empty."
+              setOnboCoordinator(event.target.value);
+              setOnboCoordinatorValid(isTextValid(event.target.value));
+              if (!onboCoordinatorValid) {
+                setOnboCoordinatorError(
+                  "Onboarding coordinator should not be empty."
                 );
               }
             }}
             className=""
           />
-          {!certificationOfInsuranceValid ? (
-            <p
-              className=""
-              style={{ fontSize: "12px", color: "red", marginBottom: "15px" }}
-            >
-              {certificationOfInsuranceError}
-            </p>
-          ) : null}
-        </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">Client task order or sow</td>
-          <td className="px-6 py-4">
-            <Select
-              value={clientTaskOrderOrSOW}
-              options={ClientTaskOrderOrSOWList}
-              onChange={(e: any) => setClientTaskOrderOrSOW(e)}
-            />
-          </td>
-        </tr> */}
-        <Grid xs={6} md={5.5}>
-          <Select
-            className="text-[13px] text-left"
-            value={clientTaskOrderOrSOW}
-            options={ClientTaskOrderOrSOWList}
-            onChange={(e: any) => {
-              setClientTaskOrderOrSOW(e);
-              setClientTaskOrderOrSOWValid(isTextValid(e?.value));
-              if (!clientTaskOrderOrSOWValid) {
-                setClientTaskOrderOrSOWError(
-                  "Client task order or sow should not be empty"
-                );
-              }
-            }}
-            isSearchable={true}
-          />
-          {!clientTaskOrderOrSOWValid ? (
+          {!onboCoordinatorValid ? (
             <p
               className=""
               style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
             >
-              {clientTaskOrderOrSOWError}
+              {onboCoordinatorError}
             </p>
           ) : null}
         </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">Client task order or sow st</td>
-          <td className="px-6 py-4">
-            <Select
-              value={clientTaskOrderOrSOWst}
-              options={ClientTaskOrderOrSOWStepList}
-              onChange={(e: any) => setClientTaskOrderOrSOWst(e)}
-            />
-          </td>
-        </tr> */}
-        <Grid xs={6} md={5.5}>
-          <Select
-            className="text-[13px] text-left"
-            value={clientTaskOrderOrSOWst}
-            options={ClientTaskOrderOrSOWStepList}
-            onChange={(e: any) => {
-              setClientTaskOrderOrSOWst(e);
-              setClientTaskOrderOrSOWstValid(isTextValid(e?.value));
-              if (!clientTaskOrderOrSOWstValid) {
-                setClientTaskOrderOrSOWstError(
-                  "Client task order or sow st should not be empty"
-                );
-              }
-            }}
-            isSearchable={true}
-          />
-          {!clientTaskOrderOrSOWstValid ? (
-            <p
-              className=""
-              style={{ fontSize: "12px", color: "red", marginBottom: "15px" }}
-            >
-              {clientTaskOrderOrSOWstError}
-            </p>
-          ) : null}
-        </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">Client task order signing</td>
-          <td className="px-6 py-4">
-            {data?.docData?.clientTaskOrderSigning}
-            <Select
-              value={clientTaskOrderSigning}
-              options={ClientTaskOrderSigningList}
-              onChange={(e: any) => setClientTaskOrderSigning(e)}
-            />
-          </td>
-        </tr> */}
-        <Grid xs={6} md={5.5}>
-          <Select
-            className="text-[13px] text-left"
-            value={clientTaskOrderSigning}
-            options={ClientTaskOrderSigningList}
-            onChange={(e: any) => {
-              setClientTaskOrderSigning(e);
-              setClientTaskOrderSigningValid(isTextValid(e?.value));
-              if (!clientTaskOrderSigningValid) {
-                setClientTaskOrderSigningError(
-                  "Client task order signing should not be empty"
-                );
-              }
-            }}
-            isSearchable={true}
-          />
-          {!clientTaskOrderSigningValid ? (
-            <p
-              className=""
-              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
-            >
-              {clientTaskOrderSigningError}
-            </p>
-          ) : null}
-        </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">Direct deposit agreement</td>
-          <td className="px-6 py-4">
-            <Select
-              value={directDepositAgreement}
-              options={DirectDepositeAgreementList}
-              onChange={(e: any) => setDirectDepositAgreement(e)}
-            />
-          </td>
-        </tr> */}
-        <Grid xs={6} md={5.5}>
-          <Select
-            className="text-[13px] text-left"
-            value={directDepositAgreement}
-            options={DirectDepositeAgreementList}
-            onChange={(e: any) => {
-              setDirectDepositAgreement(e);
-              setDirectDepositAgreementValid(isTextValid(e?.value));
-              if (!directDepositAgreementValid) {
-                setDirectDepositAgreementError(
-                  "Direct deposit agreement should not be empty"
-                );
-              }
-            }}
-            isSearchable={true}
-          />
-          {!directDepositAgreementValid ? (
-            <p
-              className=""
-              style={{ fontSize: "12px", color: "red", marginBottom: "15px" }}
-            >
-              {directDepositAgreementError}
-            </p>
-          ) : null}
-        </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">Documentation completion date</td>
-          <td className="px-6 py-4">
-            <TextField
-              value={documentationCompletionDate}
-              type="date"
-              handleChange={(e: any) => {
-                setDocumentationCompletionDate(e.target.value);
-              }}
-            />
-          </td>
-        </tr> */}
+
         <Grid xs={6} md={5.5}>
           <FloatLabel
-            label="Documentation completion date"
+            label="End date"
             type="date"
-            value={documentationCompletionDate}
+            value={endDate}
             placeholder={""}
             handleChange={(event) => {
-              setDocumentationCompletionDate(event.target.value);
-              setDocumentationCompletionDateValid(
-                isTextValid(event.target.value)
-              );
-              if (!documentationCompletionDateValid) {
-                setDocumentationCompletionDateError(
-                  "Documentation completion date should not be empty."
+              setEndDate(event.target.value);
+              setEndDateValid(isTextValid(event.target.value));
+              if (!endDateValid) {
+                setEndDateError("End date should not be empty.");
+              }
+            }}
+            className=""
+          />
+          {!endDateValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {endDateError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <Select
+            aria-label="Exit clearance"
+            className="text-[13px] text-left"
+            options={ExitClearanceList}
+            placeholder="Exit clearance"
+            value={exitClearance}
+            getOptionLabel={(option) => option.label}
+            getOptionValue={(option) => option.value}
+            onChange={(e: any) => {
+              setExitClearance(e);
+              setExitClearanceValid(isTextValid(e?.value));
+              if (!exitClearanceValid) {
+                setExitClearanceError("Exit clearance should not be empty.");
+              }
+            }}
+            isSearchable={true}
+          />
+          {!exitClearanceValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {exitClearanceError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <Select
+            aria-label="End reason"
+            className="text-[13px] text-left"
+            options={EndReasonList}
+            placeholder="End reason"
+            value={endReason}
+            getOptionLabel={(option) => option.label}
+            getOptionValue={(option) => option.value}
+            onChange={(e: any) => {
+              setEndReason(e);
+              setEndReasonValid(isTextValid(e?.value));
+              if (!endReasonValid) {
+                setEndReasonError("End reason should not be empty.");
+              }
+            }}
+            isSearchable={true}
+          />
+          {!endReasonValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {endReasonError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <FloatLabel
+            label="End remarks"
+            value={endRemarks}
+            placeholder={""}
+            handleChange={(event) => {
+              setEndRemarks(event.target.value);
+              setEndRemarksValid(isTextValid(event.target.value));
+              if (!endRemarksValid) {
+                setEndRemarksError("End remarks should not be empty.");
+              }
+            }}
+            className=""
+          />
+          {!endRemarksValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {endRemarksError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <FloatLabel
+            label="Gross BR"
+            value={grossBr}
+            placeholder={""}
+            handleChange={(event) => {
+              setGrossBr(event.target.value);
+              setGrossBrValid(isTextValid(event.target.value));
+              if (!grossBrValid) {
+                setGrossBrError("Gross BR should not be empty.");
+              }
+            }}
+            className=""
+          />
+          {!grossBrValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {grossBrError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <FloatLabel
+            label="MSP fee percentage"
+            value={mspFeePercentage}
+            placeholder={""}
+            handleChange={(event) => {
+              setMspFeePercentage(event.target.value);
+              setMspFeePercentageValid(isTextValid(event.target.value));
+              if (!mspFeePercentageValid) {
+                setMspFeePercentageError(
+                  "MSP fee percentage should not be empty."
                 );
               }
             }}
             className=""
           />
-          {!documentationCompletionDateValid ? (
-            <p
-              className=""
-              style={{ fontSize: "12px", color: "red", marginBottom: "15px" }}
-            >
-              {documentationCompletionDateError}
-            </p>
-          ) : null}
-        </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">Documentation status</td>
-          <td className="px-6 py-4">
-            {data?.docData?.documentationStatus}
-            <Select
-              value={documentationStatus}
-              options={DocumentationStatusList}
-              onChange={(e: any) => setDocumentationStatus(e)}
-            />
-          </td>
-        </tr> */}
-        <Grid xs={6} md={5.5}>
-          <Select
-            className="text-[13px] text-left"
-            value={documentationStatus}
-            options={DocumentationStatusList}
-            onChange={(e: any) => {
-              setDocumentationStatus(e);
-              setDocumentationStatusValid(isTextValid(e?.value));
-              if (!documentationStatusValid) {
-                setDocumentationStatusError(
-                  "Documentation status should not be empty"
-                );
-              }
-            }}
-            isSearchable={true}
-          />
-          {!documentationStatusValid ? (
-            <p
-              className=""
-              style={{ fontSize: "12px", color: "red", marginBottom: "15px" }}
-            >
-              {documentationStatusError}
-            </p>
-          ) : null}
-        </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">Emergency form</td>
-          <td className="px-6 py-4">
-            <Select
-              value={emergencyForm}
-              options={EemergencyFormList}
-              onChange={(e: any) => setEmergencyForm(e)}
-            />
-          </td>
-        </tr> */}
-        <Grid xs={6} md={5.5}>
-          <Select
-            className="text-[13px] text-left"
-            value={emergencyForm}
-            options={EemergencyFormList}
-            onChange={(e: any) => {
-              setEmergencyForm(e);
-              setemergencyFormValid(isTextValid(e?.value));
-              if (!emergencyFormValid) {
-                setemergencyFormError("Emergency form should not be empty");
-              }
-            }}
-            isSearchable={true}
-          />
-          {!emergencyFormValid ? (
+          {!mspFeePercentageValid ? (
             <p
               className=""
               style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
             >
-              {emergencyFormError}
+              {mspFeePercentageError}
             </p>
           ) : null}
         </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">Good standing document</td>
-          <td className="px-6 py-4">
-            {data?.docData?.goodStandingDocument}
-            <Select
-              value={goodStandingDocument}
-              options={GoodStandingDocumentationList}
-              onChange={(e: any) => setGoodStandingDocument(e)}
-            />
-          </td>
-        </tr> */}
+
         <Grid xs={6} md={5.5}>
-          <Select
-            className="text-[13px] text-left"
-            value={goodStandingDocument}
-            options={GoodStandingDocumentationList}
-            onChange={(e: any) => {
-              setGoodStandingDocument(e);
-              setGoodStandingDocumentValid(isTextValid(e?.value));
-              if (!goodStandingDocumentValid) {
-                setGoodStandingDocumentError(
-                  "Good standing document should not be empty"
-                );
+          <FloatLabel
+            label="MSP fee"
+            value={mspFee}
+            placeholder={""}
+            handleChange={(event) => {
+              setMspFee(event.target.value);
+              setMspFeeValid(isTextValid(event.target.value));
+              if (!mspFeeValid) {
+                setMspFeeError("MSP fee should not be empty.");
               }
             }}
-            isSearchable={true}
+            className=""
           />
-          {!goodStandingDocumentValid ? (
-            <p
-              className=""
-              style={{ fontSize: "12px", color: "red", marginBottom: "15px" }}
-            >
-              {goodStandingDocumentError}
-            </p>
-          ) : null}
-        </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">List A document</td>
-          <td className="px-6 py-4">
-            <Select
-              value={listADocument}
-              options={ListADocumentsList}
-              onChange={(e: any) => setListADocument(e)}
-            />
-          </td>
-        </tr> */}
-        <Grid xs={6} md={5.5}>
-          <Select
-            className="text-[13px] text-left"
-            value={listADocument}
-            options={ListADocumentsList}
-            onChange={(e: any) => {
-              setListADocument(e);
-              setListADocumentValid(isTextValid(e?.value));
-              if (!listADocumentValid) {
-                setListADocumentError("List a document should not be empty");
-              }
-            }}
-            isSearchable={true}
-          />
-          {!listADocumentValid ? (
-            <p
-              className=""
-              style={{ fontSize: "12px", color: "red", marginBottom: "15px" }}
-            >
-              {listADocumentError}
-            </p>
-          ) : null}
-        </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">List B document</td>
-          <td className="px-6 py-4">
-            <Select
-              value={listBDocument}
-              options={ListBDocumentsList}
-              onChange={(e: any) => setListBDocument(e)}
-            />
-          </td>
-        </tr> */}
-        <Grid xs={6} md={5.5}>
-          <Select
-            className="text-[13px] text-left"
-            value={listBDocument}
-            options={ListBDocumentsList}
-            onChange={(e: any) => {
-              setListBDocument(e);
-              setListBDocumentValid(isTextValid(e?.value));
-              if (!listBDocumentValid) {
-                setListBDocumentError("List b document should not be empty");
-              }
-            }}
-            isSearchable={true}
-          />
-          {!listBDocumentValid ? (
-            <p
-              className=""
-              style={{ fontSize: "12px", color: "red", marginBottom: "15px" }}
-            >
-              {listBDocumentError}
-            </p>
-          ) : null}
-        </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">List C document</td>
-          <td className="px-6 py-4">
-            <Select
-              value={listCDocument}
-              options={ListCDocumentsList}
-              onChange={(e: any) => setListCDocument(e)}
-            />
-          </td>
-        </tr> */}
-        <Grid xs={6} md={5.5}>
-          <Select
-            className="text-[13px] text-left"
-            value={listCDocument}
-            options={ListCDocumentsList}
-            onChange={(e: any) => {
-              setListCDocument(e);
-              setListCDocumentValid(isTextValid(e?.value));
-              if (!listCDocumentValid) {
-                setListCDocumentError("List C documentshould not be empty");
-              }
-            }}
-            isSearchable={true}
-          />
-          {!listCDocumentValid ? (
-            <p
-              className=""
-              style={{ fontSize: "12px", color: "red", marginBottom: "15px" }}
-            >
-              {listCDocumentError}
-            </p>
-          ) : null}
-        </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">Vaccination status</td>
-          <td className="px-6 py-4">
-            <Select
-              value={vaccinationStatus}
-              options={VaccinationStatusList}
-              onChange={(e: any) => setVaccinationStatus(e)}
-            />
-          </td>
-        </tr> */}
-        <Grid xs={6} md={5.5}>
-          <Select
-            className="text-[13px] text-left"
-            value={vaccinationStatus}
-            options={VaccinationStatusList}
-            onChange={(e: any) => {
-              setVaccinationStatus(e);
-              setVaccinationStatusValid(isTextValid(e?.value));
-              if (!vaccinationStatusValid) {
-                setVaccinationStatusError(
-                  "Vaccination status should not be empty"
-                );
-              }
-            }}
-            isSearchable={true}
-          />
-          {!vaccinationStatusValid ? (
-            <p
-              className=""
-              style={{ fontSize: "12px", color: "red", marginBottom: "15px" }}
-            >
-              {vaccinationStatusError}
-            </p>
-          ) : null}
-        </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">Void check or email content</td>
-          <td className="px-6 py-4">
-            <Select
-              value={voidCheckOrEmailContent}
-              options={VoidCheckEmailList}
-              onChange={(e: any) => setVoidCheckOrEmailContent(e)}
-            />
-          </td>
-        </tr> */}
-        <Grid xs={6} md={5.5}>
-          <Select
-            className="text-[13px] text-left"
-            value={voidCheckOrEmailContent}
-            options={VoidCheckEmailList}
-            onChange={(e: any) => {
-              setVoidCheckOrEmailContent(e);
-              setVoidCheckOrEmailContentValid(isTextValid(e?.value));
-              if (!voidCheckOrEmailContentValid) {
-                setVoidCheckOrEmailContentError(
-                  "Void check or email content should not be empty"
-                );
-              }
-            }}
-            isSearchable={true}
-          />
-          {!voidCheckOrEmailContentValid ? (
-            <p
-              className=""
-              style={{ fontSize: "12px", color: "red", marginBottom: "15px" }}
-            >
-              {voidCheckOrEmailContentError}
-            </p>
-          ) : null}
-        </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">W9 or W4</td>
-          <td className="px-6 py-4">
-            {data?.docData?.w9Orw4}
-            <Select
-              value={w9Orw4}
-              options={W9W4List}
-              onChange={(e: any) => setW9Orw4(e)}
-            />
-          </td>
-        </tr> */}
-        <Grid xs={6} md={5.5}>
-          <Select
-            className="text-[13px] text-left"
-            value={w9Orw4}
-            options={W9W4List}
-            onChange={(e: any) => {
-              setW9Orw4(e);
-              setW9Orw4Valid(isTextValid(e?.value));
-              if (!w9Orw4Valid) {
-                setW9Orw4Error("W9 or W4 should not be empty");
-              }
-            }}
-            isSearchable={true}
-          />
-          {!w9Orw4Valid ? (
-            <p
-              className=""
-              style={{ fontSize: "12px", color: "red", marginBottom: "15px" }}
-            >
-              {w9Orw4Error}
-            </p>
-          ) : null}
-        </Grid>
-        {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4">Work authorization document</td>
-          <td className="px-6 py-4">
-            {data?.docData?.workAuthorizationDocument}
-            <Select
-              value={workAuthorizationDocument}
-              options={WorkAuthorizeDocumentationList}
-              onChange={(e: any) => setWorkAuthorizationDocument(e)}
-            />
-          </td>
-        </tr> */}
-        <Grid xs={6} md={5.5}>
-          <Select
-            // aria-label="Work authorization document"
-            // placeholder="Work authorization document"
-            className="text-[13px] text-left"
-            value={workAuthorizationDocument}
-            options={WorkAuthorizeDocumentationList}
-            onChange={(e: any) => {
-              setWorkAuthorizationDocument(e);
-              setWorkAuthorizationDocumentValid(isTextValid(e?.value));
-              if (!workAuthorizationDocumentValid) {
-                setWorkAuthorizationDocumentError(
-                  "Work authorization document should not be empty"
-                );
-              }
-            }}
-            isSearchable={true}
-          />
-          {!workAuthorizationDocumentValid ? (
+          {!mspFeeValid ? (
             <p
               className=""
               style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
             >
-              {workAuthorizationDocumentError}
+              {mspFeeError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <FloatLabel
+            label="Pay rate"
+            value={payRate}
+            placeholder={""}
+            handleChange={(event) => {
+              setPayRate(event.target.value);
+              setPayRateValid(isTextValid(event.target.value));
+              if (!payRateValid) {
+                setPayRateError("Pay rate should not be empty.");
+              }
+            }}
+            className=""
+          />
+          {!payRateValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {payRateError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <FloatLabel
+            label="Ref Fee"
+            value={refFee}
+            placeholder={""}
+            handleChange={(event) => {
+              setRefFee(event.target.value);
+              setRefFeeValid(isTextValid(event.target.value));
+              if (!refFeeValid) {
+                setRefFeeError("Ref Fee should not be empty.");
+              }
+            }}
+            className=""
+          />
+          {!refFeeValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {refFeeError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <FloatLabel
+            label="Tax OH percentage"
+            value={taxOHPercentage}
+            placeholder={""}
+            handleChange={(event) => {
+              setTaxOHPercentage(event.target.value);
+              setTaxOHPercentageValid(isTextValid(event.target.value));
+              if (!taxOHPercentageValid) {
+                setRefFeeError("Tax OH percentage should not be empty.");
+              }
+            }}
+            className=""
+          />
+          {!refFeeValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {refFeeError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <FloatLabel
+            label="Tax OH"
+            value={taxOH}
+            placeholder={""}
+            handleChange={(event) => {
+              setTaxOH(event.target.value);
+              setTaxOHValid(isTextValid(event.target.value));
+              if (!taxOHValid) {
+                setTaxOHError("Tax OH should not be empty.");
+              }
+            }}
+            className=""
+          />
+          {!taxOHValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {taxOHError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <Select
+            aria-label="Health benefits opted"
+            className="text-[13px] text-left"
+            options={yesNoList}
+            placeholder="Health benefits opted"
+            value={hBenefitesOpted}
+            getOptionLabel={(option) => option.label}
+            getOptionValue={(option) => option.value}
+            onChange={(e: any) => {
+              setHBenefitesOpted(e);
+              setHBenefitesOptedValid(isTextValid(e?.value));
+              if (!hBenefitesOptedValid) {
+                setHBenefitesOptedError(
+                  "Health benefits opted should not be empty."
+                );
+              }
+            }}
+            isSearchable={true}
+          />
+          {!hBenefitesOptedValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {hBenefitesOptedError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <FloatLabel
+            label="Health benefits cost"
+            value={hBenefitesCost}
+            placeholder={""}
+            handleChange={(event) => {
+              setHBenefitesCost(event.target.value);
+              setHBenefitesCostValid(isTextValid(event.target.value));
+              if (!hBenefitesCostValid) {
+                setHBenefitesCostError(
+                  "Health benefits cost should not be empty."
+                );
+              }
+            }}
+            className=""
+          />
+          {!hBenefitesCostValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {hBenefitesCostError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <FloatLabel
+            label="netBillRate"
+            value={netBillRate}
+            placeholder={""}
+            handleChange={(event) => {
+              setNetBillRate(event.target.value);
+              setNetBillRateValid(isTextValid(event.target.value));
+              if (!netBillRateValid) {
+                setNetBillRateError("netBillRate should not be empty.");
+              }
+            }}
+            className=""
+          />
+          {!netBillRateValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {netBillRateError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <FloatLabel
+            label="Net purchase"
+            value={netPurchase}
+            placeholder={""}
+            handleChange={(event) => {
+              setNetPurchase(event.target.value);
+              setNetPurchaseValid(isTextValid(event.target.value));
+              if (!netPurchaseValid) {
+                setNetPurchaseError("Net purchase should not be empty.");
+              }
+            }}
+            className=""
+          />
+          {!netPurchaseValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {netPurchaseError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <FloatLabel
+            label="Margin"
+            value={margin}
+            placeholder={""}
+            handleChange={(event) => {
+              setMargin(event.target.value);
+              setMarginValid(isTextValid(event.target.value));
+              if (!marginValid) {
+                setMarginError("Margin should not be empty.");
+              }
+            }}
+            className=""
+          />
+          {!marginValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {marginError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <FloatLabel
+            label="Full time salary offered"
+            value={fullTimeSalaryOffered}
+            placeholder={""}
+            handleChange={(event) => {
+              setFullTimeSalaryOffered(event.target.value);
+              setFullTimeSalaryOfferedValid(isTextValid(event.target.value));
+              if (!fullTimeSalaryOfferedValid) {
+                setFullTimeSalaryOfferedError(
+                  "Full time salary offered should not be empty."
+                );
+              }
+            }}
+            className=""
+          />
+          {!fullTimeSalaryOfferedValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {fullTimeSalaryOfferedError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <Select
+            aria-label="jobLevel"
+            className="text-[13px] text-left"
+            options={JobLevelList}
+            placeholder="jobLevel"
+            value={jobLevel}
+            getOptionLabel={(option) => option.label}
+            getOptionValue={(option) => option.value}
+            onChange={(e: any) => {
+              setJobLevel(e);
+              setJobLevelValid(isTextValid(e?.value));
+              if (!jobLevelValid) {
+                setJobLevelError("jobLevel should not be empty.");
+              }
+            }}
+            isSearchable={true}
+          />
+          {!jobLevelValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {jobLevelError}
+            </p>
+          ) : null}
+        </Grid>
+
+        <Grid xs={6} md={5.5}>
+          <Select
+            aria-label="FF invoice status"
+            className="text-[13px] text-left"
+            options={FFInvoiceStatusList}
+            placeholder="FF invoice status"
+            value={ffInvoiceStatus}
+            getOptionLabel={(option) => option.label}
+            getOptionValue={(option) => option.value}
+            onChange={(e: any) => {
+              setFfInvoiceStatus(e);
+              setFfInvoiceStatusValid(isTextValid(e?.value));
+              if (!ffInvoiceStatusValid) {
+                setFfInvoiceStatusError(
+                  "FF invoice status should not be empty."
+                );
+              }
+            }}
+            isSearchable={true}
+          />
+          {!ffInvoiceStatusValid ? (
+            <p
+              className=""
+              style={{ fontSize: "12px", color: "red", marginBottom: "5px" }}
+            >
+              {ffInvoiceStatusError}
             </p>
           ) : null}
         </Grid>
       </Grid>
-
-      <div className="m-auto mb-3 w-[30%] ml-[30%] text-white">
+      <div className="m-auto w-[30%] ml-[30%] text-white">
         <Button
           className=""
-          value="Update"
+          value="update"
           handleClick={() => {
-            updateCandidateDocumentation();
+            updateCandidateStartEndOperations();
           }}
         />
       </div>
@@ -1584,4 +1323,4 @@ const ShowDocumentation: React.FC<Props> = ({
   );
 };
 
-export default ShowDocumentation;
+export default ShowStartEndOperations;
