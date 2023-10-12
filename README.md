@@ -12,9 +12,8 @@ import { isTextValid } from "../../helpers/validate";
 import { FloatLabel } from "../../common/FloatLabel/FloatLabel";
 interface Props {
   setShowModal: any;
-  data: any;
 }
-const EditWorkAuthorization: React.FC<Props> = ({ setShowModal }) => {
+const AddWorkAuthorization: React.FC<Props> = ({ setShowModal }) => {
   const dispatch = useAppDispatch();
   const workAuthorization = useAppSelector(
     (state: RootState) => state.workAuthorization.workAuthorizationData
@@ -73,7 +72,7 @@ const EditWorkAuthorization: React.FC<Props> = ({ setShowModal }) => {
           <div className="rate-revision-btn-div">
             <Button
               className="submit-btn"
-              value="Update WorkAuthorization"
+              value="Save & Submit"
               handleClick={() => onSubmitClick()}
             />
           </div>
@@ -83,4 +82,4 @@ const EditWorkAuthorization: React.FC<Props> = ({ setShowModal }) => {
   );
 };
 
-export default EditWorkAuthorization;
+export default AddWorkAuthorization;
