@@ -1,149 +1,82 @@
-import * as React from 'react';
-import Backdrop from '@mui/material/Backdrop';
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
-import Typography from '@mui/material/Typography';
-import { useSpring, animated } from '@react-spring/web';
-import CloseIcon from '@mui/icons-material/Close';
-import EditIcon from '@mui/icons-material/Edit';
-import DoneIcon from '@mui/icons-material/Done';
-import { TextField } from '@mui/material';
-import { useAppDispatch } from '../../hooks/app';
-import { editContractTypeData } from '../../actions/contractType';
-
-interface FadeProps {
-  children: React.ReactElement;
-  in?: boolean;
-  onClick?: any;
-  onEnter?: (node: HTMLElement, isAppearing: boolean) => void;
-  onExited?: (node: HTMLElement, isAppearing: boolean) => void;
-  ownerState?: any;
+import React, { useEffect, useState } from "react";
+import Grid from "@mui/material/Unstable_Grid2";
+import { TextField } from "../../common/TextField/TextField";
+import { Button } from "../../common/Button/Button";
+import { useAppDispatch, useAppSelector } from "../../hooks/app";
+import { RootState } from "../../redux/store";
+import {
+  saveContractTypeData,
+  setContractTypeInputBoxValue,
+} from "../../actions/contractType";
+import { isTextValid } from "../../helpers/validate";
+import { FloatLabel } from "../../common/FloatLabel/FloatLabel";
+interface Props {
+  setShowModal: any;
+  data: any;
 }
+const EditContractType: React.FC<Props> = ({ setShowModal }) => {
+  const dispatch = useAppDispatch();
+  const contractType = useAppSelector(
+    (state: RootState) => state.contractType.contractTypeData
+  );
 
-const Fade = React.forwardRef<HTMLDivElement, FadeProps>(function Fade(props, ref) {
-  const {
-    children,
-    in: open,
-    onClick,
-    onEnter,
-    onExited,
-    ownerState,
-    ...other
-  } = props;
-  const style = useSpring({
-    from: { opacity: 0 },
-    to: { opacity: open ? 1 : 0 },
-    onStart: () => {
-      if (open && onEnter) {
-        onEnter(null as any, true);
+  const onContractTypeValueChange = (key: any, value: any) => {
+    dispatch(setContractTypeInputBoxValue(key, value));
+  };
+
+  const [contractTypeError, setContractTypeError] = useState<any>();
+
+  const [contractTypeValid, setContractTypeValid] = useState<boolean>();
+
+  useEffect(() => {
+    setContractTypeValid(isTextValid(contractType?.contractType));
+  }, [contractType]);
+
+  function onSubmitClick() {
+    setContractTypeValid(isTextValid(contractType?.contractType));
+    if (contractTypeValid) {
+      dispatch(saveContractTypeData(contractType?.contractType));
+    } else {
+      if (!contractTypeValid) {
+        setContractTypeError("Contract type is invalid");
       }
-    },
-    onRest: () => {
-      if (!open && onExited) {
-        onExited(null as any, true);
-      }
-    },
-  });
+    }
+  }
 
   return (
-    <animated.div ref={ref} style={style} {...other}>
-      {React.cloneElement(children, { onClick })}
-    </animated.div>
+    <>
+      {/* <h2>Contract type</h2> */}
+      <div className="pt-5 px-5">
+        <Grid container spacing={2}>
+          <Grid xs={12} md={12}>
+            <FloatLabel
+              label="*Contract type"
+              value={contractType?.contractType}
+              placeholder={""}
+              handleChange={(event) => {
+                onContractTypeValueChange("contractType", event.target.value);
+              }}
+              className=""
+            />
+            {!contractTypeValid ? (
+              <p className="" style={{ fontSize: "12px", color: "red" }}>
+                {contractTypeError}
+              </p>
+            ) : null}
+          </Grid>
+        </Grid>
+          <Grid xs={6} md={6}>
+        <div className="rate-revision-btn-div">
+            <Button
+              className="submit-btn"
+              value="Update ContractType"
+              handleClick={() => onSubmitClick()}
+            />
+        </div>
+          </Grid>
+      </div>
+    </>
   );
-});
-
-const style = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '1px #000',
-  boxShadow: 24,
-  p: 4,
-  borderRadius: "10px",
 };
 
-interface Props {
-  open: any,
-  setOpen: any,
-  data: any,
-  showTableCount: any
-}
-
-const ShowContractType: React.FC<Props> = ({ open, setOpen, data, showTableCount }) => {
-  const dispatch = useAppDispatch();
-  const [disable, setDisable] = React.useState(true);
-  const [id, setId] = React.useState(data.id);
-  const [contractType, setContractType] = React.useState(data.contractType);
-  const [count, setCount] = React.useState(0);
-
-  React.useEffect(() => {
-    // if (count === 0 && data.personId) {
-    setId(data.id);
-    setContractType(data.contractType);
-    setCount(1);
-    // }
-  }, [data])
-
-  return (
-    <div>
-      <Modal
-        aria-labelledby="spring-modal-title"
-        aria-describedby="spring-modal-description"
-        open={open}
-        closeAfterTransition
-        slots={{ backdrop: Backdrop }}
-        slotProps={{
-          backdrop: {
-            TransitionComponent: Fade,
-          },
-        }}
-      // style={{
-      //   borderRadius: "10px",
-      //   alignItems: 'center'
-      // }}
-      >
-        <Box sx={style}>
-          <button style={{ float: "right" }} onClick={() => { setOpen(false); setDisable(true) }}><CloseIcon /></button>
-          <Typography id="spring-modal-title" variant="h4" component="h2">
-            {data.companyName}
-          </Typography>
-          <Typography id="spring-modal-description" sx={{ mt: 2 }}>
-
-            {
-              disable ? (
-                <button style={{ float: "right" }} onClick={() => setDisable(false)}><EditIcon /></button>
-              ) : (
-                <button style={{ float: "right" }} onClick={() => {
-                  dispatch(editContractTypeData(
-                    id,
-                    contractType,
-                  ));
-                  setDisable(true)
-                  setOpen(false)
-                  showTableCount(true)
-                }}>
-                  <DoneIcon />
-                </button>
-              )
-            }
-
-            <TextField
-              label="Contract type"
-              id="contractType"
-              value={contractType}
-              onChange={(event) => setContractType(event.target.value)}
-              size="small"
-              variant="standard"
-              disabled={disable}
-            />
-          </Typography>
-        </Box>
-      </Modal>
-    </div >
-  );
-}
-
-export default ShowContractType;
+export default EditContractType;
