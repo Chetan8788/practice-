@@ -1,249 +1,149 @@
-import React, { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../hooks/app";
-import { RootState } from "../../redux/store";
+import * as React from 'react';
+import Backdrop from '@mui/material/Backdrop';
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
+import Typography from '@mui/material/Typography';
+import { useSpring, animated } from '@react-spring/web';
+import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
+import DoneIcon from '@mui/icons-material/Done';
+import { TextField } from '@mui/material';
+import { useAppDispatch } from '../../hooks/app';
+import { editContractTypeData } from '../../actions/contractType';
 
-import { Link } from "react-router-dom";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import ShowContractType from "./ShowIndividualContractType";
-import {
-  contractTypeData,
-  deleteContractTypeData,
-} from "../../actions/contractType";
-import { GenericTable } from "../../common/GenericTable/GenricTable";
-import Swal from "sweetalert2";
-import { Button } from "../../common/Button/Button";
-import { Modal } from "../../common/Modal/Modal";
-import AddContractType from "./AddContractType";
-import EditContractType from "./EditContractType";
+interface FadeProps {
+  children: React.ReactElement;
+  in?: boolean;
+  onClick?: any;
+  onEnter?: (node: HTMLElement, isAppearing: boolean) => void;
+  onExited?: (node: HTMLElement, isAppearing: boolean) => void;
+  ownerState?: any;
+}
 
-const TABLE_HEAD: any = [
-  { label: "Contact Type", key: "contractType" },
-  { label: "Action", key: "action" },
-];
-
-const ShowContractTypeTable: React.FC = () => {
-  console.log("TABLE_HEAD: ", TABLE_HEAD);
-
-  const dispatch = useAppDispatch();
-  let contractTypeData = useAppSelector(
-    (state: RootState) => state.contractType.allContractTypeData
-  );
-  let contractTypeDataRow = contractTypeData;
-  const [open, setOpen] = useState(false);
-  const [singleContractTypeData, setSingleContractTypeData] = useState({});
-  const [filteredData, setFilteredData] = useState(contractTypeData);
-  console.log("filteredData", filteredData);
-  const [count, setCount] = useState(true);
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setSingleContractTypeData(false);
-    setShowEditModal(false);
-    setAddFlag(false);
-    setEditFlag(false);
-  };
-  useEffect(() => {
-    const contactList = contractTypeData.map((contactdate: any) => {
-      const contractType = contactdate?.contractType;
-
-      return {
-        ...contactdate,
-        contractType,
-      };
-    });
-    setFilteredData(contactList);
-
-    if (count) {
-      if (contractTypeData?.length !== 0) {
-        setFilteredData(
-          contractTypeData?.filter((cd: { contactdate: any }) =>
-            cd?.contactdate?.contactName?.toLowerCase()?.includes("")
-          )
-        );
-        setCount(false);
+const Fade = React.forwardRef<HTMLDivElement, FadeProps>(function Fade(props, ref) {
+  const {
+    children,
+    in: open,
+    onClick,
+    onEnter,
+    onExited,
+    ownerState,
+    ...other
+  } = props;
+  const style = useSpring({
+    from: { opacity: 0 },
+    to: { opacity: open ? 1 : 0 },
+    onStart: () => {
+      if (open && onEnter) {
+        onEnter(null as any, true);
       }
-    }
-  }, [contractTypeData, count]);
+    },
+    onRest: () => {
+      if (!open && onExited) {
+        onExited(null as any, true);
+      }
+    },
+  });
 
-  const filterResult = (event: any) => {
-    setFilteredData(contractTypeDataRow);
-    let value: string = event.target.value;
-
-    if (contractTypeData?.length !== 0) {
-      const data: any = contractTypeData?.filter((ele: any) =>
-        ele?.contractType?.toLowerCase()?.includes(value.toLowerCase())
-      );
-      console.log("filteredData inside search: ", data);
-
-      const contactList = data?.map((contactdate: any) => {
-        const contractType = contactdate?.contractType;
-
-        return {
-          ...contactdate,
-          contractType,
-        };
-      });
-      setFilteredData(contactList);
-      console.log("contactList: ", contactList);
-    } else {
-      const contactList = contractTypeData?.map((contactdate: any) => {
-        const contractType = contactdate?.contractType;
-
-        return {
-          ...contactdate,
-          contractType,
-        };
-      });
-      console.log("contactList: ", contractTypeData);
-      setFilteredData(contactList);
-    }
-  };
-
-  // const onPressAction = (rowData: any, type: any) => {
-  //     console.log(rowData);
-  //     console.log(type);
-  // };
-  const [editData, setEditData] = useState<any>();
-  const [addFlag, setAddFlag] = useState<boolean>(false);
-  const [editFlag, setEditFlag] = useState<boolean>(false);
-  const [showEditModal, setShowEditModal] = useState<boolean>(false);
-  const onPressAction = (rowData: any, type: any) => {
-    console.log(rowData);
-    console.log(type);
-    if (type == "Edit") {
-      setShowEditModal(true);
-      setEditFlag(true);
-      setEditData(rowData);
-    } else if (type == "Delete") {
-      Swal.fire({
-        title: "Do you really want to delete it ?",
-        showDenyButton: true,
-        // showCancelButton: true,
-        confirmButtonText: "Yes",
-        denyButtonText: "No",
-        customClass: {
-          actions: "my-actions",
-          cancelButton: "order-1 right-gap",
-          confirmButton: "order-2",
-          denyButton: "order-3",
-        },
-      });
-    }
-  };
   return (
-    <>
-      <div style={{ display: "flex" }}>
-        <div
-          style={{ borderRadius: "15px", marginBottom: "10px", width: "90%" }}
-          className="py-3 px-4"
-        >
-          <div className="relative max-w">
-            <label htmlFor="hs-table-search" className="sr-only">
-              Search
-            </label>
-
-            <input
-              style={{ border: "0.5px solid gray" }}
-              type="text"
-              name="hs-table-search"
-              id="hs-table-search"
-              className="ml-[-13px] mt-[5px] p-2 pl-10 block w-[35%] border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
-              placeholder="Search for contract types"
-              onChange={(event) => filterResult(event)}
-            />
-            <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none pl-2">
-              <svg
-                className="h-3.5 w-3.5 text-gray-400"
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                viewBox="0 0 16 16"
-              >
-                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-              </svg>
-            </div>
-          </div>
-        </div>
-        <div
-          style={{
-            width: "30%",
-            maxHeight: "100%",
-            justifyContent: "center",
-            alignContent: "center",
-            marginTop: "10px",
-            marginLeft: "150px",
-          }}
-        >
-          <Button
-            value="Add contract-type"
-            className="mt-3 py-1 text-white bg-[#1976D2]"
-            handleClick={() => {
-              setShowModal(true);
-              setAddFlag(true);
-            }}
-          />
-          {addFlag && (
-            <Modal
-              children={<AddContractType setShowModal={setShowModal} />}
-              modalStyle={{
-                marginTop: "50px",
-                overflow: "scroll",
-                boxShadow: "initial",
-                zIndex: "999px",
-              }}
-              showModalHeader={true}
-              modalHeader={"Add ContractType"}
-              isFlexible={true}
-              topRightCloseButtonID={"x-  "}
-              showModal={showModal}
-              showBackButton={true}
-              showBBPSLogo={true}
-              handleBackClick={handleCloseModal}
-            ></Modal>
-          )}
-          {editFlag && (
-            <Modal
-              children={
-                <EditContractType
-                  setShowModal={showEditModal}
-                  data={editData}
-                />
-              }
-              modalStyle={{
-                marginTop: "50px",
-                overflow: "scroll",
-                boxShadow: "initial",
-                zIndex: "999px",
-              }}
-              showModalHeader={true}
-              modalHeader={"Edit ContractType"}
-              isFlexible={true}
-              topRightCloseButtonID={"x-  "}
-              showModal={showEditModal}
-              showBackButton={true}
-              showBBPSLogo={true}
-              handleBackClick={handleCloseModal}
-            ></Modal>
-          )}
-        </div>
-      </div>
-      <GenericTable
-        showColumnLink={["fullAddress"]}
-        tableHeader={TABLE_HEAD}
-        onPressAction={onPressAction}
-        tableData={filteredData}
-        showCheckbox={false}
-        showAvatar={false}
-        actionType={["Edit", "Delete"]}
-        loading={true}
-        onPageChange={function (page: number): void {
-          throw new Error("Function not implemented.");
-        }}
-        count={0}
-      />
-    </>
+    <animated.div ref={ref} style={style} {...other}>
+      {React.cloneElement(children, { onClick })}
+    </animated.div>
   );
+});
+
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '1px #000',
+  boxShadow: 24,
+  p: 4,
+  borderRadius: "10px",
 };
 
-export default ShowContractTypeTable;
+interface Props {
+  open: any,
+  setOpen: any,
+  data: any,
+  showTableCount: any
+}
+
+const ShowContractType: React.FC<Props> = ({ open, setOpen, data, showTableCount }) => {
+  const dispatch = useAppDispatch();
+  const [disable, setDisable] = React.useState(true);
+  const [id, setId] = React.useState(data.id);
+  const [contractType, setContractType] = React.useState(data.contractType);
+  const [count, setCount] = React.useState(0);
+
+  React.useEffect(() => {
+    // if (count === 0 && data.personId) {
+    setId(data.id);
+    setContractType(data.contractType);
+    setCount(1);
+    // }
+  }, [data])
+
+  return (
+    <div>
+      <Modal
+        aria-labelledby="spring-modal-title"
+        aria-describedby="spring-modal-description"
+        open={open}
+        closeAfterTransition
+        slots={{ backdrop: Backdrop }}
+        slotProps={{
+          backdrop: {
+            TransitionComponent: Fade,
+          },
+        }}
+      // style={{
+      //   borderRadius: "10px",
+      //   alignItems: 'center'
+      // }}
+      >
+        <Box sx={style}>
+          <button style={{ float: "right" }} onClick={() => { setOpen(false); setDisable(true) }}><CloseIcon /></button>
+          <Typography id="spring-modal-title" variant="h4" component="h2">
+            {data.companyName}
+          </Typography>
+          <Typography id="spring-modal-description" sx={{ mt: 2 }}>
+
+            {
+              disable ? (
+                <button style={{ float: "right" }} onClick={() => setDisable(false)}><EditIcon /></button>
+              ) : (
+                <button style={{ float: "right" }} onClick={() => {
+                  dispatch(editContractTypeData(
+                    id,
+                    contractType,
+                  ));
+                  setDisable(true)
+                  setOpen(false)
+                  showTableCount(true)
+                }}>
+                  <DoneIcon />
+                </button>
+              )
+            }
+
+            <TextField
+              label="Contract type"
+              id="contractType"
+              value={contractType}
+              onChange={(event) => setContractType(event.target.value)}
+              size="small"
+              variant="standard"
+              disabled={disable}
+            />
+          </Typography>
+        </Box>
+      </Modal>
+    </div >
+  );
+}
+
+export default ShowContractType;
