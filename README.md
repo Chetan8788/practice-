@@ -12,8 +12,9 @@ import { isTextValid } from "../../helpers/validate";
 import { FloatLabel } from "../../common/FloatLabel/FloatLabel";
 interface Props {
   setShowModal: any;
+  data: any;
 }
-const AddContractType: React.FC<Props> = ({ setShowModal }) => {
+const EditContractType: React.FC<Props> = ({ setShowModal }) => {
   const dispatch = useAppDispatch();
   const contractType = useAppSelector(
     (state: RootState) => state.contractType.contractTypeData
@@ -33,13 +34,13 @@ const AddContractType: React.FC<Props> = ({ setShowModal }) => {
 
   function onSubmitClick() {
     setContractTypeValid(isTextValid(contractType?.contractType));
-
     if (contractTypeValid) {
       dispatch(saveContractTypeData(contractType?.contractType));
       setShowModal(false);
     } else {
       if (!contractTypeValid) {
         setContractTypeError("Contract type is invalid");
+        setShowModal(false);
       }
     }
   }
@@ -66,18 +67,18 @@ const AddContractType: React.FC<Props> = ({ setShowModal }) => {
             ) : null}
           </Grid>
         </Grid>
-        <div className="rate-revision-btn-div">
-          <Grid xs={6} md={6}>
+        <Grid xs={6} md={6}>
+          <div className="rate-revision-btn-div">
             <Button
               className="submit-btn"
-              value="Save & Submit"
+              value="Update ContractType"
               handleClick={() => onSubmitClick()}
             />
-          </Grid>
-        </div>
+          </div>
+        </Grid>
       </div>
     </>
   );
 };
 
-export default AddContractType;
+export default EditContractType;
