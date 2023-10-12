@@ -1,88 +1,83 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Unstable_Grid2";
 import { TextField } from "../../common/TextField/TextField";
 import { Button } from "../../common/Button/Button";
 import { useAppDispatch, useAppSelector } from "../../hooks/app";
 import { RootState } from "../../redux/store";
 import {
-  saveWorkAuthorizationData,
-  setWorkAuthorizationInputBoxValue,
-} from "../../actions/workAuthorization";
+  saveContractTypeData,
+  setContractTypeInputBoxValue,
+} from "../../actions/contractType";
 import { isTextValid } from "../../helpers/validate";
 import { FloatLabel } from "../../common/FloatLabel/FloatLabel";
 interface Props {
   setShowModal: any;
-  data: any;
 }
-const EditWorkAuthorization: React.FC<Props> = ({ setShowModal }) => {
+const AddContractType: React.FC<Props> = ({ setShowModal }) => {
   const dispatch = useAppDispatch();
-  const workAuthorization = useAppSelector(
-    (state: RootState) => state.workAuthorization.workAuthorizationData
+  const contractType = useAppSelector(
+    (state: RootState) => state.contractType.contractTypeData
   );
 
-  const onWorkAuthorizationValueChange = (key: any, value: any) => {
-    dispatch(setWorkAuthorizationInputBoxValue(key, value));
+  const onContractTypeValueChange = (key: any, value: any) => {
+    dispatch(setContractTypeInputBoxValue(key, value));
   };
 
-  const [workAuthorizationError, setWorkAuthorizationError] = useState<any>();
+  const [contractTypeError, setContractTypeError] = useState<any>();
 
-  const [workAuthorizationValid, setWorkAuthorizationValid] =
-    useState<boolean>();
+  const [contractTypeValid, setContractTypeValid] = useState<boolean>();
+
+  useEffect(() => {
+    setContractTypeValid(isTextValid(contractType?.contractType));
+  }, [contractType]);
 
   function onSubmitClick() {
-    setWorkAuthorizationValid(
-      isTextValid(workAuthorization?.workAuthorization)
-    );
-    console.log("setShowModal: ", setShowModal);
-    if (workAuthorizationValid) {
-      console.log("called");
-      dispatch(saveWorkAuthorizationData(workAuthorization?.workAuthorization));
+    setContractTypeValid(isTextValid(contractType?.contractType));
+
+    if (contractTypeValid) {
+      dispatch(saveContractTypeData(contractType?.contractType));
       setShowModal(false);
     } else {
-      if (!workAuthorizationValid) {
-        setWorkAuthorizationError("Work authorization is invalid");
-        setShowModal(false);
+      if (!contractTypeValid) {
+        setContractTypeError("Contract type is invalid");
       }
     }
   }
 
   return (
     <>
-      {/* <h2>Work authorization</h2> */}
+      {/* <h2>Contract type</h2> */}
       <div className="pt-5 px-5">
         <Grid container spacing={2}>
           <Grid xs={12} md={12}>
             <FloatLabel
-              label="*Work authorization type"
-              value={workAuthorization?.workAuthorization}
+              label="*Contract type"
+              value={contractType?.contractType}
               placeholder={""}
               handleChange={(event) => {
-                onWorkAuthorizationValueChange(
-                  "workAuthorization",
-                  event.target.value
-                );
+                onContractTypeValueChange("contractType", event.target.value);
               }}
               className=""
             />
-            {!workAuthorizationValid ? (
+            {!contractTypeValid ? (
               <p className="" style={{ fontSize: "12px", color: "red" }}>
-                {workAuthorizationError}
+                {contractTypeError}
               </p>
             ) : null}
           </Grid>
         </Grid>
-        <Grid xs={12} md={12}>
-          <div className="rate-revision-btn-div">
+        <div className="rate-revision-btn-div">
+          <Grid xs={6} md={6}>
             <Button
               className="submit-btn"
-              value="Update WorkAuthorization"
+              value="Save & Submit"
               handleClick={() => onSubmitClick()}
             />
-          </div>
-        </Grid>
+          </Grid>
+        </div>
       </div>
     </>
   );
 };
 
-export default EditWorkAuthorization;
+export default AddContractType;
