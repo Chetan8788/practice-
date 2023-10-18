@@ -1,50 +1,58 @@
-import React, { useState } from 'react';
-import Grid from '@mui/material/Unstable_Grid2';
-import { TextField } from '../../common/TextField/TextField';
-import { saveClientData, setClientInputBoxValue } from '../../actions/client';
-import { ContractType, LocationName } from '../../constants/candidateclientconstants';
-import { useAppDispatch, useAppSelector } from '../../hooks/app';
-import { RootState } from '../../redux/store';
-import { Box } from '@mui/material';
-import { Button } from '../../common/Button/Button';
-import { useNavigate } from 'react-router-dom';
-import { addClientStateList } from '../../constants/constants';
-import { isEmailValid, isTextValid } from '../../helpers/validate';
-import { EMPTY_ADDRESS_DATA } from '../../utils/addressutil';
-import Select from 'react-select';
-import { FloatLabel } from '../../common/FloatLabel/FloatLabel';
-import { FloatSelect } from '../../common/FloatSelect/FloatSelect';
+import React, { useEffect, useState } from "react";
+import "./CandidateDetails.css";
+import Grid from "@mui/material/Unstable_Grid2";
+import { TextField } from "../../common/TextField/TextField";
+import { useAppDispatch, useAppSelector } from "../../hooks/app";
+import { RootState } from "../../redux/store";
+import { setCandidateInputBoxValue, setCandidateValidation } from "../../actions/candidate";
+import { DropDown } from "../../common/DropDown/DropDown";
+import {
+    LocationName,
+    WorkAuthorization,
+} from "../../constants/candidateclientconstants";
+import Select from "react-select";
+import { yesNoList } from "../../constants/constants";
+import { isEmailValid, isTextValid } from "../../helpers/validate";
 
-interface Props {
-    setShowModal: any,
-}
+const CandidateDetails: React.FC = () => {
 
-const customStyles = {
-    control: (styles: any) => ({
-        ...styles,
-        // Your custom control styles here
-    }),
-    // Add more custom styles for other elements as needed
-    placeholder: (styles: any) => ({
-        ...styles,
-        color: '#1976D2', // Change this color to your desired placeholder color
-    }),
-};
-
-const AddClientDetails: React.FC<Props> = ({ setShowModal }) => {
     const dispatch = useAppDispatch();
-    const currentClientData = useAppSelector((state: RootState) => state.client.clientData);
-    const allClientData = useAppSelector((state: RootState) => state.client.allClientData);
-    let allClientName: object[] = [];
+    const currentCandidateData = useAppSelector(
+        (state: RootState) => state.candidate.candidateData
+    );
+    const validationCandidateData = useAppSelector(
+        (state: RootState) => state.candidate.candidateValidationData
+    );
 
+    console.log('currentCandidateData: ', currentCandidateData);
+    console.log('reducerCandidateData: ', validationCandidateData);
 
-
+    let workAuthorizationData = useAppSelector(
+        (state: RootState) => state.workAuthorization.allWorkAuthorizationData
+    );
+    var result: any = [];
+    if (workAuthorizationData != undefined) {
+        workAuthorizationData.forEach((element: { workAuthorization: any }) => {
+            result.push({
+                label: element.workAuthorization,
+                value: element.workAuthorization,
+            });
+        });
+    }
     const locationName = LocationName;
+    // const workAuthorization = WorkAuthorization;
 
+    const onValueChange = (key: any, value: any) => {
+        dispatch(setCandidateInputBoxValue(key, value));
+    };
 
-    const [clientNameError, setClientNameError] = useState<any>();
-    const [endClientNameError, setEndClientNameError] = useState<any>();
-    const [mspNameError, setMspNameError] = useState<any>();
+    const onValidationChange = (key: any, value: any) => {
+        dispatch(setCandidateValidation(key, value));
+    };
+
+    const [firstNameError, setFirstNameError] = useState<any>();
+    const [middleNameError, setMiddleNameError] = useState<any>();
+    const [lastNameError, setLastNameError] = useState<any>();
     const [line1Error, setLine1Error] = useState<any>();
     const [line2Error, setLine2Error] = useState<any>();
     const [cityError, setCityError] = useState<any>();
@@ -52,27 +60,16 @@ const AddClientDetails: React.FC<Props> = ({ setShowModal }) => {
     const [zipCodeError, setZipCodeError] = useState<any>();
     const [countryError, setCountryError] = useState<any>();
     const [emailError, setEmailError] = useState<any>();
-    const [contactError, setContactError] = useState<any>();
-    const [faxError, setFaxError] = useState<any>();
+    const [contactNumberError, setContactNumberError] = useState<any>();
+    const [workAuthorizationError, setWorkAuthorizationError] = useState<any>();
+    const [
+        workAuthorizationExpiryDateError,
+        setWorkAuthorizationExpiryDateError,
+    ] = useState<any>();
 
-
-    const onValueChange = (key: any, value: any) => {
-        dispatch(setClientInputBoxValue(key, value));
-    };
-
-    const boxStyle = {
-        alignItems: 'center',
-        border: 'none', flexGrow: 1,
-        marginTop: "3%", overflowY: "auto",
-        overflowX: 'hidden',
-        height: "70vh",
-        paddingRight: "10px",
-        paddingLeft: "10px"
-    }
-
-    const [clientNameValid, setClientNameValid] = useState<boolean>();
-    const [endClientNameValid, setEndClientNameValid] = useState<boolean>();
-    const [mspNameValid, setMspNameValid] = useState<boolean>();
+    const [firstNameValid, setFirstNameValid] = useState<boolean>(false);
+    const [middleNameValid, setMiddleNameValid] = useState<boolean>();
+    const [lastNameValid, setLastNameValid] = useState<boolean>();
     const [line1Valid, setLine1Valid] = useState<boolean>();
     const [line2Valid, setLine2Valid] = useState<boolean>();
     const [cityValid, setCityValid] = useState<boolean>();
@@ -80,292 +77,361 @@ const AddClientDetails: React.FC<Props> = ({ setShowModal }) => {
     const [zipCodeValid, setZipCodeValid] = useState<boolean>();
     const [countryValid, setCountryValid] = useState<boolean>();
     const [emailValid, setEmailValid] = useState<boolean>();
-    const [contactValid, setContactValid] = useState<boolean>();
-    const [faxValid, setFaxValid] = useState<boolean>();
-
-    function onSubmitClick() {
-        setClientNameValid(isTextValid(currentClientData?.clientName));
-        setEndClientNameValid(isTextValid(currentClientData?.endClientName));
-        setMspNameValid(isTextValid(currentClientData?.mspName));
-        setLine1Valid(isTextValid(currentClientData?.line1));
-        setLine2Valid(isTextValid(currentClientData?.line2));
-        setCityValid(isTextValid(currentClientData?.city));
-        setStateValid(isTextValid(currentClientData?.state?.value));
-        setZipCodeValid(isTextValid(currentClientData?.zipCode));
-        setCountryValid(isTextValid(currentClientData?.country));
-        setEmailValid(isEmailValid(currentClientData?.email));
-        setContactValid(isTextValid(currentClientData?.contactNumber));
-        setFaxValid(isTextValid(currentClientData?.faxNumber));
-
-        console.log('contactValid: ', contactValid);
-        console.log('faxValid: ', faxValid);
-        console.log('stateValid: ', stateValid);
-        console.log('clientNameValid: ', clientNameValid);
-
-        console.log('setShowModal: ', setShowModal);
-        if (clientNameValid && endClientNameValid && mspNameValid && line1Valid && line2Valid && cityValid
-            && stateValid && countryValid && emailValid && zipCodeValid && contactValid && faxValid) {
-
-            dispatch(saveClientData(
-                currentClientData?.clientName,
-                currentClientData?.endClientName,
-                currentClientData?.mspName,
-                currentClientData?.email,
-                currentClientData?.contactNumber,
-                currentClientData?.faxNumber,
-                currentClientData?.line1,
-                currentClientData?.line2,
-                currentClientData?.city,
-                currentClientData?.state?.value,
-                currentClientData?.zipCode,
-                currentClientData?.country
-            ));
-            setShowModal(false);
-        } else {
-            if (!clientNameValid) {
-                setClientNameError("Client name should not be empty.")
-            }
-            if (!endClientNameValid) {
-                setEndClientNameError("End client name should not be empty.")
-            }
-            if (!mspNameValid) {
-                setMspNameError("Msp name should not be empty.")
-            }
-            if (!line1Valid) {
-                setLine1Error("Line 1 should not be empty.")
-            }
-            if (!line2Valid) {
-                setLine2Error("Line 2 should not be empty.")
-            }
-            if (!cityValid) {
-                setCityError("City should not be empty.")
-            }
-            if (!stateValid) {
-                setStateError("State should not be empty.")
-            }
-            if (!zipCodeValid) {
-                setZipCodeError("Zip code should not be empty.");
-            }
-            if (!countryValid) {
-                setCountryError("Country should not be empty.");
-            }
-            if (!emailValid) {
-                setEmailError("Email should not be empty.");
-            }
-            if (!contactValid) {
-                setContactError("Contact should not be empty.");
-            }
-            if (!faxValid) {
-                setFaxError("Fax no should not be empty.");
-            }
-        }
-    }
+    const [contactNumberValid, setContactNumberValid] = useState<boolean>();
+    const [workAuthorizationValid, setWorkAuthorizationValid] =
+        useState<boolean>();
+    const [
+        workAuthorizationExpiryDateValid,
+        setWorkAuthorizationExpiryDateValid,
+    ] = useState<boolean>();
 
     return (
         <>
-            <div className="pt-5 px-5 h-[65vh] overflow-auto" id="no-scroll-div">
-                <Grid container spacing={2}>
-                    <Grid xs={6} md={6}>
-                        <FloatLabel
-                            label='*Client name'
-                            value={currentClientData?.clientName}
-                            placeholder={""}
-                            handleChange={(event) => {
-                                onValueChange("clientName", event.target.value.replace(/[0-9]/gi, ""));
-                                setClientNameValid(isTextValid(currentClientData?.clientName));
-                            }}
-                            className=""
-                        />
-                        {!clientNameValid ? (
-                            <p className="" style={{ fontSize: "12px", color: "red" }}>{clientNameError}</p>
-                        ) : null}
-                    </Grid>
-                    <Grid xs={6} md={6}>
-                        <FloatLabel
-                            label='*End client name'
-                            value={currentClientData?.endClientName}
-                            placeholder={""}
-                            handleChange={(event) => {
-                                onValueChange("endClientName", event.target.value.replace(/[0-9]/gi, ""));
-                                setEndClientNameValid(isTextValid(currentClientData?.endClientName));
-                            }}
-                            className=""
-                        />
-                        {!endClientNameValid ? (
-                            <p className="" style={{ fontSize: "12px", color: "red" }}>{endClientNameError}</p>
-                        ) : null}
-                    </Grid>
-                    <Grid xs={6} md={6}>
-                        <FloatLabel
-                            label='*MSP name'
-                            value={currentClientData?.mspName}
-                            placeholder={""}
-                            handleChange={(event) => {
-                                onValueChange("mspName", event.target.value.replace(/[0-9]/gi, ""));
-                                setMspNameValid(isTextValid(currentClientData?.mspName));
-                            }}
-                            className=""
-                        />
-                        {!mspNameValid ? (
-                            <p className="" style={{ fontSize: "12px", color: "red" }}>{mspNameError}</p>
-                        ) : null}
-                    </Grid>
-                    <Grid xs={6} md={6}>
-                        <FloatLabel
-                            label='*Email'
-                            value={currentClientData?.email}
-                            placeholder={""}
-                            handleChange={(event) => {
-                                onValueChange("email", event.target.value.replace(/\s/g, ""));
-                                setEmailValid(isEmailValid(currentClientData?.email));
-                            }}
-                            className=""
-                        />
-                        {!emailValid ? (
-                            <p className="" style={{ fontSize: "12px", color: "red" }}>{emailError}</p>
-                        ) : null}
-                    </Grid>
-                    <Grid xs={6} md={6}>
-                        <FloatLabel
-                            label='*Contact number'
-                            value={currentClientData?.contactNumber}
-                            placeholder={""}
-                            handleChange={(event) => {
-                                onValueChange("contactNumber", event.target.value.replace(/[^0-9]/gi, ""));
-                                setContactValid(currentClientData?.contactNumber)
-                            }}
-                            className=""
-                        />
-                        {!contactValid ? (
-                            <p className="" style={{ fontSize: "12px", color: "red" }}>{contactError}</p>
-                        ) : null}
-                    </Grid>
-                    <Grid xs={6} md={6}>
-                        <FloatLabel
-                            label='*Fax number'
-                            value={currentClientData?.faxNumber}
-                            placeholder={""}
-                            handleChange={(event) => {
-                                onValueChange("faxNumber", event.target.value.replace(/[^0-9]/gi, ""));
-                                setFaxValid(currentClientData?.faxNumber)
-                            }}
-                            className=""
-                        />
-                        {!faxValid ? (
-                            <p className="" style={{ fontSize: "12px", color: "red" }}>{faxError}</p>
-                        ) : null}
-                    </Grid>
-                    <Grid xs={6} md={6}>
-                        <FloatLabel
-                            label='*Address line 1'
-                            value={currentClientData?.line1}
-                            placeholder={""}
-                            handleChange={(event) => {
-                                onValueChange("line1", event?.target?.value);
-                                setLine1Valid(isTextValid(currentClientData?.line1));
-                            }}
-                            className=""
-                        />
-                        {!line1Valid ? (
-                            <p className="" style={{ fontSize: "12px", color: "red" }}>{line1Error}</p>
-                        ) : null}
-                    </Grid>
-                    <Grid xs={6} md={6}>
-                        <FloatLabel
-                            label='*Address line 2'
-                            value={currentClientData?.line2}
-                            placeholder={""}
-                            handleChange={(event) => {
-                                onValueChange("line2", event?.target?.value);
-                                setLine2Valid(isTextValid(currentClientData?.line2));
-                            }}
-                            className=""
-                        />
-                        {!line2Valid ? (
-                            <p className="" style={{ fontSize: "12px", color: "red" }}>{line2Error}</p>
-                        ) : null}
-                    </Grid>
-                    <Grid xs={6} md={6}>
-                        <FloatLabel
-                            label='*City'
-                            value={currentClientData?.city}
-                            placeholder={""}
-                            handleChange={(event) => {
-                                onValueChange("city", event.target.value.replace(/[0-9]/gi, ""));
-                                setCityValid(isTextValid(currentClientData?.city));
-                            }}
-                            className=""
-                        />
-                        {!cityValid ? (
-                            <p className="" style={{ fontSize: "12px", color: "red" }}>{cityError}</p>
-                        ) : null}
-                    </Grid>
-                    <Grid xs={6} md={6}>
-                        <Select
-                            className='text-[14px] text-left'
-                            placeholder="Work state"
-                            options={locationName}
-                            value={currentClientData?.state}
-                            getOptionLabel={(option) => option.label}
-                            getOptionValue={(option) => option.value}
-                            onChange={(e: any) => {
-                                console.log('e: ', e);
-                                onValueChange("state", e);
-                                setStateValid(isTextValid(currentClientData?.state.value));
-                            }}
-                            isSearchable={true}
-                            styles={customStyles}
-                        />
-                        {!stateValid ? (
-                            <p className="" style={{ fontSize: "12px", color: "red" }}>{stateError}</p>
-                        ) : null}
-                    </Grid>
-                    <Grid xs={6} md={6}>
-                        <FloatLabel
-                            label='*Zip code'
-                            value={currentClientData?.zipCode}
-                            placeholder={""}
-                            handleChange={(event) => {
-                                onValueChange("zipCode", event.target.value.replace(/[^0-9]/gi, ""));
-                                setZipCodeValid(isTextValid(currentClientData?.zipCode));
-                            }}
-                            className=""
-                        />
-                        {!zipCodeValid ? (
-                            <p className="" style={{ fontSize: "12px", color: "red" }}>{zipCodeError}</p>
-                        ) : null}
-                    </Grid>
-                    <Grid xs={6} md={6}>
-                        {/* <span>*Client country</span> */}
-                        <FloatLabel
-                            label='*Client country'
-                            value={currentClientData?.country}
-                            placeholder={""}
-                            handleChange={(event) => {
-                                onValueChange("country", event.target.value.replace(/[0-9]/gi, ""));
-                                setCountryValid(isTextValid(currentClientData?.country));
-                            }}
-                            className=""
-                        />
-                        {!countryValid ? (
-                            <p className="" style={{ fontSize: "12px", color: "red" }}>{countryError}</p>
-                        ) : null}
-                    </Grid>
-                </Grid>
-                {/* <Grid xs={12} md={12}> */}
-                <div className="m-auto w-[30%] ml-[35%] text-white ">
-                    <Button
-                        className=""
-                        value="Save & Submit"
-                        handleClick={() => onSubmitClick()}
-                        styles={{ fontSize: "16px" }}
-                    />
+            Candidate details
+            <div className="flex gap-5 " style={{ margin: "auto", width: "100%" }}>
+                <div className="relative w-[100%] mt-10 ">
+                    <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead className='text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400'>
+                            <tr>
+                                <th scope="col" className="px-6 py-4">
+                                    Initial details
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold ">
+                                    <span>Candidate first name</span>
+                                </td>
+                                <td className="px-6 py-0 ">
+                                    <TextField
+                                        value={currentCandidateData?.firstName}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("firstName", event?.target?.value);
+                                            if (!isTextValid(event?.target?.value)) {
+                                                onValidationChange("firstNameValid", "First name should not be empty.");
+                                            } else {
+                                                onValidationChange("firstNameValid", " ");
+                                            }
+                                        }}
+                                        styles={{ border: "1px solid hsl(0, 0%, 80%)", textAlign: "left", fontSize: "13px" }}
+
+                                    />
+                                    <p className="" style={{ fontSize: "12px", color: "red" }}>{validationCandidateData?.firstNameValid}</p>
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Candidate middle name</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentCandidateData?.middleName}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("middleName", event?.target?.value);
+                                            if (!isTextValid(event?.target?.value)) {
+                                                onValidationChange("middleNameValid", "Middle name should not be empty.");
+                                            } else {
+                                                onValidationChange("middleNameValid", " ");
+                                            }
+                                        }}
+                                        styles={{ border: "1px solid hsl(0, 0%, 80%)", textAlign: "left", fontSize: "13px" }}
+                                    />
+                                    <p className="" style={{ fontSize: "12px", color: "red" }}>{validationCandidateData?.middleNameValid}</p>
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Candidate last name</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentCandidateData?.lastName}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("lastName", event?.target?.value);
+                                            if (!isTextValid(event?.target?.value)) {
+                                                onValidationChange("lastNameValid", "Last name should not be empty.");
+                                            } else {
+                                                onValidationChange("lastNameValid", " ");
+                                            }
+                                        }}
+                                        styles={{ border: "1px solid hsl(0, 0%, 80%)", textAlign: "left", fontSize: "13px" }}
+                                    />
+                                    <p className="" style={{ fontSize: "12px", color: "red" }}>{validationCandidateData?.lastNameValid}</p>
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Line 1</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentCandidateData?.line1}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("line1", event?.target?.value);
+                                            if (!isTextValid(event?.target?.value)) {
+                                                onValidationChange("line1Valid", "Line 1 should not be empty.");
+                                            } else {
+                                                onValidationChange("line1Valid", " ");
+                                            }
+                                        }}
+                                        styles={{ border: "1px solid hsl(0, 0%, 80%)", textAlign: "left", fontSize: "13px" }}
+                                    />
+                                    <p className="" style={{ fontSize: "12px", color: "red" }}>{validationCandidateData?.line1Valid}</p>
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Line 2</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentCandidateData?.line2}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("line2", event?.target?.value);
+                                            if (!isTextValid(event?.target?.value)) {
+                                                onValidationChange("line2Valid", "Line 2 should not be empty.");
+                                            } else {
+                                                onValidationChange("line2Valid", " ");
+                                            }
+                                        }}
+                                        styles={{ border: "1px solid hsl(0, 0%, 80%)", textAlign: "left", fontSize: "13px" }}
+                                    />
+                                    <p className="" style={{ fontSize: "12px", color: "red" }}>{validationCandidateData?.line2Valid}</p>
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>City</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentCandidateData?.city}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("city", event?.target?.value);
+                                            if (!isTextValid(event?.target?.value)) {
+                                                onValidationChange("cityValid", "City should not be empty.");
+                                            } else {
+                                                onValidationChange("cityValid", " ");
+                                            }
+                                        }}
+                                        styles={{ border: "1px solid hsl(0, 0%, 80%)", textAlign: "left", fontSize: "13px" }}
+                                    />
+                                    <p className="" style={{ fontSize: "12px", color: "red" }}>{validationCandidateData?.cityValid}</p>
+
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>State</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <Select
+                                        className='text-[13px] text-left'
+                                        options={locationName}
+                                        value={currentCandidateData?.state}
+                                        getOptionLabel={(option) => option.label}
+                                        getOptionValue={(option) => option.value}
+                                        onChange={(e: any) => {
+                                            onValueChange("state", e);
+                                            if (!isTextValid(e?.value)) {
+                                                onValidationChange("stateValid", "State should not be empty.");
+                                            } else {
+                                                onValidationChange("stateValid", " ");
+                                            }
+                                        }}
+                                        isSearchable={true}
+                                    />
+                                    <p className="" style={{ fontSize: "12px", color: "red" }}>{validationCandidateData?.stateValid}</p>
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-                {/* </Grid> */}
+                <div className="relative w-[100%] mt-10 bg-[#f8f8f8dd]">
+                    <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead className='text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400'>
+                            <tr>
+                                <th scope="col" className="px-6 py-4">
+                                    Other details
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody className="">
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Zip code</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentCandidateData?.zipCode}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("zipCode", event?.target?.value);
+                                            if (!isTextValid(event?.target?.value)) {
+                                                onValidationChange("zipCodeValid", "Zip code should not be empty.");
+                                            } else {
+                                                onValidationChange("zipCodeValid", " ");
+                                            }
+                                        }}
+                                        styles={{ border: "1px solid hsl(0, 0%, 80%)", textAlign: "left", fontSize: "13px" }}
+                                    />
+                                    <p className="" style={{ fontSize: "12px", color: "red" }}>{validationCandidateData?.zipCodeValid}</p>
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Country</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentCandidateData?.country}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("country", event?.target?.value);
+                                            if (!isTextValid(event?.target?.value)) {
+                                                onValidationChange("countryValid", "Country should not be empty.");
+                                            } else {
+                                                onValidationChange("countryValid", " ");
+                                            }
+                                        }}
+                                        styles={{ border: "1px solid hsl(0, 0%, 80%)", textAlign: "left", fontSize: "13px" }}
+                                    />
+                                    <p className="" style={{ fontSize: "12px", color: "red" }}>{validationCandidateData?.countryValid}</p>
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Candidate email address</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentCandidateData?.email}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("email", event.target.value.replace(/\s/g, ""));
+                                            if (!isTextValid(event?.target?.value)) {
+                                                onValidationChange("emailValid", "Email should not be empty.");
+                                            } else {
+                                                if (!isEmailValid(event?.target?.value)) {
+                                                    onValidationChange("emailValid", "Email is invalid.");
+                                                } else {
+                                                    onValidationChange("emailValid", " ");
+                                                }
+                                            }
+                                        }}
+                                        styles={{ border: "1px solid hsl(0, 0%, 80%)", textAlign: "left", fontSize: "13px" }}
+                                    />
+                                    <p className="" style={{ fontSize: "12px", color: "red" }}>{validationCandidateData?.emailValid}</p>
+
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Candidate contact no.</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentCandidateData?.contactNumber}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("contactNumber", event.target.value.replace(/[^0-9]/gi, ""));
+                                            if (!isTextValid(event?.target?.value)) {
+                                                onValidationChange("contactNumberValid", "Contact number is invalid");
+                                            } else {
+                                                onValidationChange("contactNumberValid", " ");
+                                            }
+                                        }}
+                                        styles={{ border: "1px solid hsl(0, 0%, 80%)", textAlign: "left", fontSize: "13px" }}
+                                    />
+                                    <p className="" style={{ fontSize: "12px", color: "red" }}>{validationCandidateData?.contactNumberValid}</p>
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Candidate fax no.</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentCandidateData?.faxNumber}
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange("faxNumber", event.target.value.replace(/[^0-9]/gi, ""));
+                                            if (!isTextValid(event?.target?.value)) {
+                                                onValidationChange("faxNumberValid", "Fax                                                                                                                                                                                                                                                                                                                                                                                                                                                       number is invalid");
+                                            } else {
+                                                onValidationChange("faxNumberValid", " ");
+                                            }
+                                        }}
+                                        styles={{ border: "1px solid hsl(0, 0%, 80%)", textAlign: "left", fontSize: "13px" }}
+                                    />
+                                    <p className="" style={{ fontSize: "12px", color: "red" }}>{validationCandidateData?.faxNumberValid}</p>
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Work authorization</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <Select
+                                        className='text-[13px] text-left'
+                                        options={result}
+                                        value={currentCandidateData?.workAuthorization}
+                                        getOptionLabel={(option) => option.label}
+                                        getOptionValue={(option) => option.value}
+                                        onChange={(e: any) => {
+                                            onValueChange("workAuthorization", e);
+                                            if (!isTextValid(e?.value)) {
+                                                onValidationChange("workAuthorizationValid", "Work authorization is invalid");
+                                            } else {
+                                                onValidationChange("workAuthorizationValid", " ");
+                                            }
+                                        }}
+                                        isSearchable={true}
+                                    />
+                                    <p className="" style={{ fontSize: "12px", color: "red" }}>{validationCandidateData?.workAuthorizationValid}</p>
+                                </td>
+                            </tr>
+                            <tr className="bg-[#f8f8f8dd] border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td className="px-6 py-4 font-semibold">
+                                    <span>Work authorization expiry date</span>
+                                </td>
+                                <td className="px-6 py-0">
+                                    <TextField
+                                        value={currentCandidateData?.workAuthorizationExpiryDate}
+                                        type="date"
+                                        placeholder={""}
+                                        handleChange={(event) => {
+                                            onValueChange(
+                                                "workAuthorizationExpiryDate",
+                                                event?.target?.value
+                                            );
+                                            if (!isTextValid(event?.target?.value)) {
+                                                onValidationChange("workAuthorizationExpiryDateValid", "Work authorization expiry date is invalid");
+                                            } else {
+                                                onValidationChange("workAuthorizationExpiryDateValid", " ");
+                                            }
+                                        }}
+                                        styles={{ border: "1px solid hsl(0, 0%, 80%)", textAlign: "left", fontSize: "13px" }}
+                                    />
+                                    <p className="" style={{ fontSize: "12px", color: "red" }}>{validationCandidateData?.workAuthorizationExpiryDateValid}</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </>
-    )
-}
+    );
+};
 
-export default AddClientDetails;
-
+export default CandidateDetails;
