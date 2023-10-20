@@ -1,99 +1,130 @@
-<div className="flex m-auto w-[100%]">
-        <div className="container">
-          <div className="arrow-steps clearfix">
-            <div
-              className={int === 1 ? "step current1" : "step current"}
-              // className="step current"
-              // className={clicked ? "step current1" : "step current"}
-              onClick={() => {
-                // navigate("/background-data")
-                setInt(1);
-              }}
-            >
-              {" "}
-              <Typography variant="h3">Candidate details</Typography>
-              {/* <span>
-                    {" "}
-                    <a href="#">Candidate details</a>
-                  </span>{" "} */}
-            </div>
-            <div
-              className={int === 2 ? "step current1" : "step current"}
-              onClick={() => {
-                // setClicked(!clicked);
-                // navigate("/background-data")
-                setInt(2);
-              }}
-            >
-              {/* {" "}
-                  <span>
-                    <a href="#">Background Check Data</a>
-                  </span>{" "} */}
-              <Typography variant="h3">Background Check Data</Typography>
-            </div>
-            <div
-              className={int === 3 ? "step current1" : "step current"}
-              onClick={() => {
-                // navigate("/document-data")
-                setInt(3);
-              }}
-            >
-              {/* {" "}
-                  <span>
-                    <a href="#">Documentation Data</a>
-                  </span>{" "} */}
-              <Typography variant="h3">Documentation Data</Typography>
-            </div>
-            <div
-              className={int === 4 ? "step current1" : "step current"}
-              onClick={() => {
-                // navigate("/document-data")
-                setInt(4);
-              }}
-            >
-              {/* {" "}
-                  <span>
-                    <a href="#">Start End Operations Data</a>
-                  </span>{" "} */}
-              <Typography variant="h3">Start End Operations Data</Typography>
-            </div>
-            <div
-              className={int === 5 ? "step current1" : "step current"}
-              onClick={() => {
-                // navigate("/document-data")
-                setInt(5);
-              }}
-            >
-              {/* {" "}
-                  <span>
-                    <a href="#">Rate Revision Data</a>
-                  </span>{" "} */}
-              <Typography variant="h3">Rate Revision Data</Typography>
-            </div>
-            <div
-              className={
-                int === 6
-                  ? "step current1"
-                  : "step current border-solid border-[1px]"
-              }
-              onClick={() => {
-                // navigate("/document-data")
-                setInt(6);
-              }}
-            >
-              <Typography variant="h3">Other Data</Typography>
-            </div>
-          </div>
+.clearfix:after {
+    clear: both;
+    content: "";
+    display: block;
+    height: 0;
+}
 
-          {/* <div className="nav clearfix">
-                <a href="#" className="prev">
-                  Previous
-                </a>
-                <a href="#" className="next pull-right">
-                  Next
-                </a>
-              </div> */}
-        </div>
-      </div>
+.container {
+    font-family: 'Lato', sans-serif;
+    width: 100%;
+    margin: 0 auto;
+}
 
-      import { Typography } from "@material-tailwind/react";
+.wrapper {
+    display: table-cell;
+    height: 400px;
+    vertical-align: middle;
+}
+
+.nav {
+    margin-top: 40px;
+}
+
+.pull-right {
+    float: right;
+}
+
+a,
+a:active {
+    color: #333;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #999;
+}
+
+
+
+.arrow-steps .step {
+    font-size: 14px;
+    text-align: center;
+    color: #d9e3f7;
+    cursor: default;
+    margin: 0 3px;
+    padding: 10px 10px 10px 30px;
+    min-width: 190px;
+    float: left;
+    position: relative;
+    background-color: #d9e3f7;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    transition: background-color 0.2s ease;
+}
+
+.arrow-steps .step:after,
+.arrow-steps .step:before {
+    content: " ";
+    position: absolute;
+    top: 0;
+    right: -17px;
+    width: 0;
+    height: 0;
+    border-top: 19px solid transparent;
+    border-bottom: 17px solid transparent;
+    /* border-left: 17px solid #d9e3f7; */
+    z-index: 2;
+    transition: border-color 0.2s ease;
+}
+
+.arrow-steps .step:before {
+    right: 0;
+    left: 0;
+    border-left: 17px solid #fff;
+    z-index: 0;
+}
+
+.arrow-steps .step:first-child:before {
+    border: none;
+}
+
+/* .arrow-steps .step:first-child {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+} */
+
+.arrow-steps .step span {
+    position: relative;
+}
+
+.arrow-steps .step span:before {
+    opacity: 0;
+    content: "✔";
+    position: absolute;
+    top: -2px;
+    left: -20px;
+}
+
+.arrow-steps .step.done span:before {
+    opacity: 1;
+    -webkit-transition: opacity 0.3s ease 0.5s;
+    -moz-transition: opacity 0.3s ease 0.5s;
+    -ms-transition: opacity 0.3s ease 0.5s;
+    transition: opacity 0.3s ease 0.5s;
+}
+
+.arrow-steps .step.current {
+    color: #fff;
+    background-color: #1976D2;
+}
+
+.arrow-steps .step.current1 {
+    color: #181616;
+    background-color: #fff;
+    border: solid;
+    border: 10px;
+    /* border: #181616; */
+    /* border-style: solid; */
+    /* border-width: 1px; */
+
+}
+
+
+
+.arrow-steps .step.current:after {
+    border-left: 17px solid #1976D2;
+}
+
