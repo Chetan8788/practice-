@@ -1,42 +1,99 @@
-import React from "react"
-import MiscellaneousCard from "./MiscellaneousCard";
-import GroupRemoveIcon from '@mui/icons-material/GroupRemove';
-import GavelIcon from '@mui/icons-material/Gavel';
-import Grid from "@mui/material/Unstable_Grid2";
+<div className="flex m-auto w-[100%]">
+        <div className="container">
+          <div className="arrow-steps clearfix">
+            <div
+              className={int === 1 ? "step current1" : "step current"}
+              // className="step current"
+              // className={clicked ? "step current1" : "step current"}
+              onClick={() => {
+                // navigate("/background-data")
+                setInt(1);
+              }}
+            >
+              {" "}
+              <Typography variant="h3">Candidate details</Typography>
+              {/* <span>
+                    {" "}
+                    <a href="#">Candidate details</a>
+                  </span>{" "} */}
+            </div>
+            <div
+              className={int === 2 ? "step current1" : "step current"}
+              onClick={() => {
+                // setClicked(!clicked);
+                // navigate("/background-data")
+                setInt(2);
+              }}
+            >
+              {/* {" "}
+                  <span>
+                    <a href="#">Background Check Data</a>
+                  </span>{" "} */}
+              <Typography variant="h3">Background Check Data</Typography>
+            </div>
+            <div
+              className={int === 3 ? "step current1" : "step current"}
+              onClick={() => {
+                // navigate("/document-data")
+                setInt(3);
+              }}
+            >
+              {/* {" "}
+                  <span>
+                    <a href="#">Documentation Data</a>
+                  </span>{" "} */}
+              <Typography variant="h3">Documentation Data</Typography>
+            </div>
+            <div
+              className={int === 4 ? "step current1" : "step current"}
+              onClick={() => {
+                // navigate("/document-data")
+                setInt(4);
+              }}
+            >
+              {/* {" "}
+                  <span>
+                    <a href="#">Start End Operations Data</a>
+                  </span>{" "} */}
+              <Typography variant="h3">Start End Operations Data</Typography>
+            </div>
+            <div
+              className={int === 5 ? "step current1" : "step current"}
+              onClick={() => {
+                // navigate("/document-data")
+                setInt(5);
+              }}
+            >
+              {/* {" "}
+                  <span>
+                    <a href="#">Rate Revision Data</a>
+                  </span>{" "} */}
+              <Typography variant="h3">Rate Revision Data</Typography>
+            </div>
+            <div
+              className={
+                int === 6
+                  ? "step current1"
+                  : "step current border-solid border-[1px]"
+              }
+              onClick={() => {
+                // navigate("/document-data")
+                setInt(6);
+              }}
+            >
+              <Typography variant="h3">Other Data</Typography>
+            </div>
+          </div>
 
-const Miscellaneous: React.FC = () => {
-    return (
-        <>
-            <Grid container spacing={3}>
-                <Grid xs={6} md={4}>
-                    <div className="mb-5 flex" style={{ boxShadow: "rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px" }}>
-                        <MiscellaneousCard className="w-[90%]" name={"Work authorization"} component={"/show-work-authorization"} />
-                        <div className="w-[125px] bg-[#1976D2] pt-4">
-                            <GroupRemoveIcon style={{ color: "white" }} />
-                        </div>
-                    </div>
-                </Grid>
-                <Grid xs={6} md={4}>
-                    {/* <MiscellaneousCard name={"Contract type"} component={"/contract-type"} /> */}
-                    <div className="mb-5 flex" style={{ boxShadow: "rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px" }}>
-                        <MiscellaneousCard className="w-[90%]" name={"Contract type"} component={"/contract-type"} />
-                        <div className="w-[125px] bg-[#1976D2] pt-4">
-                            <GavelIcon style={{ color: "white" }} />
-                        </div>
-                    </div>
-                </Grid>
-            </Grid>
-                        <div className=" ">
-        <img
-          style={{ width: "70%", height: "420px" }}
-          // src={image1}
-          src="https://cdn-fmkch.nitrocdn.com/WalXjknmYyViFiHDyzsNopiswnbohjPn/assets/images/optimized/rev-80eb14f/www.postgrid.com/wp-content/uploads/2021/11/thank-you-letter-to-employees.jpg"
-          className="img-rounded mx-auto d-block"
-        
-        />
+          {/* <div className="nav clearfix">
+                <a href="#" className="prev">
+                  Previous
+                </a>
+                <a href="#" className="next pull-right">
+                  Next
+                </a>
+              </div> */}
+        </div>
       </div>
-        </>
-    )
-}
 
-export default Miscellaneous;
+      import { Typography } from "@material-tailwind/react";
